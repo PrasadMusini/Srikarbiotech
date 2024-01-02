@@ -14,7 +14,6 @@ class HomeScreen extends StatefulWidget {
 class _home_Screen extends State<HomeScreen> {
   int currentIndex = 0;
 
-
   @override
   initState() {
     super.initState();
@@ -33,14 +32,13 @@ class _home_Screen extends State<HomeScreen> {
     //     print('Not connected to the internet');  // Not connected to the internet
     //   }
     // });
-
   }
-    @override
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
           backgroundColor: Colors.white,
-
           centerTitle: true,
           title: Row(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -48,7 +46,7 @@ class _home_Screen extends State<HomeScreen> {
             children: [
               Padding(
                   padding:
-                  const EdgeInsets.symmetric(horizontal: 2, vertical: 2)),
+                      const EdgeInsets.symmetric(horizontal: 2, vertical: 2)),
               SvgPicture.asset(
                 'assets/srikar_biotech_logo.svg',
                 width: 60.0,
@@ -61,6 +59,7 @@ class _home_Screen extends State<HomeScreen> {
     );
   }
 }
+
 class BannerImages {
   final String FilePath;
   final int Id;
@@ -77,7 +76,6 @@ class _imagesliderState extends State<imageslider> {
   int currentIndex = 0;
   List<BannerImages> imageList = [];
 
-
   @override
   initState() {
     super.initState();
@@ -85,9 +83,8 @@ class _imagesliderState extends State<imageslider> {
       DeviceOrientation.portraitDown,
       DeviceOrientation.portraitUp,
     ]);
-  //  imageList.length = 3;
+    //  imageList.length = 3;
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -102,7 +99,7 @@ class _imagesliderState extends State<imageslider> {
                     child: SingleChildScrollView(
                         child: Container(
                             padding: EdgeInsets.only(
-                                left: 10.0, right: 10.0, top: 20.0),
+                                left: 0.0, right: 0.0, top: 20.0),
                             width: MediaQuery.of(context).size.width,
                             child: Stack(
                               children: [
@@ -113,22 +110,26 @@ class _imagesliderState extends State<imageslider> {
                                       Image.asset(
                                         'assets/slider1.png',
                                         fit: BoxFit.fitWidth,
-                                        width: MediaQuery.of(context).size.width,
+                                        width:
+                                            MediaQuery.of(context).size.width,
                                       ),
                                       Image.asset(
                                         'assets/slider2.png',
                                         fit: BoxFit.fitWidth,
-                                        width: MediaQuery.of(context).size.width,
+                                        width:
+                                            MediaQuery.of(context).size.width,
                                       ),
                                       Image.asset(
                                         'assets/slider3.png',
                                         fit: BoxFit.fitWidth,
-                                        width: MediaQuery.of(context).size.width,
+                                        width:
+                                            MediaQuery.of(context).size.width,
                                       ),
                                       // Add more static images as needed
                                     ],
                                     options: CarouselOptions(
-                                      scrollPhysics: const BouncingScrollPhysics(),
+                                      scrollPhysics:
+                                          const BouncingScrollPhysics(),
                                       autoPlay: true,
                                       aspectRatio: 23 / 9,
                                       viewportFraction: 1,
@@ -146,18 +147,18 @@ class _imagesliderState extends State<imageslider> {
                                     child: Padding(
                                       padding: EdgeInsets.only(top: 0.0),
                                       child: Row(
-                                        mainAxisAlignment: MainAxisAlignment.center,
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
                                         children: List.generate(
                                           // Use the number of images from assets
                                           3, // Replace with the actual number of assets
-                                              (index) => buildIndicator(index),
+                                          (index) => buildIndicator(index),
                                         ),
                                       ),
                                     ),
                                   ),
                                 ),
                               ],
-
                             )))),
                 Expanded(
                   flex: 3,
@@ -168,59 +169,110 @@ class _imagesliderState extends State<imageslider> {
                       children: [
                         Row(
                           //mainAxisAlignment: MainAxisAlignment.end,
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          // mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          //  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           children: [
                             _customheightCard(
                               imageUrl: "receipt.svg",
                               item: "Ledger",
                               color: Color(0xFFe78337),
-                              item_1: "this is the ledger",
+                              item_1:
+                                  "All Incoming and Outgoing Transactions record",
                               color_1: Color(0xFFF8dac2),
-                              textcolor:Colors.white ,
+                              textcolor: Colors.white,
                               onTap: () {
                                 print('Card tapped!');
                               },
                             ),
-                            // SizedBox(
-                            //   width: 10.0,
-                            // ),
-                            Column(
+                            SizedBox(
+                              width: 7.0,
+                            ),
+                            Container(
+                              height:
+                                  MediaQuery.of(context).size.height * (4 / 9) -
+                                      250 / 2,
+                              child: Column(
                                 mainAxisAlignment:
-                                MainAxisAlignment.spaceBetween,
+                                    MainAxisAlignment.spaceBetween,
                                 children: [
                                   _customwidthCard(
                                     imageUrl: "shopping_cart_add.svg",
                                     item: "Create Order",
                                     item1: "Create a New Order",
-                                    color:Color(0xFFF8dac2) ,
-                                    color_1:Color(0xFFec9d62),
-                                    textcolor:Color(0xFFe78337) ,
+                                    color: Color(0xFFF8dac2),
+                                    color_1: Color(0xFFec9d62),
+                                    textcolor: Color(0xFFe78337),
                                     onTap: () {
                                       Navigator.push(
                                         context,
-                                        MaterialPageRoute(builder: (context) => Selectpartyscreen()),
+                                        MaterialPageRoute(
+                                          builder: (context) =>
+                                              Selectpartyscreen(),
+                                        ),
                                       );
                                     },
                                   ),
+                                  // SizedBox(
+                                  //   height: MediaQuery.of(context).size.height *
+                                  //       0.02, // 2% of the screen height
+                                  // ),
                                   _customwidthCard(
                                     imageUrl: "shoppingbag.svg",
                                     item: "View Orders",
                                     item1: "View All Order",
                                     color: Color(0xFFb7dbc1),
                                     color_1: Color(0xFF43a05a),
-                                    textcolor:Color(0xFF118730) ,
+                                    textcolor: Color(0xFF118730),
                                     onTap: () {
                                       print('Card tapped!');
                                     },
                                   ),
-                                ])
+                                ],
+                              ),
+                            )
+                            // Column(
+                            //   children: [
+                            //     _customwidthCard(
+                            //       imageUrl: "shopping_cart_add.svg",
+                            //       item: "Create Order",
+                            //       item1: "Create a New Order",
+                            //       color: Color(0xFFF8dac2),
+                            //       color_1: Color(0xFFec9d62),
+                            //       textcolor: Color(0xFFe78337),
+                            //       onTap: () {
+                            //         Navigator.push(
+                            //           context,
+                            //           MaterialPageRoute(
+                            //             builder: (context) =>
+                            //                 Selectpartyscreen(),
+                            //           ),
+                            //         );
+                            //       },
+                            //     ),
+                            //     SizedBox(
+                            //       height: MediaQuery.of(context).size.height *
+                            //           0.02, // 2% of the screen height
+                            //     ),
+                            //     _customwidthCard(
+                            //       imageUrl: "shoppingbag.svg",
+                            //       item: "View Orders",
+                            //       item1: "View All Order",
+                            //       color: Color(0xFFb7dbc1),
+                            //       color_1: Color(0xFF43a05a),
+                            //       textcolor: Color(0xFF118730),
+                            //       onTap: () {
+                            //         print('Card tapped!');
+                            //       },
+                            //     ),
+                            //   ],
+                            // )
                           ],
                         ),
                         SizedBox(
                           height: 16.0,
                         ),
                         Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            //   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                             // crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               _customwidthCard(
@@ -229,38 +281,44 @@ class _imagesliderState extends State<imageslider> {
                                 item1: "Create a New Collection",
                                 color: Color(0xFFb7dbc1),
                                 color_1: Color(0xFF43a05a),
-                                textcolor:Color(0xFF118730) ,
+                                textcolor: Color(0xFF118730),
                                 onTap: () {
                                   print('Card tapped!');
                                 },
+                              ),
+                              SizedBox(
+                                width: 8.0,
                               ),
                               _customwidthCard(
                                 imageUrl: "album_collection.svg",
                                 item: "View Collections",
                                 item1: "View All Collections",
-                                color:Color(0xFFF8dac2) ,
-                                color_1:Color(0xFFec9d62),
-                                textcolor:Color(0xFFe78337) ,
+                                color: Color(0xFFF8dac2),
+                                color_1: Color(0xFFec9d62),
+                                textcolor: Color(0xFFe78337),
                                 onTap: () {
                                   print('Card tapped!');
                                 },
                               ),
                             ]),
-                        SizedBox(height: 8), // Add spacing between rows
+                        SizedBox(height: 16), // Add spacing between rows
 
                         Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            //  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                             children: [
                               _customwidthCard(
                                 imageUrl: "arrows_repeat.svg",
                                 item: "Create Reorder",
                                 item1: "Create a Reorder",
-                                color:Color(0xFFF8dac2) ,
-                                color_1:Color(0xFFec9d62),
-                                textcolor:Color(0xFFe78337) ,
+                                color: Color(0xFFF8dac2),
+                                color_1: Color(0xFFec9d62),
+                                textcolor: Color(0xFFe78337),
                                 onTap: () {
                                   print('Card tapped!');
                                 },
+                              ),
+                              SizedBox(
+                                width: 8.0,
                               ),
                               _customwidthCard(
                                 imageUrl: "shoppingbag.svg",
@@ -268,7 +326,7 @@ class _imagesliderState extends State<imageslider> {
                                 item1: "View All Reorders",
                                 color: Color(0xFFb7dbc1),
                                 color_1: Color(0xFF43a05a),
-                                textcolor:Color(0xFF118730) ,
+                                textcolor: Color(0xFF118730),
                                 onTap: () {
                                   print('Card tapped!');
                                 },
@@ -295,46 +353,58 @@ class _imagesliderState extends State<imageslider> {
     required Color color,
     required Color color_1,
     required Color textcolor,
-    required VoidCallback? onTap, // Add this line for the onTap callback
+    required VoidCallback? onTap,
   }) {
     return GestureDetector(
-      onTap: onTap, // Set the onTap callback for GestureDetector
+      onTap: onTap,
       child: SizedBox(
-        height: MediaQuery.of(context).size.height * (4 / 9) - 280 / 2,
-        width: 180,
+        height: MediaQuery.of(context).size.height * (4 / 9) - 250 / 2,
+        width: MediaQuery.of(context).size.width / 2.2,
         child: Card(
           color: color,
           shape:
-          RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
           elevation: 8,
           child: Padding(
-            padding: EdgeInsets.only(left: 18, right: 15, top: 8, bottom: 8),
+            padding: EdgeInsets.only(left: 18, right: 15, top: 15, bottom: 8),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 Container(
-                  margin: EdgeInsets.only(bottom: 8),
+                  margin: EdgeInsets.only(bottom: 0),
                   padding: EdgeInsets.all(8),
                   decoration: BoxDecoration(
-                    color: color_1, // Set your desired background color
-                    borderRadius:
-                    BorderRadius.circular(15), // Set the border radius
+                    color: color_1,
+                    borderRadius: BorderRadius.circular(15),
                   ),
                   child: SvgPicture.asset(
                     "assets/" + imageUrl,
-                    width: 35.0,
+                    width: 30.0,
                     height: 30.0,
                     color: Color(0xFF414141),
                   ),
                 ),
-                Text(
-                  item,
-                  style: TextStyle(fontSize: 18, color: textcolor),
+                // Add some space between icon and text
+                Expanded(
+                  child: Align(
+                    alignment: Alignment.centerLeft,
+                    child: Text(
+                      item,
+                      style: TextStyle(
+                          fontSize: 20,
+                          color: textcolor,
+                          fontWeight: FontWeight.bold),
+                    ),
+                  ),
                 ),
-                Text(
-                  item_1,
-                  style: TextStyle(fontSize: 16, color: textcolor),
+                Align(
+                  alignment: Alignment.bottomLeft,
+                  child: Text(
+                    item_1,
+                    style: TextStyle(fontSize: 14, color: textcolor),
+                  ),
                 ),
+                SizedBox(height: 12),
               ],
             ),
           ),
@@ -350,46 +420,56 @@ class _imagesliderState extends State<imageslider> {
     required String item1,
     required VoidCallback? onTap,
     required Color color_1,
-    required Color textcolor
+    required Color textcolor,
   }) {
     return GestureDetector(
       onTap: onTap,
       child: SizedBox(
         height: MediaQuery.of(context).size.width * (4 / 9) - 130 / 2,
-        width: 180,
+        width: MediaQuery.of(context).size.width / 2.2,
         child: Card(
           color: color,
           shape:
-          RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
           elevation: 8,
           child: Padding(
-            padding: EdgeInsets.all(8),
+            padding: EdgeInsets.only(left: 13, right: 15, top: 7, bottom: 3),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisAlignment: MainAxisAlignment.start,
               children: <Widget>[
                 Container(
                   margin: EdgeInsets.only(bottom: 8),
-                  padding: EdgeInsets.all(8), // Padding for the container
+                  padding: EdgeInsets.all(6),
                   decoration: BoxDecoration(
-                    color: color_1, // Set your desired background color
-                    borderRadius:
-                    BorderRadius.circular(15), // Set the border radius
+                    color: color_1,
+                    borderRadius: BorderRadius.circular(15),
                   ),
                   child: SvgPicture.asset(
                     "assets/" + imageUrl,
-                    width: 30.0,
-                    height: 30.0,
+                    width: 20.0,
+                    height: 25.0,
                     color: Color(0xFF414141),
                   ),
                 ),
-                Text(
-                  item,
-                  style: TextStyle(fontSize: 16, color: textcolor),
+                Expanded(
+                  child: Align(
+                    alignment: Alignment.centerLeft,
+                    child: Text(
+                      item,
+                      style: TextStyle(fontSize: 16, color: textcolor),
+                    ),
+                  ),
                 ),
-                Text(
-                  item1,
-                  style: TextStyle(fontSize: 10,  color: Color(0xFF414141)),
+                // SizedBox(
+                //   height: 8.0,
+                // ),
+                Align(
+                  alignment: Alignment.bottomLeft,
+                  child: Text(
+                    item1,
+                    style: TextStyle(fontSize: 10, color: Color(0xFF414141)),
+                  ),
                 ),
               ],
             ),
