@@ -3,531 +3,331 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'package:srikarbiotech/Createorderscreen.dart';
+import 'dart:convert';
 
-import 'Createorderscreen.dart';
+import 'CreateCollection.dart';
+import 'CreateCollectionscreen.dart';
+import 'Ledgerscreen.dart';
+import 'Model/Dealer.dart';
 
 class Selectpartyscreen extends StatefulWidget {
+  String from;
+  Selectpartyscreen({required this.from});
+
   @override
   Selectparty_screen createState() => Selectparty_screen();
 }
 
 class Selectparty_screen extends State<Selectpartyscreen> {
   bool _isLoading = false;
-  //
-  // @override
-  // initState() {
-  //   super.initState();
-  //   SystemChrome.setPreferredOrientations([
-  //     DeviceOrientation.portraitDown,
-  //     DeviceOrientation.portraitUp,
-  //   ]);
-  //
-  //   // Postpone the navigation until the next frame
-  //   // WidgetsBinding.instance.addPostFrameCallback((_) {
-  //   //   navigateproductdetailsscreen();
-  //   // });
-  //   WidgetsBinding.instance.addPostFrameCallback((_) {
-  //     navigateproductdetailsscreen();
-  //   });
-  // }
+  List<Dealer> dealers = [];
+  late String screenFrom;
+  int selectedCardIndex = -1; // Variable to track selected card index
+
+  List<Dealer> filteredDealers = [];
+  TextEditingController searchController = TextEditingController();
+
   @override
   void initState() {
     super.initState();
-    Future.delayed(const Duration(seconds: 3)).then((value) {
-      Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) =>  Createorderscreen(),
-          ));
-    });
+
+    fetchData();
+    print("screenFrom: ${widget.from}");
+
+    screenFrom = '${widget.from}'.trim();
+    print("screenFrom: ${screenFrom}");
   }
+
+  Future<void> fetchData() async {
+    final response = await http.get(
+      Uri.parse('http://182.18.157.215/Srikar_Biotech_Dev/API/api/Account/GetAllDealersBySlpCode/100'),
+    );
+
+    if (response.statusCode == 200) {
+      final Map<String, dynamic> data = json.decode(response.body);
+      final List<dynamic> listResult = data['response']['listResult'];
+
+      setState(() {
+        dealers = listResult.map((json) => Dealer.fromJson(json)).toList();
+        filteredDealers = List.from(dealers);
+      });
+
+
+    } else {
+      throw Exception('Failed to load data');
+    }
+
+
+}
   @override
   Widget build(BuildContext context) {
 
     return Scaffold(
-      appBar: AppBar(
-          backgroundColor: Colors.white,
-
-          centerTitle: true,
-          title: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Padding(
-                  padding:
-                  const EdgeInsets.symmetric(horizontal: 2, vertical: 2)),
-              SvgPicture.asset(
-                'assets/srikar_biotech_logo.svg',
-                width: 60.0,
-                height: 40.0,
-                //color: Color(0xFFe78337),
+      appBar:
+      AppBar(
+        backgroundColor: Color(0xFFe78337),
+        automaticallyImplyLeading: false, // This line removes the default back arrow
+        title: Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 2, vertical: 2),
+              child: GestureDetector(
+                onTap: () {
+                  // Handle the click event for the back arrow icon
+                  Navigator.of(context).pop();
+                },
+                child: Icon(
+                  Icons.chevron_left,
+                  size: 30.0,
+                  color: Colors.white,
+                ),
               ),
-            ],
-          )),
+            ),
+            Text(
+              'Select Party',
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 18,
+              ),
+            ),
+          ],
+        ),
+      ),
       body: Column(
         children: [
           Padding(
-            padding: EdgeInsets.symmetric(horizontal: 30.0),
-            child: Padding(
-              padding: EdgeInsets.only(top: 10.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Expanded(
-                    child: RichText(
-                      textAlign: TextAlign.center,
-                      text: TextSpan(
-                        style: TextStyle(
-                          fontFamily: 'Calibri',
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                          decorationColor: Colors.transparent,
-                          decoration: TextDecoration.none,
+            padding: EdgeInsets.only(top: 10.0, left: 20.0, right: 20.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                SizedBox(height: 8.0),
+                GestureDetector(
+                  onTap: () {
+                    // Handle the click event for the second text view
+                    print('first textview clicked');
+                  },
+                  child: Container(
+                    width: MediaQuery.of(context).size.width,
+                    height: 55.0,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(5.0),
+                      border: Border.all(
+                        color: Colors.black26,
+                        width: 2,
+                      ),
+                    ),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: Align(
+                            alignment: Alignment.centerRight,
+                            child: Padding(
+                              padding: EdgeInsets.only(left: 10.0, top: 0.0),
+                              child: TextFormField(
+                                controller: searchController,
+                                onChanged: (value) {
+                                  filterDealers();
+                                },
+                                keyboardType: TextInputType.name,
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w300,
+                                ),
+                                decoration: InputDecoration(
+
+                                  suffixIcon: Icon(
+                                    Icons.search,
+                                    color: Color(0xFFC4C2C2),
+                                  ),
+                                  hintText: 'Search for Party Name or Id',
+                                  hintStyle: TextStyle(
+                                    fontSize: 14,
+                                    fontFamily: 'Roboto-Bold',
+                                    fontWeight: FontWeight.w500,
+                                    color: Color(0xFFC4C2C2),
+                                  ),
+                                  border: InputBorder.none,
+                                ),
+                              ),
+                            ),
+                          ),
                         ),
-                        children: [
-                          TextSpan(
-                            text: 'Welcome to ',
-                            style: TextStyle(
-                                color: Color(0xFFFB4110),
-                                fontFamily: 'Calibri',
-                                fontSize: 20
+                      ],
+                    ),
+                  ),
+                ),
+                SizedBox(height: 20.0),
+              ],
+            ),
+          ),
+          // Add Expanded around the ListView.builder
+          Expanded(
+            child: ListView.builder(
+              itemCount: filteredDealers.length,
+              itemBuilder: (context, index) {
+                return GestureDetector(
+                  onTap: () {
+                    if (!FocusScope.of(context).hasPrimaryFocus) {
+                      return;
+                    }
+                    print("Tapped on dealer with cardName: ${filteredDealers[index].cardName}");
+                    print("screenFrom: $screenFrom");
+
+                    if (screenFrom == "CreateOrder") {
+                      print("Tapped on dealer with cardName:2 ${filteredDealers[index].cardName}");
+                      try {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => Createorderscreen(
+                              cardName: filteredDealers[index].cardName,
+                              cardCode: filteredDealers[index].cardCode,
+                              address: filteredDealers[index].fullAddress,
                             ),
                           ),
-                          TextSpan(
-                            text: 'new screen',
-                            style: TextStyle(
-                                color: Color(0xFF163CF1),
-                                fontFamily: 'Calibri',
-                                fontSize: 20
-                            ),
+                        );
+                      } catch (e) {
+                        print("Error navigating: $e");
+                      }
+
+                    }
+                    else if (screenFrom == "CreateCollections") {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => CreateCollection(
+                            cardName: filteredDealers[index].cardName,
+                            cardCode: filteredDealers[index].cardCode,
+                            address: filteredDealers[index].fullAddress,
                           ),
-                        ],
+                        ),
+                      );
+                    }
+                    else if (screenFrom == "Ledger") {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => Ledgerscreen(
+                            cardName: filteredDealers[index].cardName,
+                            cardCode: filteredDealers[index].cardCode,
+                            address: filteredDealers[index].fullAddress,
+                          ),
+                        ),
+                      );
+                    }
+                    // else {
+                    //   Navigator.push(
+                    //     context,
+                    //     MaterialPageRoute(
+                    //       builder: (context) => Ledgerscreen(
+                    //         cardName: filteredDealers[index].cardName,
+                    //         cardCode: filteredDealers[index].cardCode,
+                    //         address: filteredDealers[index].address,
+                    //       ),
+                    //     ),
+                    //   );
+                    // }
+                  },
+
+                  child: Container(
+                    margin: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+                    child: Card(
+                        elevation: 0,
+                        color: selectedCardIndex == index ? Colors.orange : null,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10.0),
+                          side: BorderSide(color: Colors.grey, width: 1),
+                        ),
+                      child: Container(
+                        padding: EdgeInsets.all(10.0),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Flexible(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    filteredDealers[index].cardName,
+                                    style: TextStyle(
+                                      color: Colors.orange,
+                                      fontFamily: 'Roboto',
+                                      fontWeight: FontWeight.w700,
+                                    ),
+                                    maxLines: 2, // Display in 2 lines
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                  SizedBox(height: 5.0),
+                                  Text(
+                                    filteredDealers[index].cardCode,
+                                    style: TextStyle(
+                                      color: Colors.black,
+                                      fontFamily: 'Roboto',
+                                      fontWeight: FontWeight.w700,
+                                    ),
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                  SizedBox(height: 5.0),
+                                  Text(
+                                    'Address',
+                                    style: TextStyle(
+                                      color: Colors.black,
+                                      fontFamily: 'Roboto',
+                                      fontWeight: FontWeight.w700,
+                                    ),
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                  SizedBox(height: 5.0),
+                                  Text(
+                                    filteredDealers[index].fullAddress,
+                                    style: TextStyle(
+                                      color: Colors.orange,
+                                      fontFamily: 'Roboto',
+                                      fontWeight: FontWeight.w700,
+                                    ),
+                                    maxLines: 2, // Display in 2 lines
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ],
+                              ),
+                            ),
+                            Icon(
+                              Icons.chevron_right,
+                              color: Colors.orange,
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   ),
-                ],
-              ),
+                );
+              },
             ),
           ),
-          //   _isLoading
-          //     ? Center(
-          //   child: CircularProgressIndicator(),
-          // )
-          //     : Expanded(
-          // child: ListView.builder(
-          //   shrinkWrap: true,
-          //   itemCount: brancheslist.length,
-          //   itemBuilder: (context, index) {
-          //     BranchModel branch = brancheslist[index];
-          //
-          //     return Padding(
-          //       padding: EdgeInsets.symmetric(
-          //           horizontal: 15.0, vertical: 5.0),
-          //       child: IntrinsicHeight(
-          //         child: ClipRRect(
-          //             borderRadius: BorderRadius.only(
-          //               topRight: Radius.circular(42.5),
-          //               bottomLeft: Radius.circular(42.5),
-          //             ),
-          //             child: GestureDetector(
-          //               onTap: () {
-          //                 Navigator.of(context).push(
-          //                   MaterialPageRoute(builder:
-          //                       (context) => appointmentlist(
-          //                       userId: widget.userId,
-          //                       branchid: branch.id,
-          //                       branchname: branch.name,
-          //                       filepath: branch.filePath,
-          //                       phonenumber: branch.mobileNumber,
-          //                       branchaddress: branch.address)),);
-          //               },
-          //               child: Card(
-          //                 shadowColor: Colors.transparent,
-          //                 surfaceTintColor: Colors.transparent,
-          //                 child: ClipRRect(
-          //                   borderRadius: BorderRadius.only(
-          //                     topRight: Radius.circular(29.0),
-          //                     bottomLeft: Radius.circular(29.0),
-          //                   ),
-          //                   //surfaceTintColor : Colors.red,
-          //
-          //                   child: Container(
-          //                     decoration: BoxDecoration(
-          //                       gradient: LinearGradient(
-          //                         colors: [
-          //                           Color(0xFFFEE7E1), // Start color
-          //                           Color(0xFFD7DEFA),
-          //                         ],
-          //                         begin: Alignment.centerLeft,
-          //                         end: Alignment.centerRight,
-          //
-          //                       ),
-          //                       // borderRadius: BorderRadius.only(
-          //                       //   topRight: Radius.circular(30.0),
-          //                       //   bottomLeft: Radius.circular(30.0),
-          //                       //
-          //                       // ),
-          //
-          //                     ),
-          //                     child: Row(
-          //                       crossAxisAlignment: CrossAxisAlignment.center,
-          //                       children: [
-          //                         Padding(
-          //                           padding: EdgeInsets.only(left: 15.0),
-          //                           child: Container(
-          //                             width: 110,
-          //                             height: 65,
-          //                             decoration: BoxDecoration(
-          //                               borderRadius: BorderRadius.circular(
-          //                                   10.0),
-          //                               border: Border.all(
-          //                                 color: Color(0xFF9FA1EE),
-          //                                 width: 3.0,
-          //                               ),
-          //                             ),
-          //                             child: ClipRRect(
-          //                               borderRadius: BorderRadius.circular(
-          //                                   7.0),
-          //                               child: Image.network(
-          //                                 imagesflierepo +
-          //                                     branch.filePath,
-          //                                 width: 110,
-          //                                 height: 65,
-          //                                 fit: BoxFit.fill,
-          //                               ),
-          //                             ),
-          //                           ),
-          //                         ),
-          //                         Expanded(
-          //                           child: Padding(
-          //                             padding: EdgeInsets.only(left: 15.0),
-          //                             child: Column(
-          //                               mainAxisAlignment: MainAxisAlignment
-          //                                   .start,
-          //                               crossAxisAlignment: CrossAxisAlignment
-          //                                   .start,
-          //                               children: [
-          //                                 Padding(
-          //                                   padding: EdgeInsets.only(
-          //                                       top: 15.0),
-          //                                   child: Text(
-          //                                     branch.name,
-          //                                     style: TextStyle(
-          //                                       fontSize: 18,
-          //                                       color: Color(0xFFFB4110),
-          //                                       fontWeight: FontWeight.bold,
-          //                                       fontFamily: 'Calibri',
-          //                                     ),
-          //                                   ),
-          //                                 ),
-          //                                 SizedBox(height: 4.0),
-          //                                 Expanded(
-          //                                   child: Padding(
-          //                                     padding: EdgeInsets.only(
-          //                                         right: 10.0),
-          //                                     child: Column(
-          //                                       crossAxisAlignment: CrossAxisAlignment
-          //                                           .start,
-          //                                       children: [
-          //                                         Row(
-          //                                           mainAxisAlignment: MainAxisAlignment
-          //                                               .spaceEvenly,
-          //                                           children: [
-          //                                             Image.asset(
-          //                                               'assets/location_icon.png',
-          //                                               width: 20,
-          //                                               height: 18,
-          //                                             ),
-          //                                             SizedBox(width: 4.0),
-          //                                             Expanded(
-          //                                               child: Text(
-          //                                                 branch.address,
-          //                                                 style: TextStyle(
-          //                                                   fontFamily: 'Calibri',
-          //                                                   fontSize: 12,
-          //                                                   color: Color(
-          //                                                       0xFF000000),
-          //                                                 ),
-          //                                               ),
-          //                                             ),
-          //                                           ],
-          //                                         ),
-          //                                         Spacer(flex: 3),
-          //                                       ],
-          //                                     ),
-          //                                   ),
-          //                                 ),
-          //                                 Align(
-          //                                   alignment: Alignment.bottomRight,
-          //                                   child: Container(
-          //                                     height: 26,
-          //                                     margin: EdgeInsets.only(
-          //                                         bottom: 10.0, right: 10.0),
-          //                                     decoration: BoxDecoration(
-          //                                       color: Colors.white,
-          //                                       border: Border.all(
-          //                                         color: Color(0xFF8d97e2),
-          //                                       ),
-          //                                       borderRadius: BorderRadius
-          //                                           .circular(10.0),
-          //                                     ),
-          //                                     child: ElevatedButton(
-          //                                       onPressed: () {
-          //                                         // Handle button press
-          //                                       },
-          //                                       style: ElevatedButton
-          //                                           .styleFrom(
-          //                                         primary: Colors.transparent,
-          //                                         onPrimary: Color(
-          //                                             0xFF8d97e2),
-          //                                         elevation: 0,
-          //                                         shadowColor: Colors
-          //                                             .transparent,
-          //                                         shape: RoundedRectangleBorder(
-          //                                           borderRadius: BorderRadius
-          //                                               .circular(10.0),
-          //                                         ),
-          //                                       ),
-          //                                       child: GestureDetector(
-          //                                         onTap: () {
-          //                                           print(
-          //                                               'Appointment Clicked ');
-          //
-          //                                           // Handle button press, navigate to a new screen
-          //                                           Navigator.of(context)
-          //                                               .push(
-          //                                             MaterialPageRoute(
-          //                                                 builder:
-          //                                                     (context) =>
-          //                                                     appointmentlist(
-          //                                                         userId: widget
-          //                                                             .userId,
-          //                                                         branchid: branch
-          //                                                             .id,
-          //                                                         branchname: branch
-          //                                                             .name,
-          //                                                         filepath: branch
-          //                                                             .filePath,
-          //                                                         phonenumber: branch
-          //                                                             .mobileNumber,
-          //                                                         branchaddress: branch
-          //                                                             .address)),);
-          //                                         },
-          //                                         child: Row(
-          //                                           mainAxisSize: MainAxisSize
-          //                                               .min,
-          //                                           children: [
-          //                                             SvgPicture.asset(
-          //                                               'assets/datepicker_icon.svg',
-          //                                               width: 15.0,
-          //                                               height: 15.0,
-          //                                             ),
-          //                                             SizedBox(width: 5),
-          //                                             Text(
-          //                                               'Check Appointment',
-          //                                               style: TextStyle(
-          //                                                 fontSize: 12,
-          //                                                 color: Color(
-          //                                                     0xFF8d97e2),
-          //                                               ),
-          //                                             ),
-          //                                           ],
-          //                                         ),
-          //                                       ),
-          //                                     ),
-          //                                   ),
-          //                                 ),
-          //                               ],
-          //                             ),
-          //                           ),
-          //                         ),
-          //
-          //                       ],
-          //                     ),
-          //                   ),
-          //                 ),
-          //               ),
-          //               // child: Card(
-          //               //   shadowColor: Colors.grey,
-          //               //   elevation: 10,
-          //               //   child: Container(
-          //               //     decoration: BoxDecoration(
-          //               //       gradient: LinearGradient(
-          //               //         colors: [
-          //               //           Color(0xFFFEE7E1), // Start color
-          //               //           Color(0xFFD7DEFA)
-          //               //         ],
-          //               //         begin: Alignment.centerLeft,
-          //               //         end: Alignment.centerRight,
-          //               //       ),
-          //               //       borderRadius: BorderRadius.only(
-          //               //         topRight: Radius.circular(30.0),
-          //               //         bottomLeft: Radius.circular(30.0),
-          //               //       ),
-          //               //     ),
-          //               //     child: Row(
-          //               //       crossAxisAlignment: CrossAxisAlignment.center,
-          //               //       children: [
-          //               //         Padding(
-          //               //           padding: EdgeInsets.only(left: 15.0),
-          //               //           child: Container(
-          //               //             width: 110,
-          //               //             height: 65,
-          //               //             decoration: BoxDecoration(
-          //               //               borderRadius: BorderRadius.circular(10.0),
-          //               //               border: Border.all(
-          //               //                 color: Color(0xFF9FA1EE),
-          //               //                 width: 3.0,
-          //               //               ),
-          //               //             ),
-          //               //             child: ClipRRect(
-          //               //               borderRadius: BorderRadius.circular(7.0),
-          //               //               child: Image.network(
-          //               //                 branch.filePath,
-          //               //                 width: 110,
-          //               //                 height: 65,
-          //               //                 fit: BoxFit.fill,
-          //               //               ),
-          //               //             ),
-          //               //           ),
-          //               //         ),
-          //               //         Expanded(
-          //               //           child: Padding(
-          //               //             padding: EdgeInsets.only(left: 15.0),
-          //               //             child: Column(
-          //               //               mainAxisAlignment: MainAxisAlignment.start,
-          //               //               crossAxisAlignment: CrossAxisAlignment.start,
-          //               //               children: [
-          //               //                 Padding(
-          //               //                   padding: EdgeInsets.only(top: 15.0),
-          //               //                   child: Text(
-          //               //                     branch.name,
-          //               //                     style: TextStyle(
-          //               //                       fontSize: 18,
-          //               //                       color: Color(0xFFFB4110),
-          //               //                       fontWeight: FontWeight.bold,
-          //               //                       fontFamily: 'Calibri',
-          //               //                     ),
-          //               //                   ),
-          //               //                 ),
-          //               //                 SizedBox(height: 4.0),
-          //               //                 Expanded(
-          //               //                   child: Padding(
-          //               //                     padding: EdgeInsets.only(right: 10.0),
-          //               //                     child: Column(
-          //               //                       crossAxisAlignment: CrossAxisAlignment.start,
-          //               //                       children: [
-          //               //                         Row(
-          //               //                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          //               //                           children: [
-          //               //                             Image.asset(
-          //               //                               'assets/location_icon.png',
-          //               //                               width: 20,
-          //               //                               height: 18,
-          //               //                             ),
-          //               //                             SizedBox(width: 4.0),
-          //               //                             Expanded(
-          //               //                               child: Text(
-          //               //                                 branch.address,
-          //               //                                 style: TextStyle(
-          //               //                                   fontFamily: 'Calibri',
-          //               //                                   fontSize: 12,
-          //               //                                   color: Color(0xFF000000),
-          //               //                                 ),
-          //               //                               ),
-          //               //                             ),
-          //               //                           ],
-          //               //                         ),
-          //               //                         Spacer(
-          //               //                           flex: 3,
-          //               //                         ),
-          //               //                       ],
-          //               //                     ),
-          //               //                   ),
-          //               //                 ),
-          //               //                 Align(
-          //               //                   alignment: Alignment.bottomRight,
-          //               //                   child: Container(
-          //               //                     height: 26,
-          //               //                     margin: EdgeInsets.only(bottom: 10.0, right: 10.0),
-          //               //                     decoration: BoxDecoration(
-          //               //                       color: Colors.white,
-          //               //                       border: Border.all(
-          //               //                         color: Color(0xFF8d97e2),
-          //               //                       ),
-          //               //                       borderRadius: BorderRadius.circular(10.0),
-          //               //                     ),
-          //               //                     child: ElevatedButton(
-          //               //                       onPressed: () {
-          //               //                         Navigator.of(context).push(MaterialPageRoute(builder:
-          //               //                             (context)=>appointmentlist(userId:widget.userId, branchid:branch.id,branchname:branch.name ,filepath:branch.filePath) ),);
-          //               //                         // Handle button press
-          //               //                         //  _handleButtonPress();
-          //               //                       },
-          //               //                       style: ElevatedButton.styleFrom(
-          //               //                         primary: Colors.transparent,
-          //               //                         onPrimary: Color(0xFF8d97e2),
-          //               //                         elevation: 0,
-          //               //                         shadowColor: Colors.transparent,
-          //               //                         shape: RoundedRectangleBorder(
-          //               //                           borderRadius: BorderRadius.circular(10.0),
-          //               //                         ),
-          //               //                       ),
-          //               //                       child: GestureDetector(
-          //               //                         onTap: () {
-          //               //                           // Handle button press, navigate to a new screen
-          //               //                           // Navigator.push(
-          //               //                           //   context,
-          //               //                           //   MaterialPageRoute(builder: (context) => appointmentlist(userId:widget.userId, branchid:branch.id,branchname:branch.name   )),
-          //               //                           // );
-          //               //                         },
-          //               //                         child: Row(
-          //               //                           mainAxisSize: MainAxisSize.min,
-          //               //                           children: [
-          //               //                             SvgPicture.asset(
-          //               //                               'assets/datepicker_icon.svg',
-          //               //                               width: 15.0,
-          //               //                               height: 15.0,
-          //               //                             ),
-          //               //                             SizedBox(width: 5),
-          //               //                             Text(
-          //               //                               'Check Appointment',
-          //               //                               style: TextStyle(
-          //               //                                   fontSize: 12,
-          //               //                                   color: Color(0xFF8d97e2),
-          //               //                                   fontWeight: FontWeight.bold,
-          //               //                                   fontFamily: 'Calibri'
-          //               //                               ),
-          //               //                             ),
-          //               //                           ],
-          //               //                         ),
-          //               //                       ),
-          //               //                     ),
-          //               //                   ),
-          //               //                 ),
-          //               //               ],
-          //               //             ),
-          //               //           ),
-          //               //         ),
-          //               //       ],
-          //               //     ),
-          //               //   ),
-          //               // ),
-          //             )
-          //
-          //         ),
-          //       ),
-          //     );
-          //   },
-          // ),
 
-        ],
-      ),
 
-      // Your existing build method
+
+
+        ]   ),
+
     );
   }
 
-
+  void filterDealers() {
+    final String searchTerm = searchController.text.toLowerCase();
+    setState(() {
+      filteredDealers = dealers.where((dealer) {
+        return dealer.cardCode.toLowerCase().contains(searchTerm) ||
+            dealer.cardName.toLowerCase().contains(searchTerm);
+      }).toList();
+    });
+  }
 }
+
+
 

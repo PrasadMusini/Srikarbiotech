@@ -5,6 +5,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
+import 'Common/Constants.dart';
+import 'Common/SharedPreferencesHelper.dart';
+import 'Companiesselection.dart';
+import 'HomeScreen.dart';
 import 'LoginScreen.dart';
 
 void main() => runApp(MyApp());
@@ -42,7 +46,8 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _scaleAnimation;
   late Animation<Offset> _slideAnimation;
-
+  late bool isLogin;
+  late bool welcome;
   @override
   void initState() {
     super.initState();
@@ -73,8 +78,27 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
       ),
     );
 
-    _controller.addStatusListener((status) {
+    _controller.addStatusListener((status) async {
       if (status == AnimationStatus.completed) {
+
+        isLogin = await SharedPreferencesHelper.getBool(Constants.IS_LOGIN);
+        welcome = await SharedPreferencesHelper.getBool(Constants.WELCOME);
+        print('isLogin:$isLogin');
+        print('welcome:$welcome');
+        // Add any additional logic or navigation based on the retrieved values
+
+        // Example: Navigate to the appropriate screen
+        if (isLogin) {
+          navigateToLogin();
+          // User is logged in
+          // Navigate to the home screen
+        } else {
+          // User is not logged in
+          // Check the 'welcome' value and navigate accordingly
+
+          navigateToLogin();
+          // Navigate to the welcome screen
+        }
         navigateToLogin();
       }
     });
@@ -125,8 +149,15 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
 
   void navigateToLogin() {
     Navigator.of(context).pushReplacement(
-      MaterialPageRoute(builder: (context) => LoginScreen()),
+      MaterialPageRoute(builder: (context) => Companiesselection()),
     );
   }
+
+  void navigateToHome() {
+    Navigator.of(context).pushReplacement(
+      MaterialPageRoute(builder: (context) => HomeScreen()),
+    );
+  }
+
 }
 

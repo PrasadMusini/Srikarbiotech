@@ -42,6 +42,14 @@ dependencies:
   sqflite: ^2.0.2+1
   badges: ^2.0.2
   provider: ^6.0.3
+  http: ^0.13.4
+  intl: ^0.19.0
+  connectivity: ^3.0.6
+  hexcolor: ^3.0.1
+  permission_handler: ^11.0.1
+  share: ^2.0.4
+  image_picker: ^1.0.7
+
 
 dev_dependencies:
   flutter_test:
@@ -88,6 +96,11 @@ flutter:
     - assets/slider1.png
     - assets/slider2.png
     - assets/slider3.png
+    - assets/srikar-seed.png
+    - assets/share.svg
+    - assets/sreekar_seeds.png
+    - assets/sign-out-alt.svg
+    - assets/bell.svg
   #   - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see
@@ -101,6 +114,19 @@ flutter:
   # "family" key with the font family name, and a "fonts" key with a
   # list giving the asset and other descriptors for the font. For
   # example:
+  fonts:
+    - family: Roboto
+      fonts:
+       - asset: assets/fonts/Roboto-Bold.ttf
+         weight: 700
+       - asset: assets/fonts/Roboto-Medium.ttf
+         weight: 600
+       - asset: assets/fonts/Roboto-Regular.ttf
+         weight: 400
+       - asset: assets/fonts/Roboto-Thin.ttf
+         weight: 100
+
+
   # fonts:
   #   - family: Schyler
   #     fonts:
