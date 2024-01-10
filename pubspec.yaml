@@ -49,6 +49,7 @@ dependencies:
   permission_handler: ^11.0.1
   share: ^2.0.4
   image_picker: ^1.0.7
+  dotted_border: ^2.0.0
 
 
 dev_dependencies:
@@ -100,6 +101,7 @@ flutter:
     - assets/share.svg
     - assets/sreekar_seeds.png
     - assets/sign-out-alt.svg
+    - assets/crosscircle.svg
     - assets/bell.svg
   #   - images/a_dot_ham.jpeg
 
