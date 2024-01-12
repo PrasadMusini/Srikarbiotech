@@ -5,19 +5,16 @@ import 'package:flutter/services.dart';
 import 'package:flutter_svg/svg.dart';
 
 class Createorderscreen extends StatefulWidget {
-
-
+  final String cardName;
+  final String  cardCode;
+  final String  address;
+  Createorderscreen({required this.cardName,required this.cardCode,required this.address});
   @override
   Createorder_screen createState() => Createorder_screen();
 }
 
 class Createorder_screen extends State<Createorderscreen> {
-  List<String> images = [
-    "https://static.javatpoint.com/tutorial/flutter/images/flutter-logo.png",
-    "https://static.javatpoint.com/tutorial/flutter/images/flutter-logo.png",
-    "https://static.javatpoint.com/tutorial/flutter/images/flutter-logo.png",
-    "https://static.javatpoint.com/tutorial/flutter/images/flutter-logo.png"
-  ];
+
 
   @override
   initState() {
@@ -26,6 +23,12 @@ class Createorder_screen extends State<Createorderscreen> {
       DeviceOrientation.portraitDown,
       DeviceOrientation.portraitUp,
     ]);
+
+      print('cardName: ${widget.cardName}');
+      print('cardCode: ${widget.cardCode}');
+      print('address: ${widget.address}');
+
+
 // Print the userId
   //  navigateproductdetailsscreen();
 
@@ -84,7 +87,8 @@ class Createorder_screen extends State<Createorderscreen> {
                         width: 2,
                       ),
                     ),
-                    child: Row(
+                    child:
+                    Row(
                       children: [
                         Expanded(
                           child: Align(
@@ -545,11 +549,11 @@ class Createorder_screen extends State<Createorderscreen> {
     );
   }
 
-  navigateproductdetailsscreen() {
-    Navigator.of(context).pushReplacement(
-      MaterialPageRoute(builder: (context) => Createorderscreen()),
-    );
-  }
+  // navigateproductdetailsscreen() {
+  //   Navigator.of(context).pushReplacement(
+  //     MaterialPageRoute(builder: (context) => Createorderscreen()),
+  //   );
+  // }
 
 
 
