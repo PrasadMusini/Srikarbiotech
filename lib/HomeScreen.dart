@@ -240,7 +240,9 @@ class _imagesliderState extends State<imageslider> {
                                           context,
                                           MaterialPageRoute(
                                             builder: (context) =>
-                                                Selectpartyscreen(),
+                                                Selectpartyscreen(
+                                              from: '',
+                                            ),
                                           ),
                                         );
                                       },
