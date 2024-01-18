@@ -2,13 +2,12 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_svg/svg.dart';
-import 'package:flutter/material.dart';
+
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:srikarbiotech/Createorderscreen.dart';
 import 'dart:convert';
 
-import 'CreateCollection.dart';
 import 'CreateCollectionscreen.dart';
 import 'Ledgerscreen.dart';
 import 'Model/Dealer.dart';
@@ -29,16 +28,19 @@ class Selectparty_screen extends State<Selectpartyscreen> {
 
   List<Dealer> filteredDealers = [];
   TextEditingController searchController = TextEditingController();
+  // SharedPreferences prefs = await SharedPreferences.getInstance();
 
   @override
   void initState() {
     super.initState();
+getslpcode();
 
-    fetchData();
     print("screenFrom: ${widget.from}");
 
     screenFrom = '${widget.from}'.trim();
     print("screenFrom: ${screenFrom}");
+  
+
   }
 
   Future<void> fetchData() async {
@@ -98,7 +100,8 @@ class Selectparty_screen extends State<Selectpartyscreen> {
           ],
         ),
       ),
-      body: Column(
+      body:
+      Column(
         children: [
           Padding(
             padding: EdgeInsets.only(top: 10.0, left: 20.0, right: 20.0),
@@ -171,10 +174,14 @@ class Selectparty_screen extends State<Selectpartyscreen> {
               itemCount: filteredDealers.length,
               itemBuilder: (context, index) {
                 return GestureDetector(
-                  onTap: () {
-                    if (!FocusScope.of(context).hasPrimaryFocus) {
-                      return;
-                    }
+                onTap: () {
+    setState(() {
+    selectedCardIndex = index; // Update selected index
+    });
+                  // onTap: () {
+                  //   if (!FocusScope.of(context).hasPrimaryFocus) {
+                  //     return;
+                  //   }
                     print("Tapped on dealer with cardName: ${filteredDealers[index].cardName}");
                     print("screenFrom: $screenFrom");
 
@@ -200,10 +207,14 @@ class Selectparty_screen extends State<Selectpartyscreen> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => CreateCollection(
+                          builder: (context) => CreateCollectionscreen(
                             cardName: filteredDealers[index].cardName,
                             cardCode: filteredDealers[index].cardCode,
                             address: filteredDealers[index].fullAddress,
+                            state: filteredDealers[index].state,
+                            phone: filteredDealers[index].phoneNumber,
+                            proprietorName:  filteredDealers[index].proprietorName,
+                            gstRegnNo:  filteredDealers[index].gstRegnNo
                           ),
                         ),
                       );
@@ -213,36 +224,34 @@ class Selectparty_screen extends State<Selectpartyscreen> {
                         context,
                         MaterialPageRoute(
                           builder: (context) => Ledgerscreen(
-                            cardName: filteredDealers[index].cardName,
-                            cardCode: filteredDealers[index].cardCode,
-                            address: filteredDealers[index].fullAddress,
+                              cardName: filteredDealers[index].cardName,
+                              cardCode: filteredDealers[index].cardCode,
+                              address: filteredDealers[index].fullAddress,
+                              state: filteredDealers[index].state,
+                              phone: filteredDealers[index].phoneNumber,
+                              proprietorName:  filteredDealers[index].proprietorName,
+                              gstRegnNo:  filteredDealers[index].gstRegnNo
                           ),
                         ),
                       );
                     }
-                    // else {
-                    //   Navigator.push(
-                    //     context,
-                    //     MaterialPageRoute(
-                    //       builder: (context) => Ledgerscreen(
-                    //         cardName: filteredDealers[index].cardName,
-                    //         cardCode: filteredDealers[index].cardCode,
-                    //         address: filteredDealers[index].address,
-                    //       ),
-                    //     ),
-                    //   );
-                    // }
+
                   },
 
                   child: Container(
                     margin: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
                     child: Card(
-                        elevation: 0,
-                        color: selectedCardIndex == index ? Colors.orange : null,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10.0),
-                          side: BorderSide(color: Colors.grey, width: 1),
+                      elevation: 0,
+                      color: selectedCardIndex == index ? Color(0xFFfff5ec) : null,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10.0),
+                        side: BorderSide(
+                          color: selectedCardIndex == index
+                              ?Color(0xFFe98d47)// Border color for selected item
+                              : Colors.grey, // Border color for unselected items
+                          width: 1,
                         ),
+                      ),
                       child: Container(
                         padding: EdgeInsets.all(10.0),
                         child: Row(
@@ -258,6 +267,7 @@ class Selectparty_screen extends State<Selectpartyscreen> {
                                       color: Colors.orange,
                                       fontFamily: 'Roboto',
                                       fontWeight: FontWeight.w700,
+                                      fontSize: 16,
                                     ),
                                     maxLines: 2, // Display in 2 lines
                                     overflow: TextOverflow.ellipsis,
@@ -268,17 +278,59 @@ class Selectparty_screen extends State<Selectpartyscreen> {
                                     style: TextStyle(
                                       color: Colors.black,
                                       fontFamily: 'Roboto',
-                                      fontWeight: FontWeight.w700,
+                                      fontWeight: FontWeight.w600,
+                                      fontSize: 14
                                     ),
                                     overflow: TextOverflow.ellipsis,
                                   ),
+                                  SizedBox(height: 5.0),
+                                  Text(
+                                    filteredDealers[index].proprietorName,
+                                    style: TextStyle(
+                                      color: Colors.orange,
+                                      fontFamily: 'Roboto',
+                                      fontWeight: FontWeight.w600,
+                                      fontSize: 12
+                                    ),
+                                    maxLines: 2, // Display in 2 lines
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                  SizedBox(height: 5.0),
+                                  RichText(
+                                    text: TextSpan(
+                                      style: DefaultTextStyle.of(context).style,
+                                      children: <TextSpan>[
+                                        TextSpan(
+                                          text: 'GST No. ',
+                                          style: TextStyle(
+                                            color: Colors.black,
+                                            fontFamily: 'Roboto',
+                                            fontWeight: FontWeight.w600,
+                                              fontSize: 12
+                                          ),
+                                        ),
+                                        TextSpan(
+                                          text: filteredDealers[index].gstRegnNo,
+                                          style: TextStyle(
+                                            color: Colors.orange,
+                                            fontFamily: 'Roboto',
+                                            fontWeight: FontWeight.w600,
+                                              fontSize: 12
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+
                                   SizedBox(height: 5.0),
                                   Text(
                                     'Address',
                                     style: TextStyle(
                                       color: Colors.black,
                                       fontFamily: 'Roboto',
-                                      fontWeight: FontWeight.w700,
+                                      fontWeight: FontWeight.w600,
+                                        fontSize: 12
                                     ),
                                     overflow: TextOverflow.ellipsis,
                                   ),
@@ -288,7 +340,8 @@ class Selectparty_screen extends State<Selectpartyscreen> {
                                     style: TextStyle(
                                       color: Colors.orange,
                                       fontFamily: 'Roboto',
-                                      fontWeight: FontWeight.w700,
+                                      fontWeight: FontWeight.w600,
+                                        fontSize: 12
                                     ),
                                     maxLines: 2, // Display in 2 lines
                                     overflow: TextOverflow.ellipsis,
@@ -327,6 +380,26 @@ class Selectparty_screen extends State<Selectpartyscreen> {
       }).toList();
     });
   }
+
+  Future<void> getslpcode() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+
+// Retrieve userId and slpCode
+    String? userId = prefs.getString("userId");
+    String? slpCode = prefs.getString("slpCode");
+
+// Check if they are not null before using them
+    if (userId != null && slpCode != null) {
+      // Use userId and slpCode in your code
+      print('Retrieved userId: $userId');
+      print('Retrieved slpCode: $slpCode');
+      fetchData();
+    } else {
+      // Handle the case where userId or slpCode is null
+      print('User not logged in or missing required data.');
+    }
+  }
+
 }
 
 

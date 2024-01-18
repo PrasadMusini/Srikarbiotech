@@ -3,8 +3,10 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:srikarbiotech/view_collection_page.dart';
 
 import 'Selectpartyscreen.dart';
+
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -36,13 +38,14 @@ class _home_Screen extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    double  height = MediaQuery.of(context).size.height / 3;
     return Scaffold(
       appBar: AppBar(
         elevation: 5.0,
         backgroundColor: Colors.white,
         //  centerTitle: true,
         automaticallyImplyLeading:
-            false, // Set this to false to remove back arrow
+        false, // Set this to false to remove back arrow
         title: Row(
           mainAxisAlignment: MainAxisAlignment.start,
           mainAxisSize: MainAxisSize.min,
@@ -72,7 +75,7 @@ class _home_Screen extends State<HomeScreen> {
               width: 15.0,
             ),
             SvgPicture.asset(
-              'assets/signoutalt.svg',
+              'assets/sign-out-alt.svg',
               width: 18.0,
               height: 25.0,
               color: Color(0xFFe78337),
@@ -139,25 +142,25 @@ class _imagesliderState extends State<imageslider> {
                                         'assets/slider1.png',
                                         fit: BoxFit.fitWidth,
                                         width:
-                                            MediaQuery.of(context).size.width,
+                                        MediaQuery.of(context).size.width,
                                       ),
                                       Image.asset(
                                         'assets/slider2.png',
                                         fit: BoxFit.fitWidth,
                                         width:
-                                            MediaQuery.of(context).size.width,
+                                        MediaQuery.of(context).size.width,
                                       ),
                                       Image.asset(
                                         'assets/slider3.png',
                                         fit: BoxFit.fitWidth,
                                         width:
-                                            MediaQuery.of(context).size.width,
+                                        MediaQuery.of(context).size.width,
                                       ),
                                       // Add more static images as needed
                                     ],
                                     options: CarouselOptions(
                                       scrollPhysics:
-                                          const BouncingScrollPhysics(),
+                                      const BouncingScrollPhysics(),
                                       autoPlay: true,
                                       aspectRatio: 23 / 9,
                                       viewportFraction: 1,
@@ -176,11 +179,11 @@ class _imagesliderState extends State<imageslider> {
                                       padding: EdgeInsets.only(top: 0.0),
                                       child: Row(
                                         mainAxisAlignment:
-                                            MainAxisAlignment.center,
+                                        MainAxisAlignment.center,
                                         children: List.generate(
                                           // Use the number of images from assets
                                           3, // Replace with the actual number of assets
-                                          (index) => buildIndicator(index),
+                                              (index) => buildIndicator(index),
                                         ),
                                       ),
                                     ),
@@ -192,7 +195,8 @@ class _imagesliderState extends State<imageslider> {
                   height: 10.0,
                 ),
                 Expanded(
-                  flex: 3,
+                  flex:
+                  3,
                   child: SingleChildScrollView(
                     child: Container(
                       width: MediaQuery.of(context).size.width,
@@ -209,11 +213,18 @@ class _imagesliderState extends State<imageslider> {
                                 item: "Ledger",
                                 color: Color(0xFFe78337),
                                 item_1:
-                                    "All Incoming and Outgoing Transactions record",
+                                "All Incoming and Outgoing Transactions record",
                                 color_1: Color(0xFFF8dac2),
                                 textcolor: Colors.white,
                                 onTap: () {
-                                  print('Card tapped!');
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) =>
+                                          Selectpartyscreen( from: 'Ledger'),
+                                    ),
+                                  );
+
                                 },
                               ),
                               SizedBox(
@@ -226,7 +237,7 @@ class _imagesliderState extends State<imageslider> {
 
                                 child: Column(
                                   mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
+                                  MainAxisAlignment.spaceBetween,
                                   children: [
                                     _customcontainerCard(
                                       imageUrl: "shopping_cart_add.svg",
@@ -236,15 +247,15 @@ class _imagesliderState extends State<imageslider> {
                                       color_1: Color(0xFFec9d62),
                                       textcolor: Color(0xFFe78337),
                                       onTap: () {
+
                                         Navigator.push(
                                           context,
                                           MaterialPageRoute(
                                             builder: (context) =>
-                                                Selectpartyscreen(
-                                              from: '',
-                                            ),
+                                                Selectpartyscreen( from: 'CreateOrder'),
                                           ),
                                         );
+
                                       },
                                     ),
                                     // Spacer(),
@@ -263,7 +274,13 @@ class _imagesliderState extends State<imageslider> {
                                       color_1: Color(0xFF43a05a),
                                       textcolor: Color(0xFF118730),
                                       onTap: () {
-                                        print('Card tapped!');
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (context) =>
+                                                Selectpartyscreen( from: 'CreateOrder'),
+                                          ),
+                                        );
                                       },
                                     ),
                                   ],
@@ -275,8 +292,8 @@ class _imagesliderState extends State<imageslider> {
                             height: 10.0,
                           ),
                           Row(
-                              //   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                              // crossAxisAlignment: CrossAxisAlignment.start,
+                            //   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            // crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 _customwidthCard(
                                   imageUrl: "creditcard.svg",
@@ -286,7 +303,13 @@ class _imagesliderState extends State<imageslider> {
                                   color_1: Color(0xFF43a05a),
                                   textcolor: Color(0xFF118730),
                                   onTap: () {
-                                    print('Card tapped!');
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) =>
+                                            Selectpartyscreen( from: 'CreateCollections'),
+                                      ),
+                                    );
                                   },
                                 ),
                                 SizedBox(
@@ -300,14 +323,17 @@ class _imagesliderState extends State<imageslider> {
                                   color_1: Color(0xFFec9d62),
                                   textcolor: Color(0xFFe78337),
                                   onTap: () {
-                                    print('Card tapped!');
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(builder: (context) => ViewCollectionPage()),
+                                    );
                                   },
                                 ),
                               ]),
                           SizedBox(height: 10), // Add spacing between rows
 
                           Row(
-                              //  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            //  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                               children: [
                                 _customwidthCard(
                                   imageUrl: "arrows_repeat.svg",
@@ -361,14 +387,14 @@ class _imagesliderState extends State<imageslider> {
     return GestureDetector(
       onTap: onTap,
       child: SizedBox(
-        // height: MediaQuery.of(context).size.height * (4 / 9) - 250 / 2,
+   //  height: MediaQuery.of(context).size.height * (4 / 9) - 250 / 2,
         height: MediaQuery.of(context).size.height / 3,
-
-        width: MediaQuery.of(context).size.width / 2.2,
+       // height: height,
+        width: MediaQuery.of(context).size.width / 2.1,
         child: Card(
           color: color,
           shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
+          RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
           elevation: 8,
           child: Padding(
             padding: EdgeInsets.only(left: 18, right: 15, top: 15, bottom: 8),
@@ -434,14 +460,15 @@ class _imagesliderState extends State<imageslider> {
       child: SizedBox(
         //  height: MediaQuery.of(context).size.width * (3.8 / 9) - 110 / 2,
         width: MediaQuery.of(context).size.width / 2.2,
-        height: 275 / 2,
+      //  height: 275 / 2,
+        height: MediaQuery.of(context).size.height / 6,
         child: Card(
           color: color,
           shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
+          RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
           elevation: 8,
           child: Padding(
-            padding: EdgeInsets.only(left: 13, right: 15, top: 7, bottom: 3),
+            padding: EdgeInsets.only(left: 10, right: 15, top: 7, bottom: 3),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisAlignment: MainAxisAlignment.start,
@@ -467,6 +494,7 @@ class _imagesliderState extends State<imageslider> {
                     alignment: Alignment.topLeft,
                     child: Text(
                       item,
+                      maxLines: 1,
                       style: TextStyle(fontSize: 16, color: textcolor),
                     ),
                   ),
@@ -503,12 +531,13 @@ class _imagesliderState extends State<imageslider> {
     return GestureDetector(
       onTap: onTap,
       child: SizedBox(
-        height: 260 / 2,
+        //height: 260 / 2,
+        height:  MediaQuery.of(context).size.height / 6,
         width: MediaQuery.of(context).size.width / 2.2,
         child: Card(
           color: color,
           shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
+          RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
           elevation: 8,
           child: Padding(
             padding: EdgeInsets.only(left: 13, right: 15, top: 5, bottom: 3),
@@ -536,6 +565,7 @@ class _imagesliderState extends State<imageslider> {
                   alignment: Alignment.topLeft,
                   child: Text(
                     item,
+                    maxLines: 1,
                     style: TextStyle(fontSize: 16, color: textcolor),
                   ),
                 ),

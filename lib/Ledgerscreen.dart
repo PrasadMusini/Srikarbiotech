@@ -18,7 +18,14 @@ class Ledgerscreen extends StatefulWidget {
   final String cardName;
   final String  cardCode;
   final String  address;
-  Ledgerscreen({required this.cardName,required this.cardCode,required this.address});
+  final String proprietorName;
+  final String gstRegnNo;
+  final String state;
+  final String phone;
+
+  Ledgerscreen(
+      {required this.cardName, required this.cardCode, required this.address, required  this.state, required  this.phone,
+        required  this.proprietorName, required  this.gstRegnNo});
   @override
   Ledger_screen createState() => Ledger_screen();
 }
@@ -74,7 +81,7 @@ class Ledger_screen extends State<Ledgerscreen> {
                 ),
                 SizedBox(width: 8.0),
                 Text(
-                  'Create Collection',
+                  'Ledger',
                   style: TextStyle(
                     color: Colors.white,
                     fontSize: 18,
@@ -110,6 +117,8 @@ class Ledger_screen extends State<Ledgerscreen> {
                 CommonUtils.buildCard(
                   widget.cardName,
                   widget.cardCode,
+                  widget.proprietorName,
+                  widget.gstRegnNo,
                   widget.address,
                   Colors.white,
                   BorderRadius.circular(10.0),
@@ -151,7 +160,10 @@ class Ledger_screen extends State<Ledgerscreen> {
 
     ],
     ),
-    ))]))]),
+    )
+    )
+
+              ]))]),
       bottomNavigationBar: Container(
         height: 60,
         margin: const EdgeInsets.symmetric(vertical: 15, horizontal: 10),
@@ -215,29 +227,7 @@ class Ledger_screen extends State<Ledgerscreen> {
           ],
         ),
       ),
- //        bottomNavigationBar: Padding(
- //    padding: const EdgeInsets.all(8.0),
- //    child: Row(
- //    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
- //    children: [
- //    ElevatedButton(
- //    onPressed: () {
- //      downloadData();
- //    // Add logic for the download button
- //    print('Download button clicked');
- //    },
- //    child: Text('Download'),
- //    ),
- //    ElevatedButton(
- //    onPressed: () {
- //    // Add logic for the share button
- //    print('Share button clicked');
- // shareData();
- //    },
- //    child: Text('Share'),
- //    ),
- //    ],
- //    ),
+
  //    ),
     );
 
@@ -295,15 +285,17 @@ class Ledger_screen extends State<Ledgerscreen> {
                         controller: controller,
                         style: TextStyle(
                           fontSize: 14,
-                          fontWeight: FontWeight.w300,
+                          fontFamily: 'Roboto',
+                          fontWeight: FontWeight.w600,
+                          color: Color(0xFFe78337),
                         ),
                         decoration: InputDecoration(
                           hintText: labelText,
                           hintStyle: TextStyle(
                             fontSize: 14,
-                            fontFamily: 'Roboto-Bold',
-                            fontWeight: FontWeight.w500,
-                            color: Color(0xFFC4C2C2),
+                            fontFamily: 'Roboto',
+                            fontWeight: FontWeight.w600,
+                            color: Color(0xFFe78337),
                           ),
                           border: InputBorder.none,
                         ),
@@ -425,6 +417,7 @@ class Ledger_screen extends State<Ledgerscreen> {
     bool hasValidationFailed = false;
     String fromdate = DateFormat('yyyy-MM-dd').format(selectedFromDate);
     String todate = DateFormat('yyyy-MM-dd').format(selectedToDate);
+
     if (isValid && fromDateController.text.isEmpty) {
       CommonUtils.showCustomToastMessageLong(
           'Please Select From Date', context, 1, 4);

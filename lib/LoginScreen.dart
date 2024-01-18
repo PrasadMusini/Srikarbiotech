@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 import 'Common/CommonUtils.dart';
 import 'HomeScreen.dart';
 import 'Model/CompanyModel.dart';
@@ -24,6 +25,8 @@ class _MyHomePageState extends State<LoginScreen> {
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
   int compneyid = 0; // Assuming companyId is an int
+  String? userId;
+  String? slpCode;
   @override
   initState() {
     super.initState();
@@ -430,9 +433,19 @@ class _MyHomePageState extends State<LoginScreen> {
 
     if (response.statusCode == 200) {
       final jsonResponse = json.decode(response.body);
-
+      print('LoginjsonResponse ==>$jsonResponse');
       if (jsonResponse['isSuccess'] == true) {
         print('Login successful');
+
+        userId =  jsonResponse['response']['userId'];
+        slpCode =  jsonResponse['response']['slpCode'];
+        print('userId===>$userId');
+        print('slpCode===>$slpCode');
+        SharedPreferences prefs = await SharedPreferences.getInstance();
+        await prefs.setString("userId", userId ?? "");
+        await prefs.setString("slpCode", slpCode ?? "");
+
+
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(builder: (context) => HomeScreen()),

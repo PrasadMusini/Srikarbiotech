@@ -77,6 +77,8 @@ class CommonUtils{
       String title,
       String subtitle1,
       String subtitle2,
+      String subtitle3,
+      String subtitle4,
       Color backgroundColor,
       BorderRadius borderRadius,
       ) {
@@ -96,8 +98,8 @@ class CommonUtils{
               "Party Details",
               style: TextStyle(
                 fontSize: 16,
-                fontWeight: FontWeight.bold,
-                fontFamily: 'Roboto-Bold', // Use 'Roboto-Bold' font family
+                fontWeight: FontWeight.w700,
+                fontFamily: 'Roboto', // Use 'Roboto-Bold' font family
                  // Orange color for the title
               ),
             ),
@@ -105,30 +107,89 @@ class CommonUtils{
             Text(
               title,
               style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-                fontFamily: 'Roboto-Bold', // Use 'Roboto-Bold' font family
-                color: Colors.orange, // Orange color for the title
+                color: Colors.orange,
+                fontFamily: 'Roboto',
+                fontWeight: FontWeight.w700,
+                fontSize: 14,
               ),
+              maxLines: 2, // Display in 2 lines
+              overflow: TextOverflow.ellipsis,
             ),
             SizedBox(height: 8.0),
             Text(
               subtitle1,
               style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
+                  color: Colors.black,
+                  fontFamily: 'Roboto',
+                  fontWeight: FontWeight.w600,
+                  fontSize: 12
               ),
+              overflow: TextOverflow.ellipsis,
             ),
             SizedBox(height: 8.0),
             Text(
               subtitle2,
               style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-                fontFamily: 'Roboto-Bold', // Use 'Roboto-Bold' font family
-                color: Colors.orange, // Orange color for the address
+                  color: Colors.orange,
+                  fontFamily: 'Roboto',
+                  fontWeight: FontWeight.w600,
+                  fontSize: 12
               ),
+              maxLines: 2, // Display in 2 lines
+              overflow: TextOverflow.ellipsis,
             ),
+            SizedBox(height: 8.0),
+            RichText(
+              text: TextSpan(
+
+                children: <TextSpan>[
+                  TextSpan(
+                    text: 'GST No. ',
+                    style: TextStyle(
+                      color: Colors.black,
+                      fontFamily: 'Roboto',
+                      fontSize: 12,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  TextSpan(
+                    text: subtitle3,
+                    style: TextStyle(
+                      color: Colors.orange,
+                      fontFamily: 'Roboto',
+                      fontSize: 12,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ],
+              ),
+              overflow: TextOverflow.ellipsis,
+            ),
+
+            SizedBox(height: 8.0),
+            Text(
+              'Address',
+              style: TextStyle(
+                color: Colors.black,
+                fontFamily: 'Roboto',
+                fontWeight: FontWeight.w600,
+                fontSize: 12,
+              ),
+              overflow: TextOverflow.ellipsis,
+            ),
+            SizedBox(height: 8.0),
+            Text(
+              subtitle4,
+              style: TextStyle(
+                color: Colors.orange,
+                fontFamily: 'Roboto',
+                fontWeight: FontWeight.w600,
+                fontSize: 12,
+              ),
+              maxLines: 2, // Display in 2 lines
+              overflow: TextOverflow.ellipsis,
+            ),
+
           ],
         ),
       ),
