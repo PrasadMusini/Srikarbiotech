@@ -1,16 +1,16 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:connectivity/connectivity.dart';
-class CommonUtils{
+import 'package:shared_preferences/shared_preferences.dart';
 
-  static  void showCustomToastMessageLong(String message,
-      BuildContext context,
-      int backgroundColorType,
-      int length,) {
-    final double screenWidth = MediaQuery
-        .of(context)
-        .size
-        .width;
+class CommonUtils {
+  static void showCustomToastMessageLong(
+    String message,
+    BuildContext context,
+    int backgroundColorType,
+    int length,
+  ) {
+    final double screenWidth = MediaQuery.of(context).size.width;
     final double textWidth = screenWidth / 1.5; // Adjust multiplier as needed
 
     final double toastWidth = textWidth + 32.0; // Adjust padding as needed
@@ -18,47 +18,44 @@ class CommonUtils{
 
     OverlayEntry overlayEntry;
     overlayEntry = OverlayEntry(
-      builder: (BuildContext context) =>
-          Positioned(
-            bottom: 16.0,
-            left: toastOffset,
-            child: Material(
-              color: Colors.white,
+      builder: (BuildContext context) => Positioned(
+        bottom: 16.0,
+        left: toastOffset,
+        child: Material(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(8.0),
+          child: Container(
+            width: toastWidth,
+            decoration: BoxDecoration(
+              border: Border.all(
+                color: backgroundColorType == 0 ? Colors.green : Colors.red,
+                width: 2.0,
+              ),
               borderRadius: BorderRadius.circular(8.0),
-              child: Container(
-                width: toastWidth,
-                decoration: BoxDecoration(
-                  border: Border.all(
-                    color: backgroundColorType == 0 ? Colors.green : Colors.red,
-                    width: 2.0,
-                  ),
-                  borderRadius: BorderRadius.circular(8.0),
-                ),
-                child: Padding(
-                  padding: EdgeInsets.symmetric(
-                      horizontal: 16.0, vertical: 10.0),
-                  child: Center(
-                    child: Text(
-                      message,
-                      style: TextStyle(fontSize: 16.0, color: Colors.black,fontFamily: 'Calibri'),
-                      textAlign: TextAlign.center,
-                    ),
-                  ),
+            ),
+            child: Padding(
+              padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 10.0),
+              child: Center(
+                child: Text(
+                  message,
+                  style: TextStyle(
+                      fontSize: 16.0,
+                      color: Colors.black,
+                      fontFamily: 'Calibri'),
+                  textAlign: TextAlign.center,
                 ),
               ),
             ),
           ),
+        ),
+      ),
     );
-
 
     Overlay.of(context).insert(overlayEntry);
     Future.delayed(Duration(seconds: length)).then((value) {
       overlayEntry.remove();
     });
   }
-
-
-
 
   static Future<bool> checkInternetConnectivity() async {
     var connectivityResult = await (Connectivity().checkConnectivity());
@@ -69,19 +66,21 @@ class CommonUtils{
       return false; // Not connected to the internet
     }
   }
+
   static void myCommonMethod() {
     // Your common method logic here
     print('This is a common method');
   }
+
   static Widget buildCard(
-      String title,
-      String subtitle1,
-      String subtitle2,
-      String subtitle3,
-      String subtitle4,
-      Color backgroundColor,
-      BorderRadius borderRadius,
-      ) {
+    String title,
+    String subtitle1,
+    String subtitle2,
+    String subtitle3,
+    String subtitle4,
+    Color backgroundColor,
+    BorderRadius borderRadius,
+  ) {
     return Card(
       elevation: 2.0,
       shape: RoundedRectangleBorder(
@@ -100,7 +99,7 @@ class CommonUtils{
                 fontSize: 16,
                 fontWeight: FontWeight.w700,
                 fontFamily: 'Roboto', // Use 'Roboto-Bold' font family
-                 // Orange color for the title
+                // Orange color for the title
               ),
             ),
             SizedBox(height: 8.0),
@@ -122,8 +121,7 @@ class CommonUtils{
                   color: Colors.black,
                   fontFamily: 'Roboto',
                   fontWeight: FontWeight.w600,
-                  fontSize: 12
-              ),
+                  fontSize: 12),
               overflow: TextOverflow.ellipsis,
             ),
             SizedBox(height: 8.0),
@@ -133,15 +131,13 @@ class CommonUtils{
                   color: Colors.orange,
                   fontFamily: 'Roboto',
                   fontWeight: FontWeight.w600,
-                  fontSize: 12
-              ),
+                  fontSize: 12),
               maxLines: 2, // Display in 2 lines
               overflow: TextOverflow.ellipsis,
             ),
             SizedBox(height: 8.0),
             RichText(
               text: TextSpan(
-
                 children: <TextSpan>[
                   TextSpan(
                     text: 'GST No. ',
@@ -165,7 +161,6 @@ class CommonUtils{
               ),
               overflow: TextOverflow.ellipsis,
             ),
-
             SizedBox(height: 8.0),
             Text(
               'Address',
@@ -189,10 +184,19 @@ class CommonUtils{
               maxLines: 2, // Display in 2 lines
               overflow: TextOverflow.ellipsis,
             ),
-
           ],
         ),
       ),
     );
   }
+}
+
+Future<void> saveIntToPreferences(String key, int value) async {
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  prefs.setInt(key, value);
+}
+
+Future<int?> getIntFromPreferences(String key) async {
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  return prefs.getInt(key);
 }

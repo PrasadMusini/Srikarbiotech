@@ -15,8 +15,10 @@ class LoginScreen extends StatefulWidget {
   // Assuming you have a class named Company
   final String companyName;
   final int companyId;
-  LoginScreen({required this.companyName,
-    required this.companyId,});
+  LoginScreen({
+    required this.companyName,
+    required this.companyId,
+  });
   @override
   State<LoginScreen> createState() => _MyHomePageState();
 }
@@ -30,6 +32,7 @@ class _MyHomePageState extends State<LoginScreen> {
   @override
   initState() {
     super.initState();
+    saveIntToPreferences('companyIdKey', widget.companyId);
     SystemChrome.setPreferredOrientations([
       DeviceOrientation.portraitDown,
       DeviceOrientation.portraitUp,
@@ -39,6 +42,7 @@ class _MyHomePageState extends State<LoginScreen> {
     compneyid = widget.companyId;
     print("Company ID: $compneyid");
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -68,9 +72,8 @@ class _MyHomePageState extends State<LoginScreen> {
                 // Other styling properties as needed
               ),
             ),
-
           ),
-        
+
           Align(
             alignment: FractionalOffset.bottomCenter,
             child: Padding(
@@ -173,7 +176,8 @@ class _MyHomePageState extends State<LoginScreen> {
                                               left: 10.0, top: 0.0),
                                           child: TextFormField(
                                             controller: emailController,
-                                            keyboardType: TextInputType.emailAddress,
+                                            keyboardType:
+                                                TextInputType.emailAddress,
                                             validator: (value) {
                                               if (value!.isEmpty) {
                                                 return 'Please enter your Email/Username';
@@ -185,7 +189,8 @@ class _MyHomePageState extends State<LoginScreen> {
                                               fontWeight: FontWeight.w300,
                                             ),
                                             decoration: InputDecoration(
-                                              hintText: 'Enter Email or Username',
+                                              hintText:
+                                                  'Enter Email or Username',
                                               hintStyle: TextStyle(
                                                 fontSize: 14,
                                                 fontFamily: 'Roboto-Bold',
@@ -407,10 +412,9 @@ class _MyHomePageState extends State<LoginScreen> {
     );
   }
 
-
   void _login() async {
-    final apiUrl = baseUrl+post_Login;
-  //  final apiUrl = 'http://182.18.157.215/Srikar_Biotech_Dev/API/api/Account/Login';
+    final apiUrl = baseUrl + post_Login;
+    //  final apiUrl = 'http://182.18.157.215/Srikar_Biotech_Dev/API/api/Account/Login';
     final payload = {
       "Username": "Superadmin",
       "Password": "Abcd@123",
@@ -437,14 +441,13 @@ class _MyHomePageState extends State<LoginScreen> {
       if (jsonResponse['isSuccess'] == true) {
         print('Login successful');
 
-        userId =  jsonResponse['response']['userId'];
-        slpCode =  jsonResponse['response']['slpCode'];
+        userId = jsonResponse['response']['userId'];
+        slpCode = jsonResponse['response']['slpCode'];
         print('userId===>$userId');
         print('slpCode===>$slpCode');
         SharedPreferences prefs = await SharedPreferences.getInstance();
         await prefs.setString("userId", userId ?? "");
         await prefs.setString("slpCode", slpCode ?? "");
-
 
         Navigator.pushReplacement(
           context,
@@ -465,11 +468,11 @@ class _MyHomePageState extends State<LoginScreen> {
         // }
       } else {
         print('Login failed. Please check your credentials.');
-        CommonUtils.showCustomToastMessageLong('Login failed. Please check your credentials.', context, 1, 4);
+        CommonUtils.showCustomToastMessageLong(
+            'Login failed. Please check your credentials.', context, 1, 4);
       }
     } else {
       print('Login failed. Please check your credentials.');
     }
   }
-
 }

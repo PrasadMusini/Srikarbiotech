@@ -7,9 +7,14 @@ import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 import 'package:srikarbiotech/view_collection_checkout.dart';
 
-import 'HomeScreen.dart';
-import 'Model/card_collection.dart';
+import 'package:srikarbiotech/Payment_model.dart' as PaymentApiResponse;
 
+import 'Common/CommonUtils.dart';
+import 'HomeScreen.dart';
+import 'Model/ApiResponse.dart';
+import 'Model/card_collection.dart';
+import 'OrctResponse.dart';
+import 'Payment_model.dart';
 
 class ViewCollectionPage extends StatefulWidget {
   const ViewCollectionPage({super.key});
@@ -19,7 +24,8 @@ class ViewCollectionPage extends StatefulWidget {
 }
 
 class _ViewCollectionPageState extends State<ViewCollectionPage> {
-  String url = 'http://182.18.157.215/Srikar_Biotech_Dev/API/api/Collections/GetCollections/null';
+  String url =
+      'http://182.18.157.215/Srikar_Biotech_Dev/API/api/Collections/GetCollections/null';
 
   late Future<List<ListResult>> apiData;
 
@@ -62,19 +68,18 @@ class _ViewCollectionPageState extends State<ViewCollectionPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar:
-      AppBar(
+      appBar: AppBar(
         backgroundColor: Color(0xFFe78337),
         automaticallyImplyLeading: false,
         // This line removes the default back arrow
         title: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
-
           children: [
             Row(
               children: [
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 2, vertical: 2),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 2, vertical: 2),
                   child: GestureDetector(
                     onTap: () {
                       // Handle the click event for the back button
@@ -165,6 +170,7 @@ class _ViewCollectionPageState extends State<ViewCollectionPage> {
                               print('Container clicked!');
                               showModalBottomSheet(
                                 context: context,
+                                // isScrollControlled: true,
                                 builder: (context) => const FilterBottomSheet(),
                               );
                               // Add your specific logic or navigation here
@@ -181,7 +187,6 @@ class _ViewCollectionPageState extends State<ViewCollectionPage> {
                               ),
                             ),
                           )
-
                         ],
                       ),
                     ),
@@ -192,7 +197,6 @@ class _ViewCollectionPageState extends State<ViewCollectionPage> {
                         itemCount: data.length,
                         itemBuilder: ((context, index) {
                           return MyCard(listResult: data[index], index: index);
-
                         }),
                       ),
                     ),
@@ -211,7 +215,6 @@ class _ViewCollectionPageState extends State<ViewCollectionPage> {
   }
 }
 
-
 class FilterBottomSheet extends StatefulWidget {
   const FilterBottomSheet({super.key});
 
@@ -221,7 +224,9 @@ class FilterBottomSheet extends StatefulWidget {
 
 class _FilterBottomSheetState extends State<FilterBottomSheet> {
   final _labelTextStyle = const TextStyle(
-      color: Colors.black, fontSize: 15, fontWeight: FontWeight.bold);
+      color: Colors.black, fontSize: 14, fontWeight: FontWeight.bold);
+  List<Dealer> dealers = [];
+  int selectedCardCode = -1;
 
   // ... Other variables and methods
   final _primaryOrange = HexColor('#e58338');
@@ -250,10 +255,367 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
     'item 4',
     'item 5',
   ];
+  List<dynamic> dropdownItems = [];
+  PaymentMode? selectedPaymode;
+  int? payid;
+  late String selectedName;
+  PaymentApiResponse.ApiResponse? apiResponse;
+  int indexselected = -1;
+  String? Selected_PaymentMode = "";
+  TextEditingController todateController = TextEditingController();
+  TextEditingController fromdateController = TextEditingController();
+  DateTime selectedDate = DateTime.now();
+  DateTime selectedfromdateDate = DateTime.now();
+  List<Purpose> purposeList = [];
+  String? selectedPurpose, selectformattedfromdate, selectformattedtodate;
+  Purpose? selectedPurposeObj; // Declare it globally
+  String purposename = '';
+  int? savedCompanyId = 0;
+
+  @override
+  void initState() {
+    fetchData();
+
+    print(savedCompanyId);
+    getpaymentmethods();
+    fetchdropdownitems();
+    super.initState();
+  }
+
+  Future<void> fetchdropdownitems() async {
+    final apiUrl =
+        'http://182.18.157.215/Srikar_Biotech_Dev/API/api/Collections/GetPurposes';
+
+    try {
+      final response = await http.get(Uri.parse(apiUrl));
+
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        final listResult = data['response']['listResult'] as List;
+
+        setState(() {
+          purposeList =
+              listResult.map((item) => Purpose.fromJson(item)).toList();
+        });
+      } else {
+        throw Exception('Failed to load data');
+      }
+    } catch (e) {
+      print('Error: $e');
+    }
+  }
+
+  Future<void> getpaymentmethods() async {
+    final response = await http.get(Uri.parse(
+        'http://182.18.157.215/Srikar_Biotech_Dev/API/api/Master/GetAllTypeCdDmt/2'));
+
+    if (response.statusCode == 200) {
+      setState(() {
+        apiResponse =
+            PaymentApiResponse.ApiResponse.fromJson(jsonDecode(response.body));
+        print('========>apiResponse$apiResponse');
+      });
+    } else {
+      throw Exception('Failed to load data');
+    }
+  }
+
+  Future<void> _selectDate(
+    BuildContext context,
+    TextEditingController controller,
+  ) async {
+    DateTime currentDate = DateTime.now();
+    DateTime initialDate;
+
+    if (controller.text.isNotEmpty) {
+      try {
+        initialDate = DateTime.parse(controller.text);
+      } catch (e) {
+        print("Invalid date format: $e");
+        initialDate = currentDate;
+      }
+    } else {
+      initialDate = currentDate;
+    }
+
+    try {
+      DateTime? picked = await showDatePicker(
+        context: context,
+        initialDate: initialDate,
+        firstDate: DateTime(2000),
+        lastDate: DateTime(2101),
+      );
+
+      if (picked != null) {
+        String formattedDate = DateFormat('dd-MM-yyyy').format(picked);
+        controller.text = formattedDate;
+
+        // Save selected dates as DateTime objects
+        selectedDate = picked;
+        print("todate selected: $selectedDate");
+
+        // Print formatted date
+        print("fromatted todate: ${DateFormat('yyyy-MM-dd').format(picked)}");
+        selectformattedtodate = DateFormat('yyyy-MM-dd').format(picked);
+        print("selectformattedtodate: $selectformattedtodate");
+      }
+    } catch (e) {
+      print("Error selecting date: $e");
+      // Handle the error, e.g., show a message to the user or log it.
+    }
+  }
+
+  Widget buildDateInput(
+    BuildContext context,
+    String labelText,
+    TextEditingController controller,
+    VoidCallback onTap,
+  ) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: EdgeInsets.only(top: 0.0, left: 5.0, right: 0.0),
+          child: Text(
+            labelText,
+            style: TextStyle(
+              fontSize: 16.0,
+              color: Color(0xFF5f5f5f),
+              fontWeight: FontWeight.bold,
+            ),
+            textAlign: TextAlign.start,
+          ),
+        ),
+        SizedBox(height: 4.0), // Add space between labelText and TextFormField
+        GestureDetector(
+          onTap: onTap,
+          child: Container(
+            width: MediaQuery.of(context).size.width,
+            height: 40.0,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(12.0),
+              border: Border.all(
+                color: Color(0xFFe78337),
+                width: 1.0,
+              ),
+            ),
+            child: Row(
+              children: [
+                Expanded(
+                  child: Align(
+                    alignment: Alignment.centerLeft,
+                    child: Padding(
+                      padding: EdgeInsets.only(left: 10.0, top: 0.0),
+                      child: TextFormField(
+                        controller: controller,
+                        enabled: false,
+                        style: TextStyle(
+                          fontSize: 14,
+                          fontFamily: 'Roboto',
+                          fontWeight: FontWeight.w600,
+                          color: Color(0xFFe78337),
+                        ),
+                        decoration: InputDecoration(
+                          hintText: labelText,
+                          hintStyle: TextStyle(
+                            fontSize: 14,
+                            fontFamily: 'Roboto',
+                            fontWeight: FontWeight.w500,
+                            color: Color(0xFFe78337),
+                          ),
+                          border: InputBorder.none,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+                InkWell(
+                  onTap: onTap,
+                  child: Padding(
+                    padding: EdgeInsets.all(10.0),
+                    child: Icon(
+                      Icons.calendar_today,
+                      color: Color(0xFFe78337),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Future<void> _selectfromDate(
+    BuildContext context,
+    TextEditingController controller,
+  ) async {
+    DateTime currentDate = DateTime.now();
+    DateTime initialDate;
+
+    if (controller.text.isNotEmpty) {
+      try {
+        initialDate = DateTime.parse(controller.text);
+      } catch (e) {
+        print("Invalid date format: $e");
+        initialDate = currentDate;
+      }
+    } else {
+      initialDate = currentDate;
+    }
+
+    try {
+      DateTime? picked = await showDatePicker(
+        context: context,
+        initialDate: initialDate,
+        firstDate: DateTime(2000),
+        lastDate: DateTime(2101),
+      );
+
+      if (picked != null) {
+        String formattedDate = DateFormat('dd-MM-yyyy').format(picked);
+        controller.text = formattedDate;
+
+        // Save selected dates as DateTime objects
+        selectedfromdateDate = picked;
+        print("fromdate selected: $selectedfromdateDate");
+
+        // Print formatted date
+        print("fromattedfromdate: ${DateFormat('yyyy-MM-dd').format(picked)}");
+        selectformattedfromdate = DateFormat('yyyy-MM-dd').format(picked);
+        print("selectformattedfromdate: $selectformattedfromdate");
+      }
+    } catch (e) {
+      print("Error selecting date: $e");
+      // Handle the error, e.g., show a message to the user or log it.
+    }
+  }
+
+  Widget buildDateInputfromdate(
+    BuildContext context,
+    String labelText,
+    TextEditingController controller,
+    VoidCallback onTap,
+  ) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: EdgeInsets.only(top: 0.0, left: 5.0, right: 0.0),
+          child: Text(
+            labelText,
+            style: TextStyle(
+              fontSize: 16.0,
+              color: Color(0xFF5f5f5f),
+              fontWeight: FontWeight.bold,
+            ),
+            textAlign: TextAlign.start,
+          ),
+        ),
+        SizedBox(height: 4.0), // Add space between labelText and TextFormField
+        GestureDetector(
+          onTap: onTap,
+          child: Container(
+            width: MediaQuery.of(context).size.width,
+            height: 40.0,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(12.0),
+              border: Border.all(
+                color: Color(0xFFe78337),
+                width: 1.0,
+              ),
+            ),
+            child: Row(
+              children: [
+                Expanded(
+                  child: Align(
+                    alignment: Alignment.centerLeft,
+                    child: Padding(
+                      padding: EdgeInsets.only(left: 10.0, top: 0.0),
+                      child: TextFormField(
+                        controller: controller,
+                        enabled: false,
+                        style: TextStyle(
+                          fontSize: 14,
+                          fontFamily: 'Roboto',
+                          fontWeight: FontWeight.w600,
+                          color: Color(0xFFe78337),
+                        ),
+                        decoration: InputDecoration(
+                          hintText: labelText,
+                          hintStyle: TextStyle(
+                            fontSize: 14,
+                            fontFamily: 'Roboto',
+                            fontWeight: FontWeight.w500,
+                            color: Color(0xFFe78337),
+                          ),
+                          border: InputBorder.none,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+                InkWell(
+                  onTap: onTap,
+                  child: Padding(
+                    padding: EdgeInsets.all(10.0),
+                    child: Icon(
+                      Icons.calendar_today,
+                      color: Color(0xFFe78337),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Future<void> fetchData() async {
+    final response = await http.get(Uri.parse(
+        'http://182.18.157.215/Srikar_Biotech_Dev/API/api/Account/GetAllDealersBySlpCode/100'));
+
+    if (response.statusCode == 200) {
+      Map<String, dynamic> data = json.decode(response.body);
+
+      // if (data['isSuccess']) {
+      //   List<dynamic> dealerList = data['response']['listResult'];
+      //
+      //   setState(() {
+      //     // dealers = dealerList
+      //     //     .map((dealer) => Dealer(
+      //     //           cardCode: dealer['cardCode'],
+      //     //           cardName: dealer['cardName'],
+      //     //         ))
+      //     //     .toList();
+      //
+      //     setState(() {
+      //       dropdownItems = data['listResult'];
+      //     });
+      //   });
+      // }
+      // Map<String, dynamic> data1 = json.decode(response.body);
+
+      if (data['isSuccess']) {
+        // Check if 'listResult' key exists and is not null
+        if (data['response']['listResult'] != null) {
+          setState(() {
+            dropdownItems = List.from(data['response']['listResult']);
+          });
+        }
+      }
+    } else {
+      throw Exception('Failed to load data');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
+    return SingleChildScrollView(
+        child: Padding(
       padding: const EdgeInsets.all(20),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -289,194 +651,286 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
                   style: _labelTextStyle,
                 ),
               ),
-              GestureDetector(
-                onTap: () async {
-                  // Perform something.
-                },
+              Padding(
+                padding: EdgeInsets.only(left: 0, top: 5.0, right: 0),
                 child: Container(
-                  width: double.infinity,
-                  height: 40,
+                  // width: double.infinity,
+                  height: 40.0,
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(10),
                     border: Border.all(
                       color: HexColor('#e58338'),
                     ),
                   ),
-                  margin: const EdgeInsets.only(top: 3, bottom: 15),
-                  child: DropdownButton<String>(
-                    padding: const EdgeInsets.symmetric(horizontal: 10),
-                    value: selectedValue,
-                    underline: const SizedBox(),
-                    elevation: 0,
-                    isExpanded: true,
-                    hint: Text(
-                      'Select something',
-                      style: _textStyle,
+                  child: DropdownButtonHideUnderline(
+                    child: ButtonTheme(
+                      alignedDropdown: true,
+                      child: DropdownButton<int>(
+                          value: selectedCardCode,
+                          iconSize: 20,
+                          icon: null,
+                          isExpanded: true,
+                          underline: const SizedBox(),
+                          style: TextStyle(
+                            color: Color(0xFFe58338),
+                          ),
+                          onChanged: (value) {
+                            setState(() {
+                              selectedCardCode = value!;
+                              if (selectedCardCode != -1) {
+                                selectedValue =
+                                    dropdownItems[selectedCardCode]['cardCode'];
+                                selectedName =
+                                    dropdownItems[selectedCardCode]['cardName'];
+
+                                print("selectedValue:$selectedValue");
+                                print("selectedName:$selectedName");
+                              } else {
+                                print("==========");
+                                print(selectedValue);
+                                print(selectedName);
+                              }
+                              // isDropdownValid = selectedTypeCdId != -1;
+                            });
+                          },
+                          items: [
+                            DropdownMenuItem<int>(
+                              value: -1,
+                              child: Text('Select Party'), // Static text
+                            ),
+                            ...dropdownItems.asMap().entries.map((entry) {
+                              final index = entry.key;
+                              final item = entry.value;
+                              return DropdownMenuItem<int>(
+                                  value: index,
+                                  child: Text(
+                                    item['cardName'],
+                                    overflow: TextOverflow.visible,
+                                    // wrapText: true,
+                                  ));
+                            }).toList(),
+                          ]),
                     ),
-                    items: dropDownItems.map((item) {
-                      return DropdownMenuItem<String>(
-                        value: item,
-                        child: Text(item),
-                      );
-                    }).toList(),
-                    onChanged: (String? newValue) {
-                      setState(() {
-                        selectedValue = newValue;
-                      });
-                    },
-                    // Add selectedItemBuilder to display the selected value
                   ),
                 ),
               ),
-            ],
-          ),
-          Container(
-            margin: const EdgeInsets.only(bottom: 12),
-            child: Row(
-              children: [
-                ...List.generate(
-                  4,
-                      (index) {
-                    return Row(
-                      children: [
-                        GestureDetector(
-                          onTap: () {
-                            setState(() {
-                              // issue
-                              selectedChipIndex = index;
-                            });
-                          },
-                          child: Chip(
-                            backgroundColor: selectedChipIndex == index
-                                ? _primaryOrange
-                                : Colors.white,
-                            side: BorderSide(
-                              color: _primaryOrange,
-                            ),
-                            label: const Text('chip'),
-                          ),
-                        ),
-                        const SizedBox(
-                          width: 10,
-                        ),
-                      ],
-                    );
-                  },
-                ),
-              ],
-            ),
-          ),
-
-          // From date
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
+              SizedBox(
+                height: 10.0,
+              ),
               Padding(
                 padding: const EdgeInsets.only(left: 5.0),
                 child: Text(
-                  'To Date',
+                  'Purpose',
                   style: _labelTextStyle,
                 ),
               ),
-              GestureDetector(
-                onTap: () async {
-                  // Perform something.
-                  final DateTime? time = await showDatePicker(
-                    context: context,
-                    initialDate: toDate,
-                    firstDate: DateTime(2023, 12, 30),
-                    lastDate: DateTime(2024, 12, 30),
-                  );
-                  if (time != null) {
-                    setState(() {
-                      toDate = time;
-                    });
-                  }
-                },
-                child: Container(
-                  width: double.infinity,
-                  padding: const EdgeInsets.all(8),
+              SizedBox(
+                height: 4.0,
+              ),
+              Container(
+                  width: MediaQuery.of(context).size.width,
+                  height: 40.0,
                   decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(10),
+                    borderRadius: BorderRadius.circular(12.0),
                     border: Border.all(
-                      color: HexColor('#e58338'),
+                      color: Color(0xFFe78337),
+                      width: 1.0,
                     ),
                   ),
-                  margin: const EdgeInsets.only(top: 3, bottom: 15),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Text(
-                        ' ${toDate.day} - ${toDate.month} - ${toDate.year} ',
-                        style: _textStyle,
-                      ),
-                      Icon(
-                        Icons.date_range_outlined,
-                        color: _orangeColor,
-                      ),
-                    ],
-                  ),
-                ),
-              ),
+                  child: Padding(
+                    padding: EdgeInsets.all(8.0),
+                    child: purposeList.isEmpty
+                        ? CircularProgressIndicator
+                            .adaptive() // Show a loading indicator
+                        : DropdownButton<String>(
+                            hint: Text(
+                              'Select Purpose',
+                              style: TextStyle(
+                                fontSize: 14,
+                                fontFamily: 'Roboto',
+                                //    fontWeight: FontWeight.w600,
+                                color: Color(0xFFe78337),
+                              ),
+                            ),
+                            value: selectedPurpose,
+                            onChanged: (String? newValue) {
+                              setState(() {
+                                selectedPurpose = newValue;
+
+                                // Find the selected Purpose object
+                                selectedPurposeObj = purposeList.firstWhere(
+                                  (purpose) => purpose.fldValue == newValue,
+                                  orElse: () => Purpose(
+                                      fldValue: '', descr: '', purposeName: ''),
+                                );
+
+                                // Print the selected values
+                                print(
+                                    'fldValue: ${selectedPurposeObj?.fldValue}');
+                                print('descr: ${selectedPurposeObj?.descr}');
+                                print(
+                                    'purposeName: ${selectedPurposeObj?.purposeName}');
+
+                                purposename = selectedPurposeObj!.purposeName;
+                                print('selectpurposeName: $purposename');
+                              });
+                            },
+                            items: purposeList.map((Purpose purpose) {
+                              return DropdownMenuItem<String>(
+                                value: purpose.fldValue,
+                                child: Text(
+                                  purpose.purposeName,
+                                  style: TextStyle(
+                                    fontSize: 14,
+                                    fontFamily: 'Roboto',
+                                    fontWeight: FontWeight.w600,
+                                    color: Color(0xFFe78337),
+                                  ),
+                                ),
+                              );
+                            }).toList(),
+                            icon: Icon(Icons.arrow_drop_down),
+                            iconSize: 24,
+                            isExpanded: true,
+                            underline: SizedBox(),
+                          ),
+                  ))
             ],
           ),
 
+          SizedBox(
+            height: 10.0,
+          ),
+          Container(
+            height: 40,
+            child: Expanded(
+              child: apiResponse == null
+                  ? Center(child: CircularProgressIndicator.adaptive())
+                  : ListView.builder(
+                      scrollDirection: Axis.horizontal,
+                      itemCount: apiResponse!.listResult.length,
+                      itemBuilder: (BuildContext context, int index) {
+                        bool isSelected = index == indexselected;
+                        PaymentMode currentPaymode = apiResponse!.listResult[
+                            index]; // Store the current paymode in a local variable
+
+                        IconData iconData;
+                        switch (currentPaymode.desc) {
+                          case 'Cheque':
+                            // iconData = Icons.payment;
+                            break;
+                          case 'Online':
+                            //   iconData = Icons.access_alarm;
+                            break;
+                          case 'UPI':
+                            //   iconData = Icons.payment;
+                            break;
+                          // Add more cases as needed
+                          default:
+                            //   iconData = Icons.payment; // Default icon
+                            break;
+                        }
+
+                        return GestureDetector(
+                          onTap: () {
+                            setState(() {
+                              indexselected = index;
+                              selectedPaymode =
+                                  currentPaymode; // Update the selectedPaymode outside the build method
+                            });
+                            payid = currentPaymode.typeCdId;
+                            Selected_PaymentMode = currentPaymode.desc;
+                            print('payid:$payid');
+                            print(
+                                'Selected Payment Mode: ${currentPaymode.desc}, TypeCdId: $payid');
+                            print(
+                                'Selected Payment Mode: ${Selected_PaymentMode}, TypeCdId: $payid');
+                          },
+                          child: Container(
+                            margin: EdgeInsets.symmetric(horizontal: 4.0),
+                            decoration: BoxDecoration(
+                              color: isSelected
+                                  ? Color(0xFFe78337)
+                                  : Color(0xFFe78337).withOpacity(0.1),
+                              border: Border.all(
+                                color: isSelected
+                                    ? Color(0xFFe78337)
+                                    : Color(0xFFe78337),
+                                width: 1.0,
+                              ),
+                              borderRadius: BorderRadius.circular(8.0),
+                            ),
+                            child: IntrinsicWidth(
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Container(
+                                    padding:
+                                        EdgeInsets.symmetric(horizontal: 10.0),
+                                    child: Row(
+                                      children: [
+                                        // Icon(
+                                        //   iconData, // Use the dynamically determined icon
+                                        //   color: isSelected
+                                        //       ? Colors.white
+                                        //       : Colors.black,
+                                        // ),
+                                        // SizedBox(
+                                        //     width:
+                                        //         8.0), // Add some spacing between icon and text
+                                        Text(
+                                          '${currentPaymode.desc.toString()}',
+                                          style: TextStyle(
+                                            color: isSelected
+                                                ? Colors.white
+                                                : Colors.black,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+            ),
+          ),
+
+          SizedBox(
+            height: 10.0,
+          ), // From date
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              buildDateInput(
+                context,
+                'To Date',
+                todateController,
+                () => _selectDate(context, todateController),
+              ),
+            ],
+          ),
+          SizedBox(
+            height: 10.0,
+          ),
           // To Date
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Padding(
-                padding: const EdgeInsets.only(left: 5.0),
-                child: Text(
-                  'From Date',
-                  style: _labelTextStyle,
-                ),
-              ),
-              GestureDetector(
-                onTap: () async {
-                  // Perform something.
-                  final DateTime? time = await showDatePicker(
-                    context: context,
-                    initialDate: fromDate,
-                    firstDate: DateTime(2023, 12, 30),
-                    lastDate: DateTime(2024, 12, 30),
-                  );
-                  if (time != null) {
-                    setState(() {
-                      fromDate = time;
-                    });
-                  }
-                },
-                child: Container(
-                  width: double.infinity,
-                  padding: const EdgeInsets.all(8),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(10),
-                    border: Border.all(
-                      color: HexColor('#e58338'),
-                    ),
-                  ),
-                  margin: const EdgeInsets.only(top: 3, bottom: 15),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Text(
-                        ' ${fromDate.day} - ${fromDate.month} - ${fromDate.year} ',
-                        style: _textStyle,
-                      ),
-                      Icon(
-                        Icons.date_range_outlined,
-                        color: _orangeColor,
-                      ),
-                    ],
-                  ),
-                ),
+              buildDateInputfromdate(
+                context,
+                'From Date',
+                fromdateController,
+                () => _selectfromDate(context, fromdateController),
               ),
             ],
           ),
-
+          SizedBox(
+            height: 10.0,
+          ),
           Row(
             children: [
               Expanded(
@@ -509,7 +963,9 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
               ),
               Expanded(
                 child: ElevatedButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    getappliedflitters();
+                  },
                   style: ElevatedButton.styleFrom(
                     textStyle: const TextStyle(
                       color: Colors.white,
@@ -533,10 +989,69 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
           ),
         ],
       ),
-    );
+    ));
+  }
+
+  Future<void> getappliedflitters() async {
+    savedCompanyId = await getIntFromPreferences('companyIdKey');
+    print('getCompanyId:$savedCompanyId');
+    try {
+      final url = Uri.parse(
+          'http://182.18.157.215/Srikar_Biotech_Dev/API/api/Collections/GetCollectionsbyMobileSearch');
+      print('applyfilter: $url');
+      final request = {
+        "PurposeName": purposename,
+        "StatusId": payid,
+        "PartyCode": selectedValue,
+        "FormDate": selectformattedfromdate,
+        "ToDate": selectformattedtodate,
+        "CompanyId": savedCompanyId
+      };
+      // final headers = {
+      //   'Authorization': '$accessToken',
+      // };
+      // Map<String, String> _header = {
+      //   'Authorization': '$accessToken',
+      // };
+      // String at = accessToken;
+      // print('Request Headers: $_header');
+      print('Request Body: ${json.encode(request)}');
+
+      final response = await http.post(
+        url,
+        body: json.encode(request),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      );
+      //  print('access: $at');
+      // if (response.body == "Server errorNullable object must have a value.") {
+      //   Commonutils.showCustomToastMessageLong(
+      //       'Leave Applied', context, 0, 3);
+      // }
+      print('Applyresponse: ${response.body}');
+
+      if (response.statusCode == 200) {
+        print('response is success');
+      } else {
+        print('response is not success');
+        // Commonutils.showCustomToastMessageLong(
+        //     '${response.body}', context, 0, 3);
+        print(
+            'Failed to send the request. Status code: ${response.statusCode}');
+      }
+    } catch (e) {
+      print('Error: $e');
+    }
   }
 }
 
+class Dealer {
+  final String cardCode;
+  final String cardName;
+
+  Dealer({required this.cardCode, required this.cardName});
+}
 
 class MyCard extends StatefulWidget {
   final ListResult listResult;
@@ -585,9 +1100,10 @@ class _MyCardState extends State<MyCard> {
         //     .pushNamed('/statusScreen', arguments: widget.listResult);
         Navigator.of(context).push(
           MaterialPageRoute(
-            builder: (context) => ViewCollectionCheckOut(//
-                listResult: widget.listResult,
-                position: widget.index,// Assuming you have the index available
+            builder: (context) => ViewCollectionCheckOut(
+              //
+              listResult: widget.listResult,
+              position: widget.index, // Assuming you have the index available
             ),
           ),
         );
