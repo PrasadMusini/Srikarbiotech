@@ -6,12 +6,12 @@ class CartItem {
   final int id;
   final String productName;
   final String unitTag;
-  final double initialPrice;
-  final double productPrice;
+  final String initialPrice;
+  final String productPrice;
   final int productquantity;
   final ValueNotifier<int> quantity;
 //  final String image;
-  final int discount;
+  final String discount;
 
   CartItem(
       {required this.id,

@@ -9,9 +9,10 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'Model/CartHelper.dart';
 
 class billing_screen extends StatefulWidget {
-  final List<SelectedProducts> productitems;
 
-  billing_screen({required this.productitems});
+  // final List<SelectedProducts> productitems;
+
+  // billing_screen({required this.productitems});
 
   @override
   State<billing_screen> createState() => _billing_screenState();
@@ -20,7 +21,7 @@ class billing_screen extends StatefulWidget {
 class _billing_screenState extends State<billing_screen> {
   TextEditingController nacharamController = TextEditingController();
   List<SelectedProducts> savedCartItems = [];
-
+  List<String>? cartItems = [];
   @override
   void initState() {
     super.initState();
@@ -44,29 +45,11 @@ class _billing_screenState extends State<billing_screen> {
   //   });
   // }
 
-  Future<List<String>> fetchData() async {
-    // Retrieve saved cart items using CartHelper
-    List<SelectedProducts> cartItems = await CartHelper.getFertCartData();
-    print('cartiteminbillingscreen$cartItems');
-
-    // Extract product names from SelectedProducts
-    List<String> productNames =
-        cartItems.map((product) => product.productName).toList();
-
-    return productNames;
-  }
-
-  Future<List<String>> convertProductListToStringList(
-      List<SelectedProducts> products) async {
-    List<String> result = [];
-
-    for (var product in products) {
-      // Assuming there is a property in SelectedProducts that you want to convert to String
-      result.add(
-          product.productName); // Replace with the actual property or logic
-    }
-
-    return result;
+  Future<void> fetchData() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      cartItems = prefs.getStringList('cartItems') ?? [];
+    });
   }
 
   // Future<List<SelectedProducts>> loadProductListFromSharedPreferences() async {
@@ -284,297 +267,29 @@ class _billing_screenState extends State<billing_screen> {
               ),
             ),
             SizedBox(height: 5),
-            FutureBuilder<List<String>>(
-                future:
-                    fetchData(), // Use the function directly, it's already a Future
-
-                // Replace with your function to retrieve list data from SharedPreferences
-                builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return CircularProgressIndicator();
-                  } else if (snapshot.hasError) {
-                    return Text('Error: ${snapshot.error}');
-                  } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                    return Text('No data available');
-                  } else {
-                    List<String> productNames = snapshot.data!;
-                    return ListView.builder(
-                        shrinkWrap: true,
-                        physics: NeverScrollableScrollPhysics(),
-                        itemCount: snapshot.data!.length,
-                        itemBuilder: (context, index) {
-                          return Dismissible(
-                              key: Key(snapshot.data![
-                                  index]), // Use a unique key for each item
-                              onDismissed: (direction) async {
-                                // Call the deleteItem function when the item is dismissed
-                                await deleteItem(context, index);
-                              },
-                              background: Container(
-                                color: Colors
-                                    .red, // Background color when swiping to delete
-                                alignment: Alignment.centerRight,
-                                child: Padding(
-                                  padding: EdgeInsets.only(right: 16.0),
-                                  child: Icon(
-                                    Icons.delete,
-                                    color: Colors.white,
-                                  ),
-                                ),
-                              ),
-                              child: Container(
-                                width: screenWidth,
-                                padding: const EdgeInsets.all(10.0),
-                                child: Card(
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(10.0),
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        RichText(
-                                          overflow: TextOverflow.ellipsis,
-                                          maxLines: 1,
-                                          text: TextSpan(
-                                            text:
-                                                '${savedCartItems[index].productName}',
-                                            style: TextStyle(
-                                              color: Color(0xFF424242),
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: 16.0,
-                                            ),
-                                          ),
-                                        ),
-                                        SizedBox(
-                                          height: 8.0,
-                                        ),
-                                        RichText(
-                                          maxLines: 1,
-                                          text: TextSpan(
-                                            text:
-                                                '₹${savedCartItems[index].productPrice}',
-                                            style: TextStyle(
-                                              color: Colors.orange,
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: 16.0,
-                                            ),
-                                            children: [
-                                              TextSpan(
-                                                text: 'MRP: ',
-                                                style: TextStyle(
-                                                  color: Color(0xFFa6a6a6),
-                                                  fontWeight: FontWeight.bold,
-                                                  fontSize: 13.0,
-                                                  // decoration: TextDecoration.lineThrough,
-                                                ),
-                                              ),
-                                              TextSpan(
-                                                text:
-                                                    '${savedCartItems[index].initialPrice}',
-                                                style: TextStyle(
-                                                  color: Color(0xFFa6a6a6),
-                                                  fontWeight: FontWeight.bold,
-                                                  fontSize: 13.0,
-                                                  decoration: TextDecoration
-                                                      .lineThrough,
-                                                ),
-                                              ),
-                                              WidgetSpan(
-                                                child: SizedBox(
-                                                    width:
-                                                        16), // Adjust the width as needed
-                                              ),
-                                              TextSpan(
-                                                text:
-                                                    '(${savedCartItems[index].discount}%)',
-                                                style: TextStyle(
-                                                  color: Colors.green,
-                                                  fontWeight: FontWeight.bold,
-                                                  fontSize: 15.0,
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                        SizedBox(
-                                          height: 8.0,
-                                        ),
-                                        Row(
-                                          children: [
-                                            Container(
-                                              width: screenWidth / 3.9,
-                                              height: 36,
-                                              // Adjust the width as needed
-                                              child: DropdownButton<int>(
-                                                isExpanded: true,
-                                                // Ensure the dropdown takes full width
-                                                value: 1,
-                                                // Set initial value
-                                                onChanged: (newValue) {
-                                                  // Implement your logic when the dropdown value changes
-                                                },
-                                                items: List.generate(
-                                                  10,
-                                                  (index) =>
-                                                      DropdownMenuItem<int>(
-                                                    value: index + 1,
-                                                    child: Text(
-                                                        (index + 1).toString()),
-                                                  ),
-                                                ),
-                                                style: TextStyle(
-                                                  fontSize: 16.0,
-                                                  color: Colors.black,
-                                                ),
-                                                elevation:
-                                                    2, // Adjust the elevation as needed
-                                              ),
-                                            ),
-                                            SizedBox(
-                                              width: 25.0,
-                                            ),
-                                            // Add your additional widget here
-                                            Padding(
-                                              padding: const EdgeInsets.only(
-                                                  right: 0, left: 0, bottom: 0),
-                                              child: Row(
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.start,
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment.start,
-                                                children: [
-                                                  Container(
-                                                    height: 36,
-                                                    width:
-                                                        MediaQuery.of(context)
-                                                                .size
-                                                                .width /
-                                                            2.2,
-                                                    decoration: BoxDecoration(
-                                                      color: Colors.orange,
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              10.0),
-                                                    ),
-                                                    child: Row(
-                                                      mainAxisAlignment:
-                                                          MainAxisAlignment
-                                                              .spaceAround,
-                                                      crossAxisAlignment:
-                                                          CrossAxisAlignment
-                                                              .center,
-                                                      children: [
-                                                        IconButton(
-                                                          icon: Icon(
-                                                              Icons.remove,
-                                                              color:
-                                                                  Colors.white),
-                                                          onPressed: () {},
-                                                          iconSize: 17.0,
-                                                        ),
-                                                        Expanded(
-                                                          child: Align(
-                                                            alignment: Alignment
-                                                                .center,
-                                                            child: Container(
-                                                              height: 35,
-                                                              child: Padding(
-                                                                padding:
-                                                                    const EdgeInsets
-                                                                        .all(
-                                                                        2.0),
-                                                                child:
-                                                                    Container(
-                                                                  alignment:
-                                                                      Alignment
-                                                                          .center,
-                                                                  width: MediaQuery.of(
-                                                                              context)
-                                                                          .size
-                                                                          .width /
-                                                                      5.1,
-                                                                  decoration:
-                                                                      BoxDecoration(
-                                                                    color: Colors
-                                                                        .white,
-                                                                  ),
-                                                                  child:
-                                                                      TextField(
-                                                                    onChanged:
-                                                                        (value) {},
-                                                                    decoration:
-                                                                        InputDecoration(
-                                                                      hintText:
-                                                                          '0',
-                                                                      border: InputBorder
-                                                                          .none,
-                                                                      focusedBorder:
-                                                                          InputBorder
-                                                                              .none,
-                                                                      enabledBorder:
-                                                                          InputBorder
-                                                                              .none,
-                                                                      contentPadding:
-                                                                          EdgeInsets.symmetric(
-                                                                              horizontal: 0.0),
-                                                                    ),
-                                                                    textAlign:
-                                                                        TextAlign
-                                                                            .center,
-                                                                    style: TextStyle(
-                                                                        fontSize:
-                                                                            12.5),
-                                                                  ),
-                                                                ),
-                                                              ),
-                                                            ),
-                                                          ),
-                                                        ),
-                                                        IconButton(
-                                                          icon: Icon(Icons.add,
-                                                              color:
-                                                                  Colors.white),
-                                                          onPressed: () {},
-                                                          alignment: Alignment
-                                                              .centerLeft,
-                                                          iconSize: 17.0,
-                                                        ),
-                                                      ],
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                            ),
-                                            SizedBox(
-                                              width: 5.0,
-                                            ),
-                                            InkWell(
-                                              onTap: () async {
-                                                // Call the deleteItem function when the trash icon is tapped
-                                                await deleteItem(
-                                                    context, index);
-                                              },
-                                              child: Padding(
-                                                padding: EdgeInsets.only(
-                                                    right: 15.0, top: 8.0),
-                                                child: SvgPicture.asset(
-                                                  'assets/images/trash.svg',
-                                                  width: 20.0,
-                                                  height: 20.0,
-                                                  color: Colors.black,
-                                                ),
-                                              ),
-                                            )
-                                          ],
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                              ));
-                        });
-                  }
-                }),
+        // Expanded(
+        //   child:
+        // cartItems != null && cartItems!.isNotEmpty
+        //     ? ListView.builder(
+        //   itemCount: cartItems!.length,
+        //   itemBuilder: (context, index) {
+        //     // Parse the cart item data
+        //     List<String> itemData = cartItems![index].split(',');
+        //     String itemCode = itemData[0];
+        //     String itemName = itemData[1];
+        //     int quantity = int.parse(itemData[2]);
+        //
+        //     return ListTile(
+        //       title: Text(itemName),
+        //       subtitle: Text('Quantity: $quantity'),
+        //       // Add more information or customize the ListTile as needed
+        //     );
+        //   },
+        // )
+        //     : Center(
+        //   child: Text('No items in the cart'),
+        // ),
+        // ),
             SizedBox(height: 10),
             Container(
               width: screenWidth,
@@ -791,161 +506,7 @@ class _billing_screenState extends State<billing_screen> {
                         SizedBox(
                           height: 10.0,
                         ),
-                        Container(
-                          decoration: BoxDecoration(
-                            border: Border.all(
-                              color:
-                                  Colors.grey, // specify your border color here
-                              width: 1.0, // specify the border width
-                            ),
-                            borderRadius: BorderRadius.circular(
-                                8.0), // specify the border radius
-                          ),
-                          width: MediaQuery.of(context).size.width,
-                          child: Column(
-                            children: [
-                              Row(
-                                children: [
-                                  Container(
-                                    width:
-                                        MediaQuery.of(context).size.width / 2.2,
-                                    padding: EdgeInsets.all(10.0),
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Padding(
-                                          padding: EdgeInsets.only(
-                                              top: 0.0, left: 20.0, right: 0.0),
-                                          child: Text(
-                                            'Payment Mode',
-                                            style: TextStyle(
-                                              fontSize: 13.0,
-                                              color: Color(0xFF414141),
-                                              fontWeight: FontWeight.bold,
-                                            ),
-                                            textAlign: TextAlign.start,
-                                          ),
-                                        ),
-                                        Padding(
-                                          padding: EdgeInsets.only(
-                                              top: 0.0, left: 20.0, right: 0.0),
-                                          child: Text(
-                                            'Cheque',
-                                            style: TextStyle(
-                                              fontSize: 13.0,
-                                              color: Color(0xFFe78337),
-                                              fontWeight: FontWeight.bold,
-                                            ),
-                                            textAlign: TextAlign.start,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                  Container(
-                                    width:
-                                        MediaQuery.of(context).size.width / 2.9,
-                                    padding: EdgeInsets.all(10.0),
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.start,
-                                      children: [
-                                        Padding(
-                                          padding: EdgeInsets.only(
-                                              top: 0.0, left: 0.0, right: 0.0),
-                                          child: Text(
-                                            'Cheque Number',
-                                            style: TextStyle(
-                                              fontSize: 13.0,
-                                              color: Color(0xFF414141),
-                                              fontWeight: FontWeight.bold,
-                                            ),
-                                            textAlign: TextAlign.start,
-                                          ),
-                                        ),
-                                        Padding(
-                                          padding: EdgeInsets.only(
-                                              top: 0.0, left: 0.0, right: 0.0),
-                                          child: Text(
-                                            '68467967956554',
-                                            style: TextStyle(
-                                              fontSize: 13.0,
-                                              color: Color(0xFFe78337),
-                                              fontWeight: FontWeight.bold,
-                                            ),
-                                            textAlign: TextAlign.start,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  )
-                                ],
-                              ),
-                              SizedBox(height: 5),
-                              Container(
-                                height: 1.0, // Set the height of the line
-                                color: Colors.grey, // Set the color of the line
-                              ),
-                              SizedBox(height: 5),
-                              Container(
-                                width: MediaQuery.of(context).size.width,
-                                child: Row(
-                                  children: [
-                                    Container(
-                                      width:
-                                          MediaQuery.of(context).size.width / 2,
-                                      padding: EdgeInsets.all(10.0),
-                                      child: Column(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.start,
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Padding(
-                                            padding: EdgeInsets.only(
-                                                top: 0.0,
-                                                left: 20.0,
-                                                right: 0.0),
-                                            child: Text(
-                                              'Cheque Issued Bank',
-                                              style: TextStyle(
-                                                fontSize: 13.0,
-                                                color: Color(0xFF414141),
-                                                fontWeight: FontWeight.bold,
-                                              ),
-                                              textAlign: TextAlign.start,
-                                            ),
-                                          ),
-                                          Padding(
-                                            padding: EdgeInsets.only(
-                                                top: 0.0,
-                                                left: 20.0,
-                                                right: 0.0),
-                                            child: Text(
-                                              'Bank Name',
-                                              style: TextStyle(
-                                                fontSize: 13.0,
-                                                color: Color(0xFFe78337),
-                                                fontWeight: FontWeight.bold,
-                                              ),
-                                              textAlign: TextAlign.start,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                    SizedBox(
-                                      width: 10.0,
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
+
                       ],
                     ),
                   ),
@@ -963,148 +524,8 @@ class _billing_screenState extends State<billing_screen> {
                     width: screenWidth,
                     child: Column(
                       children: [
-                        Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: [
-                            Container(
-                              child: Text(
-                                'Sub Total',
-                                style: TextStyle(
-                                  color: Color(0xFF414141),
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 12.0,
-                                ),
-                              ),
-                            ),
-                            Spacer(),
-                            Row(
-                              crossAxisAlignment: CrossAxisAlignment.end,
-                              mainAxisAlignment: MainAxisAlignment.end,
-                              children: [
-                                Container(
-                                  //   width: MediaQuery.of(context).size.width / 1.8,
-                                  child: Row(
-                                    crossAxisAlignment: CrossAxisAlignment.end,
-                                    mainAxisAlignment: MainAxisAlignment.end,
-                                    children: [
-                                      Text(
-                                        'Pcs',
-                                        style: TextStyle(
-                                          color: Color(0xFFe78337),
-                                          fontWeight: FontWeight.w600,
-                                          fontSize: 13.0,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                )
-                              ],
-                            ),
-                          ],
-                        ),
-                        SizedBox(
-                          height: 10.0,
-                        ),
-                        Container(
-                          padding: EdgeInsets.all(12.0),
-                          height: 1.0, // Set the height of the line
-                          color: Colors.grey, // Set the color of the line
-                        ),
-                        Container(
-                          child: Column(
-                            children: [
-                              Container(
-                                //  width: screenWidth / 2,
-                                child: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Column(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.start,
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Text(''),
-                                        Text('Tax'),
-                                        SizedBox(
-                                          height: 4.0,
-                                        ),
-                                        Text('Transport Charge')
-                                      ],
-                                    ),
-                                    Container(
-                                      //   width: screenWidth / 2,
-                                      child: Column(
-                                        children: [
-                                          Row(
-                                            children: [
-                                              Text(
-                                                '(SGST)',
-                                                style: TextStyle(
-                                                  color: Color(0xFFe78337),
-                                                ),
-                                              ),
-                                              Text(
-                                                '846384',
-                                                style: TextStyle(
-                                                  color: Color(0xFFe78337),
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                          SizedBox(
-                                            height: 6.0,
-                                          ),
-                                          Row(
-                                            children: [
-                                              Text(
-                                                '(SGST)',
-                                                style: TextStyle(
-                                                  color: Color(0xFFe78337),
-                                                ),
-                                              ),
-                                              Text(
-                                                '846384',
-                                                style: TextStyle(
-                                                  color: Color(0xFFe78337),
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                          SizedBox(
-                                            height: 3.0,
-                                          ),
-                                          Row(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.end,
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.end,
-                                            children: [
-                                              Text(''),
-                                              Text(
-                                                '846384',
-                                                style: TextStyle(
-                                                  color: Color(0xFFe78337),
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                        Container(
-                          padding: EdgeInsets.all(12.0),
-                          height: 1.0, // Set the height of the line
-                          color: Colors.grey, // Set the color of the line
-                        ),
+
+
                         Row(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           mainAxisAlignment: MainAxisAlignment.start,

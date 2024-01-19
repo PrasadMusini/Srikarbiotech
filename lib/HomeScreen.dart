@@ -3,6 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:srikarbiotech/ViewOrders.dart';
 import 'package:srikarbiotech/view_collection_page.dart';
 
 import 'Selectpartyscreen.dart';
@@ -276,10 +277,7 @@ class _imagesliderState extends State<imageslider> {
                                       onTap: () {
                                         Navigator.push(
                                           context,
-                                          MaterialPageRoute(
-                                            builder: (context) =>
-                                                Selectpartyscreen( from: 'CreateOrder'),
-                                          ),
+                                          MaterialPageRoute(builder: (context) => ViewOrders()),
                                         );
                                       },
                                     ),
@@ -337,13 +335,20 @@ class _imagesliderState extends State<imageslider> {
                               children: [
                                 _customwidthCard(
                                   imageUrl: "arrows_repeat.svg",
-                                  item: "Create Reorder",
+                                  item: "Create Return order",
                                   item1: "Create a Reorder",
                                   color: Color(0xFFF8dac2),
                                   color_1: Color(0xFFec9d62),
                                   textcolor: Color(0xFFe78337),
+
                                   onTap: () {
-                                    print('Card tapped!');
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) =>
+                                            Selectpartyscreen( from: 'CreatereturnOrder'),
+                                      ),
+                                    );
                                   },
                                 ),
                                 SizedBox(
@@ -351,13 +356,16 @@ class _imagesliderState extends State<imageslider> {
                                 ),
                                 _customwidthCard(
                                   imageUrl: "shoppingbag.svg",
-                                  item: "View Reorder",
+                                  item: "View Return order",
                                   item1: "View All Reorders",
                                   color: Color(0xFFb7dbc1),
                                   color_1: Color(0xFF43a05a),
                                   textcolor: Color(0xFF118730),
                                   onTap: () {
-                                    print('Card tapped!');
+                                    // Navigator.push(
+                                    //   context,
+                                    //   MaterialPageRoute(builder: (context) => ViewReturnorder()),
+                                    // );
                                   },
                                 ),
                               ]),

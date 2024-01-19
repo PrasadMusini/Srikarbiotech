@@ -93,6 +93,8 @@ getslpcode();
             Text(
               'Select Party',
               style: TextStyle(
+                fontFamily: 'Roboto',
+                fontWeight: FontWeight.w600,
                 color: Colors.white,
                 fontSize: 18,
               ),
@@ -124,7 +126,8 @@ getslpcode();
                         width: 2,
                       ),
                     ),
-                    child: Row(
+                    child:
+                    Row(
                       children: [
                         Expanded(
                           child: Align(
@@ -139,7 +142,9 @@ getslpcode();
                                 keyboardType: TextInputType.name,
                                 style: TextStyle(
                                   fontSize: 14,
-                                  fontWeight: FontWeight.w300,
+                                  fontFamily: 'Roboto',
+                                  fontWeight: FontWeight.w700,
+                                  color: Color(0xFF2D2B2B),
                                 ),
                                 decoration: InputDecoration(
 
@@ -150,8 +155,8 @@ getslpcode();
                                   hintText: 'Search for Party Name or Id',
                                   hintStyle: TextStyle(
                                     fontSize: 14,
-                                    fontFamily: 'Roboto-Bold',
-                                    fontWeight: FontWeight.w500,
+                                    fontFamily: 'Roboto',
+                                    fontWeight: FontWeight.w700,
                                     color: Color(0xFFC4C2C2),
                                   ),
                                   border: InputBorder.none,
@@ -191,10 +196,14 @@ getslpcode();
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => Createorderscreen(
-                              cardName: filteredDealers[index].cardName,
-                              cardCode: filteredDealers[index].cardCode,
-                              address: filteredDealers[index].fullAddress,
+                            builder: (context) =>  Createorderscreen(
+                                cardName: filteredDealers[index].cardName,
+                                cardCode: filteredDealers[index].cardCode,
+                                address: filteredDealers[index].fullAddress,
+                                state: filteredDealers[index].state,
+                                phone: filteredDealers[index].phoneNumber,
+                                proprietorName:  filteredDealers[index].proprietorName,
+                                gstRegnNo:  filteredDealers[index].gstRegnNo
                             ),
                           ),
                         );
@@ -235,6 +244,28 @@ getslpcode();
                         ),
                       );
                     }
+   else if (screenFrom == "CreatereturnOrder") {
+      print("Tapped on dealer with cardName:2 ${filteredDealers[index].cardName}");
+      try {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => Createorderscreen(
+                cardName: filteredDealers[index].cardName,
+                cardCode: filteredDealers[index].cardCode,
+                address: filteredDealers[index].fullAddress,
+                state: filteredDealers[index].state,
+                phone: filteredDealers[index].phoneNumber,
+                proprietorName:  filteredDealers[index].proprietorName,
+                gstRegnNo:  filteredDealers[index].gstRegnNo
+            ),
+          ),
+        );
+      } catch (e) {
+        print("Error navigating: $e");
+      }
+
+    }
 
                   },
 

@@ -2,12 +2,13 @@ import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:hexcolor/hexcolor.dart';
+import 'package:srikarbiotech/ViewOrders.dart';
 import 'package:srikarbiotech/view_collection_page.dart';
 
 import 'HomeScreen.dart';
 
-class StatusScreen extends StatelessWidget {
-  const StatusScreen({super.key});
+class ReturnorderStatusScreen extends StatelessWidget {
+  const ReturnorderStatusScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -42,7 +43,7 @@ class StatusScreen extends StatelessWidget {
               height: 35,
             ),
             Text(
-              'Your Collection Submitted successfully',
+              'Your return Order got Placed successfully',
               style: TextStyle(
                 fontSize: 19,
                 letterSpacing: 0,
@@ -50,34 +51,34 @@ class StatusScreen extends StatelessWidget {
                 color: primaryGreen,
               ),
             ),
-            const Text(
-              'Thank you for shopping with Srikar Bio Tech',
-              style: TextStyle(
-                fontSize: 18,
-                letterSpacing: 0,
-              ),
-            ),
+            // const Text(
+            //   'Thank you for shopping with Srikar Bio Tech',
+            //   style: TextStyle(
+            //     fontSize: 18,
+            //     letterSpacing: 0,
+            //   ),
+            // ),
             // const SizedBox(
             //   height: 5,
             // ),
-            // Row(
-            //   mainAxisAlignment: MainAxisAlignment.center,
-            //   crossAxisAlignment: CrossAxisAlignment.center,
-            //   children: [
-            //     const Text(
-            //       'Order ID: ',
-            //       style: TextStyle(fontWeight: FontWeight.bold),
-            //     ),
-            //     Text(
-            //       orderId,
-            //       style: TextStyle(
-            //         fontWeight: FontWeight.bold,
-            //         fontSize: 20,
-            //         color: primaryOrange,
-            //       ),
-            //     ),
-            //   ],
-            // ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                const Text(
+                  'Order ID: ',
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
+                Text(
+                  orderId,
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 20,
+                    color: primaryOrange,
+                  ),
+                ),
+              ],
+            ),
             const SizedBox(
               height: 20,
             ),
@@ -88,25 +89,25 @@ class StatusScreen extends StatelessWidget {
                   // Navigate to the "View Collections" screen
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => ViewCollectionPage()),
+                    MaterialPageRoute(builder: (context) => ViewOrders()),
                   );
                 },
-              child:
-              Container(
-                padding: const EdgeInsets.all(13),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(12),
-                  color: primaryOrange,
-                ),
-                child: const Center(
-                  child: Text(
-                    'Go to View Collections',
-                    style: TextStyle(
-                        fontWeight: FontWeight.bold, color: Colors.white),
+                child:
+                Container(
+                  padding: const EdgeInsets.all(13),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(12),
+                    color: primaryOrange,
+                  ),
+                  child: const Center(
+                    child: Text(
+                      'Go to View  Return Orders',
+                      style: TextStyle(
+                          fontWeight: FontWeight.bold, color: Colors.white),
+                    ),
                   ),
                 ),
               ),
-            ),
             ),
             const SizedBox(
               height: 20,
@@ -121,25 +122,25 @@ class StatusScreen extends StatelessWidget {
                     MaterialPageRoute(builder: (context) => HomeScreen()),
                   );
                 },
-              child: Container(
-                padding: const EdgeInsets.all(13),
-                decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(12),
-                    color: Colors.white,
-                    border: Border.all(
-                      color: primaryOrange,
-                    )),
-                child: Center(
-                  child: Text(
-                    'Back to Home',
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      color: primaryOrange,
+                child: Container(
+                  padding: const EdgeInsets.all(13),
+                  decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(12),
+                      color: Colors.white,
+                      border: Border.all(
+                        color: primaryOrange,
+                      )),
+                  child: Center(
+                    child: Text(
+                      'Back to Home',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: primaryOrange,
+                      ),
                     ),
                   ),
                 ),
               ),
-            ),
             ),
           ],
         ),
