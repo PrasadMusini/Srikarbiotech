@@ -6,6 +6,7 @@ import 'package:srikarbiotech/ViewOrders.dart';
 import 'package:srikarbiotech/view_collection_page.dart';
 
 import 'HomeScreen.dart';
+import 'ViewReturnorder.dart';
 
 class ReturnorderStatusScreen extends StatelessWidget {
   const ReturnorderStatusScreen({super.key});
@@ -43,7 +44,7 @@ class ReturnorderStatusScreen extends StatelessWidget {
               height: 35,
             ),
             Text(
-              'Your return Order got Placed successfully',
+              'Your Return Order got Placed successfully',
               style: TextStyle(
                 fontSize: 19,
                 letterSpacing: 0,
@@ -89,7 +90,7 @@ class ReturnorderStatusScreen extends StatelessWidget {
                   // Navigate to the "View Collections" screen
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => ViewOrders()),
+                    MaterialPageRoute(builder: (context) => ViewReturnorder()),
                   );
                 },
                 child:

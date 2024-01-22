@@ -42,9 +42,6 @@ class _ProductListState extends State<Createorderscreen > {
   bool isLoading = false;
   List<ProductResponse> products = [];
   List<int> quantities =[];
-  // List<int> quantities = List<int>.filled(productresponse.length, 0);
-  // List<bool> isSelectedList = List<bool>.filled(productresponse.length, false);
-
   List<TextEditingController> textEditingControllers =[];
   bool isSelectedWeight1 = false;
   bool isSelectedWeight2 = false;
@@ -186,12 +183,12 @@ class _ProductListState extends State<Createorderscreen > {
     children: [
     IconButton(
     onPressed: () {
-    Navigator.push(
-    context,
-    MaterialPageRoute(
-    builder: (context) => const CartScreen(),
-    ),
-    );
+    // Navigator.push(
+    // context,
+    // MaterialPageRoute(
+    // builder: (context) => const CartScreen(),
+    // ),
+    // );
     },
     icon: const Icon(Icons.shopping_cart),
     ),
@@ -767,17 +764,7 @@ class _ProductListState extends State<Createorderscreen > {
                     gstRegnNo: '${widget.gstRegnNo}'),
               ),
             );
-            // Check if there are saved cart items
-            // List<SelectedProducts> savedCartItems =
-            // await CartHelper.getFertCartData();
-            //
-            // if (_isValidCart(savedCartItems)) {
-            //   // Navigate to the next screen if items are saved and have valid data
-            //
-            // } else {
-            //   // Show a message or perform some action if no valid items are saved
-            //   print('No valid items are saved or cart is empty.');
-            // }
+
           },
           style: ElevatedButton.styleFrom(
             primary: Color(0xFFe78337), // Set your desired background color

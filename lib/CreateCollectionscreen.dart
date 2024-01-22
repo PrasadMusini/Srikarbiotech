@@ -1110,29 +1110,30 @@ fetchdropdownitemscategory();
                           SizedBox(height: 18.0),
 
                           // Submit Button
-                          Container(
+                          GestureDetector(
+                            onTap: () {
+                              // Call Submit submit function or perform the desired action here
+                              print('Submit button clicked');
+                              AddUpdateCollections(context);
+                            },
+                            child: Container(
                               padding: const EdgeInsets.all(10),
                               width: double.infinity,
                               decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(10),
                                 color: Color(0xFFe78337),
                               ),
-                              child: GestureDetector(
-                                onTap: () {
-                                  // Call Submit submit function or perform the desired action here
-                                  print('Submit button clicked');
-                                  AddUpdateCollections(context);
-                                },
-                                child: Center(
-                                  child: Text(
-                                    'Submit',
-                                    style: TextStyle(
-                                      color: Colors.white,
-                                    ),
+                              child: Center(
+                                child: Text(
+                                  'Submit',
+                                  style: TextStyle(
+                                    color: Colors.white,
                                   ),
                                 ),
-                              )
+                              ),
+                            ),
                           ),
+
 
                         ],
                       ),

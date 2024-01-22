@@ -52,6 +52,7 @@ dependencies:
   path: ^1.8.0
   dotted_border: ^2.0.0
   collection: ^1.15.0
+  device_info: ^2.0.0
 
 
 dev_dependencies:
@@ -110,6 +111,11 @@ flutter:
     - assets/sensor-alert.svg
     - assets/sb_money-bill-wave.svg
     - assets/apps-sort.svg
+    - assets/shipping-timed.svg
+    - assets/shipping-fast.svg
+    - assets/box-circle-check.svg
+    - assets/boxes.svg
+    - assets/edit.svg
   #   - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see

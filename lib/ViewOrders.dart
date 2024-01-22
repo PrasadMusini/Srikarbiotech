@@ -3,8 +3,10 @@ import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:hexcolor/hexcolor.dart';
 import 'package:intl/intl.dart';
 import 'package:http/http.dart' as http;
+import 'HomeScreen.dart';
 import 'OrctResponse.dart';
 import 'Payment_model.dart';
 import 'order_details.dart';
@@ -16,6 +18,13 @@ class ViewOrders extends StatefulWidget {
 }
 
 class _vieworderPageState extends State<ViewOrders> {
+  final _orangeColor = HexColor('#e58338');
+  final _borderforContainer = BoxDecoration(
+      borderRadius: BorderRadius.circular(10),
+      border: Border.all(
+        color: HexColor('#e58338'),
+      ));
+
   // String url =
   //     'http://182.18.157.215/Srikar_Biotech_Dev/API/api/Collections/GetCollections/null';
 
@@ -96,11 +105,11 @@ class _vieworderPageState extends State<ViewOrders> {
             ),
             GestureDetector(
               onTap: () {
-                // Handle the click event for the home icon
-                // Navigator.pushReplacement(
-                //   context,
-                //   MaterialPageRoute(builder: (context) => HomeScreen()),
-                // );
+               // Handle the click event for the home icon
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (context) => HomeScreen()),
+                );
               },
               child: Icon(
                 Icons.home,
@@ -155,9 +164,11 @@ class _vieworderPageState extends State<ViewOrders> {
                     child: Container(
                       height: 45,
                       width: 45,
+                      decoration: _borderforContainer,
                       child: Center(
                         child: SvgPicture.asset(
-                          'assets/sb_home.svg',
+                          'assets/apps-sort.svg',
+                          color: _orangeColor,
                         ),
                       ),
                     ),

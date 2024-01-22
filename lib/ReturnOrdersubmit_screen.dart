@@ -5,6 +5,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:hexcolor/hexcolor.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:intl/intl.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -15,9 +16,10 @@ import 'package:http/http.dart' as http;
 import 'package:srikarbiotech/sb_status.dart';
 
 import 'HomeScreen.dart';
+import 'ReturnorderStatusScreen.dart';
 import 'orderStatusScreen.dart';
 
-class Ordersubmit_screen extends StatefulWidget {
+class ReturnOrdersubmit_screen extends StatefulWidget {
   final String cardName;
   final String  cardCode;
   final String  address;
@@ -26,18 +28,44 @@ class Ordersubmit_screen extends StatefulWidget {
   final String state;
   final String phone;
 
-  Ordersubmit_screen(
+  ReturnOrdersubmit_screen(
       {required this.cardName, required this.cardCode, required this.address, required  this.state, required  this.phone,
         required  this.proprietorName, required  this.gstRegnNo});
   @override
-  Order_submit_screen createState() => Order_submit_screen();
+  returnOrder_submit_screen createState() => returnOrder_submit_screen();
 }
 
-class Order_submit_screen extends State<Ordersubmit_screen> {
+class returnOrder_submit_screen extends State<ReturnOrdersubmit_screen> {
 
   List<String>? cartItems = [];
   List<TextEditingController> textEditingControllers =[];
   List<int> quantities =[];
+  final _orangeColor = HexColor('#e58338');
+
+  final _titleTextStyle = const TextStyle(
+    fontFamily: 'Roboto',
+    fontWeight: FontWeight.w700,
+    color: Colors.black,
+    fontSize: 15,
+  );
+
+  final _dataTextStyle = TextStyle(
+    fontFamily: 'Roboto',
+    fontWeight: FontWeight.bold,
+    color: HexColor('#e58338'),
+    fontSize: 13,
+  );
+
+  final dividerForHorizontal = Container(
+    width: double.infinity,
+    height: 1,
+    color: Colors.grey,
+  );
+  final dividerForVertical = Container(
+    width: 1,
+    height: 60,
+    color: Colors.grey,
+  );
   @override
   initState() {
     super.initState();
@@ -45,7 +73,7 @@ class Order_submit_screen extends State<Ordersubmit_screen> {
       DeviceOrientation.portraitDown,
       DeviceOrientation.portraitUp,
     ]);
-   loadData();
+    loadData();
     print('cardName: ${widget.cardName}');
     print('cardCode: ${widget.cardCode}');
     print('address: ${widget.address}');
@@ -81,7 +109,7 @@ class Order_submit_screen extends State<Ordersubmit_screen> {
                 ),
                 SizedBox(width: 8.0),
                 Text(
-                  'Order Submission ',
+                  'Return Order Submission ',
                   style: TextStyle(
                     color: Colors.white,
                     fontSize: 18,
@@ -154,162 +182,159 @@ class Order_submit_screen extends State<Ordersubmit_screen> {
             child: IntrinsicHeight(
               child:
               Card(
-                color: Colors.white,
+                elevation: 5,
                 child: Container(
-                  width: MediaQuery.of(context).size.width,
-                  padding: EdgeInsets.all(10.0),
+                  decoration: BoxDecoration(
+                    color: Colors.white10,
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  width: double.infinity, // remove padding here
                   child: Column(
-                    children: [
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Padding(
-                                padding:
-                                EdgeInsets.only(left: 15.0, top: 8.0),
-                                child: Text(
-                                  'Transport  Details',
-                                  style: TextStyle(
-                                    fontSize: 13.0,
-                                    color: Color(0xFF414141),
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                  textAlign: TextAlign.start,
-                                ),
-                              ),
-                              Padding(
-                                padding:
-                                EdgeInsets.only(right: 15.0, top: 8.0),
-                                child: GestureDetector(
-                                  child: SvgPicture.asset(
-                                    'assets/edit.svg',
-                                    width: 20.0,
-                                    height: 20.0,
-                                    color: Color(0xFFe78337),
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                          SizedBox(
-                            height: 10.0,
-                          ),
-                        ],
-                      ),
-                      Container(
-                        decoration: BoxDecoration(
-                          border: Border.all(
-                            color:
-                            Colors.grey, // specify your border color here
-                            width: 1.0, // specify the border width
-                          ),
-                          borderRadius: BorderRadius.circular(
-                              8.0), // specify the border radius
-                        ),
-                        width: MediaQuery.of(context).size.width,
-                        child: Column(
-                          children: [
-                            Row(
-                              children: [
-                                Container(
-                                  width:
-                                  MediaQuery.of(context).size.width / 2.2,
-                                  padding: EdgeInsets.all(10.0),
-                                  child: Column(
-                                    crossAxisAlignment:
-                                    CrossAxisAlignment.start,
-                                    children: [
-                                      Padding(
-                                        padding: EdgeInsets.only(
-                                          top: 0.0,
-                                          left: 20.0,
-                                          right: 0.0,
-                                        ),
-                                        child: Text(
-                                          'Booking Place',
-                                          style: TextStyle(
-                                            fontSize: 13.0,
-                                            color: Color(0xFF414141),
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                          textAlign: TextAlign.start,
-                                        ),
-                                      ),
-                                      SizedBox(
-                                        height: 4.0,
-                                      ),
-                                      Padding(
-                                        padding: EdgeInsets.only(
-                                            top: 0.0, left: 20.0, right: 0.0),
-                                        child: Text(
-                                          'Nacharam',
-                                          style: TextStyle(
-                                            fontSize: 13.0,
-                                            color: Color(0xFFe78337),
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                          textAlign: TextAlign.start,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                Container(
-                                  width:
-                                  MediaQuery.of(context).size.width / 2.9,
-                                  padding: EdgeInsets.all(10.0),
-                                  child: Column(
-                                    crossAxisAlignment:
-                                    CrossAxisAlignment.start,
-                                    mainAxisAlignment:
-                                    MainAxisAlignment.start,
-                                    children: [
-                                      Padding(
-                                        padding: EdgeInsets.only(
-                                            top: 0.0, left: 0.0, right: 0.0),
-                                        child: Text(
-                                          'Transport Name',
-                                          style: TextStyle(
-                                            fontSize: 13.0,
-                                            color: Color(0xFF414141),
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                          textAlign: TextAlign.start,
-                                        ),
-                                      ),
-                                      SizedBox(
-                                        height: 4.0,
-                                      ),
-                                      Padding(
-                                        padding: EdgeInsets.only(
-                                            top: 0.0, left: 0.0, right: 0.0),
-                                        child: Text(
-                                          'Train  ',
-                                          style: TextStyle(
-                                            fontSize: 13.0,
-                                            color: Color(0xFFe78337),
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                          textAlign: TextAlign.start,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                )
-                              ],
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      // row one
+                      Padding(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 12, vertical: 10),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: <Widget>[
+                            Text(
+                              'Trasport Details',
+                              style: _titleTextStyle,
                             ),
-
-
+                            const Icon(Icons.home),
                           ],
                         ),
                       ),
-                      SizedBox(
-                        height: 10.0,
+
+                      dividerForHorizontal,
+
+                      // row two
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: <Widget>[
+                          Expanded(
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 12, vertical: 10),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    'LR Number',
+                                    style: _titleTextStyle,
+                                  ),
+                                  Text(
+                                    'xx-xx-xxxx',
+                                    style: _dataTextStyle,
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                          dividerForVertical,
+                          Expanded(
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 12, vertical: 10),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    'LR Date',
+                                    style: _titleTextStyle,
+                                  ),
+                                  Text(
+                                    'xxxxxx',
+                                    style: _dataTextStyle,
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
 
+                      dividerForHorizontal,
+
+                      // row three
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: <Widget>[
+                          Expanded(
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 12, vertical: 10),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    'Transport Mode',
+                                    style: _titleTextStyle,
+                                  ),
+                                  Text(
+                                    'Train',
+                                    style: _dataTextStyle,
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                          dividerForVertical,
+                          Expanded(
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 12, vertical: 10),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    'Transport Name',
+                                    style: _titleTextStyle,
+                                  ),
+                                  Text(
+                                    'Railway Parcel Service',
+                                    style: _dataTextStyle,
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+
+                      dividerForHorizontal,
+
+                      // row four
+                      Padding(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 12, vertical: 10),
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 10, vertical: 4),
+                          decoration: BoxDecoration(
+                            color: Colors.orange.shade100,
+                            border: Border.all(
+                              color: _orangeColor,
+                            ),
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              const Icon(Icons.link),
+                              const SizedBox(
+                                width: 5,
+                              ),
+                              Text(
+                                'Attachment',
+                                style: _titleTextStyle,
+                              ),
+                            ],
+                          ),
+                        ),
+                      )
                     ],
                   ),
                 ),
@@ -387,7 +412,7 @@ class Order_submit_screen extends State<Ordersubmit_screen> {
           onPressed: () {
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => orderStatusScreen()),
+              MaterialPageRoute(builder: (context) => ReturnorderStatusScreen()),
             );
           },
           style: ElevatedButton.styleFrom(
@@ -424,7 +449,7 @@ class Order_submit_screen extends State<Ordersubmit_screen> {
     List<String> itemData = cartItems![index].split(',');
     String itemName = itemData[1];
     int quantity = int.parse(itemData[2]);
-print('ordersubmitscreenquntity$quantity');
+    print('ordersubmitscreenquntity$quantity');
     List<String> weightOptions = ['10 KG', '20 KG', '40 KG', '50 KG'];
     String selectedWeight = weightOptions[0]; // Default to the first option
 

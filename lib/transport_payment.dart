@@ -148,15 +148,18 @@ class _transportstate extends State<transport_payment> {
                                         child: TextFormField(
                                           keyboardType: TextInputType.name,
                                           style: TextStyle(
-                                            fontSize: 14,
-                                            fontWeight: FontWeight.w300,
+                                              color: Color(0xFF5f5f5f),
+                                              fontFamily: 'Roboto',
+                                              fontWeight: FontWeight.w600,
+                                              fontSize: 14
                                           ),
                                           decoration: InputDecoration(
                                             hintText: 'Enter Booking Place',
                                             hintStyle: TextStyle(
-                                              fontSize: 14,
+                                                color: Color(0xFF5f5f5f),
                                                 fontFamily: 'Roboto',
                                                 fontWeight: FontWeight.w600,
+                                                fontSize: 14
 
                                             ),
                                             border: InputBorder.none,
@@ -186,10 +189,10 @@ class _transportstate extends State<transport_payment> {
                               'Preferable Transport',
                               style: TextStyle(
 
-                                color: Colors.black,
-                                fontFamily: 'Roboto',
-                                fontWeight: FontWeight.w600,
-                                fontSize: 14,
+                                  color: Color(0xFF5f5f5f),
+                                  fontFamily: 'Roboto',
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: 14,
                               ),
                               textAlign: TextAlign.start,
                             ),
@@ -223,6 +226,7 @@ class _transportstate extends State<transport_payment> {
                                           keyboardType: TextInputType.name,
                                           style: TextStyle(
 
+                                              color: Color(0xFF5f5f5f),
                                               fontFamily: 'Roboto',
                                               fontWeight: FontWeight.w600,
                                               fontSize: 14
@@ -230,11 +234,11 @@ class _transportstate extends State<transport_payment> {
                                           decoration: InputDecoration(
                                             hintText: 'Enter Parcel Service',
                                             hintStyle: TextStyle(
-
+                                                color: Color(0xFF5f5f5f),
                                                 fontFamily: 'Roboto',
                                                 fontWeight: FontWeight.w600,
                                                 fontSize: 14,
-                                              color: Color(0xFFC4C2C2),
+
                                             ),
                                             border: InputBorder.none,
                                           ),

@@ -9,6 +9,7 @@ import 'package:srikarbiotech/Createorderscreen.dart';
 import 'dart:convert';
 
 import 'CreateCollectionscreen.dart';
+import 'CreateReturnorderscreen.dart';
 import 'Ledgerscreen.dart';
 import 'Model/Dealer.dart';
 
@@ -33,6 +34,7 @@ class Selectparty_screen extends State<Selectpartyscreen> {
   @override
   void initState() {
     super.initState();
+    fetchData();
 getslpcode();
 
     print("screenFrom: ${widget.from}");
@@ -250,7 +252,7 @@ getslpcode();
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => Createorderscreen(
+            builder: (context) => CreateReturnorderscreen(
                 cardName: filteredDealers[index].cardName,
                 cardCode: filteredDealers[index].cardCode,
                 address: filteredDealers[index].fullAddress,

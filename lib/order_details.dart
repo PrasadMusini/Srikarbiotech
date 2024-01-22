@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:srikarbiotech/HomeScreen.dart';
 
 class orderdetails extends StatefulWidget {
   final String orderid;
@@ -118,10 +119,10 @@ class _orderdetailsPageState extends State<orderdetails> {
               GestureDetector(
                 onTap: () {
                   // Handle the click event for the home icon
-                  // Navigator.pushReplacement(
-                  //   context,
-                  //   MaterialPageRoute(builder: (context) => HomeScreen()),
-                  // );
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(builder: (context) => HomeScreen()),
+                  );
                 },
                 child: Icon(
                   Icons.home,

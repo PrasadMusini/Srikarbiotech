@@ -7,6 +7,7 @@ import 'package:srikarbiotech/ViewOrders.dart';
 import 'package:srikarbiotech/view_collection_page.dart';
 
 import 'Selectpartyscreen.dart';
+import 'ViewReturnorder.dart';
 
 
 class HomeScreen extends StatefulWidget {
@@ -362,10 +363,10 @@ class _imagesliderState extends State<imageslider> {
                                   color_1: Color(0xFF43a05a),
                                   textcolor: Color(0xFF118730),
                                   onTap: () {
-                                    // Navigator.push(
-                                    //   context,
-                                    //   MaterialPageRoute(builder: (context) => ViewReturnorder()),
-                                    // );
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(builder: (context) => ViewReturnorder()),
+                                    );
                                   },
                                 ),
                               ]),

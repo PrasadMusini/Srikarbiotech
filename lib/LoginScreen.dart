@@ -38,6 +38,8 @@ class _MyHomePageState extends State<LoginScreen> {
     print("Company ID: ${widget.companyId}");
     compneyid = widget.companyId;
     print("Company ID: $compneyid");
+    emailController.text = "Superadmin";
+    passwordController.text = "Abcd@123";
   }
   @override
   Widget build(BuildContext context) {
@@ -182,14 +184,16 @@ class _MyHomePageState extends State<LoginScreen> {
                                             },
                                             style: TextStyle(
                                               fontSize: 14,
-                                              fontWeight: FontWeight.w300,
+                                              fontFamily: 'Roboto',
+                                              fontWeight: FontWeight.w600,
+                                                color: Color(0xFFe78337),
                                             ),
                                             decoration: InputDecoration(
                                               hintText: 'Enter Email or Username',
                                               hintStyle: TextStyle(
                                                 fontSize: 14,
-                                                fontFamily: 'Roboto-Bold',
-                                                fontWeight: FontWeight.w500,
+                                                fontFamily: 'Roboto',
+                                                fontWeight: FontWeight.w600,
                                                 color: Color(0xFFC4C2C2),
                                               ),
                                               border: InputBorder.none,
@@ -281,15 +285,18 @@ class _MyHomePageState extends State<LoginScreen> {
                                             },
                                             style: TextStyle(
                                               fontSize: 14,
-                                              fontWeight: FontWeight.w300,
+
+                                                fontFamily: 'Roboto',
+                                                fontWeight: FontWeight.w600,
+                                                color: Color(0xFFe78337),
                                             ),
                                             decoration: InputDecoration(
                                               hintText: 'Enter Password',
                                               hintStyle: TextStyle(
                                                 fontSize: 14,
-                                                fontFamily: 'Roboto-Bold',
-                                                fontWeight: FontWeight.w500,
-                                                color: Color(0xFFC4C2C2),
+                                                fontFamily: 'Roboto',
+                                                fontWeight: FontWeight.w600,
+                                                color: Color(0xFFe78337),
                                               ),
                                               border: InputBorder.none,
                                             ),
@@ -411,16 +418,17 @@ class _MyHomePageState extends State<LoginScreen> {
   void _login() async {
     final apiUrl = baseUrl+post_Login;
   //  final apiUrl = 'http://182.18.157.215/Srikar_Biotech_Dev/API/api/Account/Login';
+  //   final payload = {
+  //     "Username": "Superadmin",
+  //     "Password": "Abcd@123",
+  //     "CompanyId": 2
+  //   };
+
     final payload = {
-      "Username": "Superadmin",
-      "Password": "Abcd@123",
-      "CompanyId": 2
+      "Username": emailController.text,
+      "Password": passwordController.text,
+      "CompanyId": compneyid
     };
-    // final payload = {
-    //   "Username": emailController.text,
-    //   "Password": passwordController.text,
-    //   "CompanyId": compneyid
-    // };
 
     // if (emailController.text.isEmpty || passwordController.text.isEmpty) {
     //   CommonUtils.showCustomToastMessageLong('Please fill in all fields', context, 1, 4);

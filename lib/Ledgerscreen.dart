@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:device_info/device_info.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -441,12 +442,17 @@ class Ledger_screen extends State<Ledgerscreen> {
     if (isValid) {
       final apiUrl = 'http://182.18.157.215/Srikar_Biotech_Dev/API/api/Party/GetCustomerLedgerReport';
       final requestHeaders = {'Content-Type': 'application/json'};
-
       final requestBody = {
-        "PartyCode":'${widget.cardCode}',
-        "FromDate": fromdate,
-        "ToDate": todate
+        "PartyCode": "SRIKARTS00139",
+        "FromDate": "2023-05-24",
+        "ToDate": "2023-06-05"
       };
+
+      // final requestBody = {
+      //   "PartyCode":'${widget.cardCode}',
+      //   "FromDate": fromdate,
+      //   "ToDate": todate
+      // };
 
       try {
         final response = await http.post(
@@ -579,6 +585,16 @@ class Ledger_screen extends State<Ledgerscreen> {
   }
 
   Future<void> checkStoragePermission() async {
+
+    bool permissionStatus;
+    final deviceInfo = await DeviceInfoPlugin().androidInfo;
+
+    if (deviceInfo.version.sdkInt > 32) {
+      permissionStatus = await Permission.storage.request().isGranted;
+    } else {
+      permissionStatus = await Permission.storage.request().isGranted;
+    }
+    print('Storage permission is granted $permissionStatus');
     if (await Permission.storage.request().isGranted) {
     // Permission is granted, you can proceed with your tasks
     print('Storage permission is granted');
