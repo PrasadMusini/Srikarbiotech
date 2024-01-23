@@ -1,9 +1,11 @@
 import 'dart:async';
 
+import 'package:device_info/device_info.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 import 'Common/Constants.dart';
 import 'Common/SharedPreferencesHelper.dart';
@@ -24,7 +26,7 @@ class _MyAppState extends State<MyApp> {
   @override
   void initState() {
     super.initState();
-
+    checkStoragePermission();
   }
 
   @override
@@ -34,6 +36,30 @@ class _MyAppState extends State<MyApp> {
       home: MyHomePage(),
     );
   }
+
+  Future<void> checkStoragePermission() async {
+    Map<Permission, PermissionStatus> statuses = await [
+      Permission.storage,
+      Permission.manageExternalStorage,
+    ].request();
+
+    var storage = statuses[Permission.storage];
+    print('Storage permission is granted $storage');
+    var manageExternalStorage = statuses[Permission.manageExternalStorage];
+    print('Storage permission is granted $manageExternalStorage');
+    if (storage!.isGranted || manageExternalStorage!.isGranted) {
+      // // do something
+      // Navigator.of(context).pushReplacement(
+      //     MaterialPageRoute(builder: (context) =>  MyApp())
+   //   );
+    }
+    else{
+      openAppSettings();
+    }
+
+  }
+
+
 }
 
 

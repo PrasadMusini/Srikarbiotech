@@ -303,7 +303,7 @@ class Createcollection_screen extends State<CreateCollectionscreen> {
                           SizedBox(height: 4.0),
                           Container(
                             height: 50,
-                            child: Expanded(
+                            // child: Expanded(
                               child: apiResponse == null
                                   ? Center(child: CircularProgressIndicator())
                                   : ListView.builder(
@@ -406,7 +406,7 @@ class Createcollection_screen extends State<CreateCollectionscreen> {
                                       },
                                     ),
                             ),
-                          ),
+                       //   ),
                           SizedBox(height: 5.0),
                           Visibility(
                               visible: Selected_PaymentMode == 'Cheque',
@@ -1382,7 +1382,7 @@ class Createcollection_screen extends State<CreateCollectionscreen> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Padding(
-          padding: EdgeInsets.only(top: 10.0, left: 5.0, right: 0.0),
+          padding: EdgeInsets.only(top: 0.0, left: 5.0, right: 0.0),
           child: Text(
             labelText,
             style: TextStyle(
@@ -1393,9 +1393,12 @@ class Createcollection_screen extends State<CreateCollectionscreen> {
             textAlign: TextAlign.start,
           ),
         ),
-        SizedBox(height: 8.0), // Add space between labelText and TextFormField
+        SizedBox(height: 8.0),
         GestureDetector(
-          onTap: onTap,
+          onTap: () async {
+            // Call the onTap callback to open the date picker
+            onTap();
+          },
           child: Container(
             width: MediaQuery.of(context).size.width,
             height: 55.0,
@@ -1413,35 +1416,40 @@ class Createcollection_screen extends State<CreateCollectionscreen> {
                     alignment: Alignment.centerLeft,
                     child: Padding(
                       padding: EdgeInsets.only(left: 10.0, top: 0.0),
-                      child: TextFormField(
-                        controller: controller,
-                        style: TextStyle(
-                          fontSize: 14,
-                          fontFamily: 'Roboto',
-                          fontWeight: FontWeight.w600,
-                          color: Color(0xFFe78337),
-                        ),
-                        decoration: InputDecoration(
-                          hintText: labelText,
-                          hintStyle: TextStyle(
+                      child: IgnorePointer(
+                        child: TextFormField(
+                          controller: controller,
+                          style: TextStyle(
                             fontSize: 14,
                             fontFamily: 'Roboto',
-                            fontWeight: FontWeight.w500,
+                            fontWeight: FontWeight.w600,
                             color: Color(0xFFe78337),
                           ),
-                          border: InputBorder.none,
+                          decoration: InputDecoration(
+                            hintText: labelText,
+                            hintStyle: TextStyle(
+                              fontSize: 14,
+                              fontFamily: 'Roboto',
+                              fontWeight: FontWeight.w600,
+                              color: Color(0xFFe78337),
+                            ),
+                            border: InputBorder.none,
+                          ),
                         ),
                       ),
                     ),
                   ),
                 ),
                 InkWell(
-                  onTap: onTap,
+                  onTap: () async {
+                    // Call the onTap callback to open the date picker
+                    onTap();
+                  },
                   child: Padding(
                     padding: EdgeInsets.all(10.0),
                     child: Icon(
                       Icons.calendar_today,
-                      color: Color(0xFFe78337),
+                      color: Colors.orange,
                     ),
                   ),
                 ),
@@ -1452,6 +1460,8 @@ class Createcollection_screen extends State<CreateCollectionscreen> {
       ],
     );
   }
+
+
 
   Future<void> _selectcheckDate(
     BuildContext context,

@@ -262,9 +262,12 @@ class Ledger_screen extends State<Ledgerscreen> {
             textAlign: TextAlign.start,
           ),
         ),
-        SizedBox(height: 8.0), // Add space between labelText and TextFormField
+        SizedBox(height: 8.0),
         GestureDetector(
-          onTap: onTap,
+          onTap: () async {
+            // Call the onTap callback to open the date picker
+            onTap();
+          },
           child: Container(
             width: MediaQuery.of(context).size.width,
             height: 55.0,
@@ -282,30 +285,35 @@ class Ledger_screen extends State<Ledgerscreen> {
                     alignment: Alignment.centerLeft,
                     child: Padding(
                       padding: EdgeInsets.only(left: 10.0, top: 0.0),
-                      child: TextFormField(
-                        controller: controller,
-                        style: TextStyle(
-                          fontSize: 14,
-                          fontFamily: 'Roboto',
-                          fontWeight: FontWeight.w600,
-                          color: Color(0xFFe78337),
-                        ),
-                        decoration: InputDecoration(
-                          hintText: labelText,
-                          hintStyle: TextStyle(
+                      child: IgnorePointer(
+                        child: TextFormField(
+                          controller: controller,
+                          style: TextStyle(
                             fontSize: 14,
                             fontFamily: 'Roboto',
-                            fontWeight: FontWeight.w600,
+                            fontWeight: FontWeight.w700,
                             color: Color(0xFFe78337),
                           ),
-                          border: InputBorder.none,
+                          decoration: InputDecoration(
+                            hintText: labelText,
+                            hintStyle: TextStyle(
+                              fontSize: 14,
+                              fontFamily: 'Roboto',
+                              fontWeight: FontWeight.w700,
+                              color: Color(0xFFe78337),
+                            ),
+                            border: InputBorder.none,
+                          ),
                         ),
                       ),
                     ),
                   ),
                 ),
                 InkWell(
-                  onTap: onTap,
+                  onTap: () async {
+                    // Call the onTap callback to open the date picker
+                    onTap();
+                  },
                   child: Padding(
                     padding: EdgeInsets.all(10.0),
                     child: Icon(
@@ -321,6 +329,8 @@ class Ledger_screen extends State<Ledgerscreen> {
       ],
     );
   }
+
+
 
 
 
@@ -468,7 +478,8 @@ class Ledger_screen extends State<Ledgerscreen> {
             // Convert base64 string to bytes
             List<int> pdfBytes = base64.decode(jsonResponse['response']);
             var status = await Permission.storage.request();
-            if (status.isGranted) {
+            var manageExternalStorage = await Permission.manageExternalStorage.request();
+            if (status!.isGranted || manageExternalStorage!.isGranted) {
               Directory downloadsDirectory = Directory(
                   '/storage/emulated/0/Download');
 
@@ -536,7 +547,8 @@ class Ledger_screen extends State<Ledgerscreen> {
           // if (status.isDenied ||
           //     status.isPermanentlyDenied ||
           //     status.isRestricted) {
-          if (status.isGranted) {
+          var manageExternalStorage = await Permission.manageExternalStorage.request();
+          if (status!.isGranted || manageExternalStorage!.isGranted) {
             Directory downloadsDirectory = Directory('/storage/emulated/0/Download');
 
             String fileName = "srikar_${DateFormat('yyyyMMdd_HHmmss').format(DateTime.now())}.pdf";
@@ -585,6 +597,7 @@ class Ledger_screen extends State<Ledgerscreen> {
   }
 
   Future<void> checkStoragePermission() async {
+
 
     bool permissionStatus;
     final deviceInfo = await DeviceInfoPlugin().androidInfo;

@@ -5,7 +5,9 @@ import 'package:flutter/services.dart';
 
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:srikarbiotech/Common/CommonUtils.dart';
 import 'package:srikarbiotech/Createorderscreen.dart';
+import 'package:srikarbiotech/Services/api_config.dart';
 import 'dart:convert';
 
 import 'CreateCollectionscreen.dart';
@@ -47,7 +49,7 @@ getslpcode();
 
   Future<void> fetchData() async {
     final response = await http.get(
-      Uri.parse('http://182.18.157.215/Srikar_Biotech_Dev/API/api/Account/GetAllDealersBySlpCode/100'),
+      Uri.parse(baseUrl+GetAllDealersBySlpCode),
     );
 
     if (response.statusCode == 200) {
@@ -142,12 +144,7 @@ getslpcode();
                                   filterDealers();
                                 },
                                 keyboardType: TextInputType.name,
-                                style: TextStyle(
-                                  fontSize: 14,
-                                  fontFamily: 'Roboto',
-                                  fontWeight: FontWeight.w700,
-                                  color: Color(0xFF2D2B2B),
-                                ),
+                                style:CommonUtils.Mediumtext_12,
                                 decoration: InputDecoration(
 
                                   suffixIcon: Icon(
@@ -155,12 +152,8 @@ getslpcode();
                                     color: Color(0xFFC4C2C2),
                                   ),
                                   hintText: 'Search for Party Name or Id',
-                                  hintStyle: TextStyle(
-                                    fontSize: 14,
-                                    fontFamily: 'Roboto',
-                                    fontWeight: FontWeight.w700,
-                                    color: Color(0xFFC4C2C2),
-                                  ),
+                                  hintStyle: CommonUtils.hintstyle_14,
+
                                   border: InputBorder.none,
                                 ),
                               ),

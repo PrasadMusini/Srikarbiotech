@@ -93,49 +93,36 @@ class _MyHomePageState extends State<LoginScreen> {
                         alignment: Alignment.topCenter,
                         child: Padding(
                           padding: const EdgeInsets.only(
-                              top: 6.0, left: 12.0, right: 12.0),
+                              top: 10.0, left: 12.0, right: 12.0),
                           child: Text(
                             'LogIn',
-                            style: TextStyle(
-                              fontSize: 24.0,
-                              color: Color(0xFFe78337),
-                              fontWeight: FontWeight.bold,
-                            ),
+                            style: CommonUtils.header_Styles18
                           ),
                         ),
                       ),
-                      SizedBox(height: 8.0),
+                      SizedBox(height: 10.0),
                       Text(
                         'Hi, Welcome to Srikar Bio Tech',
-                        style: TextStyle(
-                          fontSize: 18.0,
-                          color: Color(0xFFe78337),
-                          fontWeight: FontWeight.w400,
-                        ),
+               style: CommonUtils.header_Styles16
+
                       ),
-                      SizedBox(height: 8.0),
+                      SizedBox(height: 10.0),
                       Text(
                         'Enter your credentials to continue',
-                        style: TextStyle(
-                          fontSize: 15.0,
-                          color: Color(0xFF5f5f5f),
-                        ),
+    style: CommonUtils.Mediumtext_14
+
                       ),
                       Padding(
                         padding:
-                            EdgeInsets.only(top: 14.0, left: 30.0, right: 30.0),
+                            EdgeInsets.only(top: 30.0, left: 30.0, right: 30.0),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
                               'Email/Username', // Add your desired text here
-                              style: TextStyle(
-                                fontSize: 12.0,
-                                color: Color(0xFF5f5f5f),
-                                fontWeight: FontWeight.bold,
-                              ),
+                              style: CommonUtils.Mediumtext_12
                             ),
-                            //  SizedBox(height: 8.0),
+                           SizedBox(height: 4.0),
                             GestureDetector(
                               onTap: () {
                                 // Handle the click event for the second text view
@@ -143,7 +130,7 @@ class _MyHomePageState extends State<LoginScreen> {
                               },
                               child: Container(
                                 width: MediaQuery.of(context).size.width,
-                                height: 55.0,
+                                height: 50.0,
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(5.0),
                                   border: Border.all(
@@ -182,20 +169,10 @@ class _MyHomePageState extends State<LoginScreen> {
                                               }
                                               return null;
                                             },
-                                            style: TextStyle(
-                                              fontSize: 14,
-                                              fontFamily: 'Roboto',
-                                              fontWeight: FontWeight.w600,
-                                                color: Color(0xFFe78337),
-                                            ),
+                                            style: CommonUtils.Mediumtext_o_14,
                                             decoration: InputDecoration(
                                               hintText: 'Enter Email or Username',
-                                              hintStyle: TextStyle(
-                                                fontSize: 14,
-                                                fontFamily: 'Roboto',
-                                                fontWeight: FontWeight.w600,
-                                                color: Color(0xFFC4C2C2),
-                                              ),
+                                              hintStyle: CommonUtils.hintstyle_14,
                                               border: InputBorder.none,
                                             ),
                                           ),
@@ -230,13 +207,9 @@ class _MyHomePageState extends State<LoginScreen> {
                           children: [
                             Text(
                               'Password', // Add your desired text here
-                              style: TextStyle(
-                                fontSize: 12.0,
-                                color: Color(0xFF5f5f5f),
-                                fontWeight: FontWeight.bold,
-                              ),
+                             style: CommonUtils.Mediumtext_12
                             ),
-                            //  SizedBox(height: 8.0),
+                              SizedBox(height: 4.0),
                             GestureDetector(
                               onTap: () {
                                 // Handle the click event for the second text view
@@ -244,7 +217,7 @@ class _MyHomePageState extends State<LoginScreen> {
                               },
                               child: Container(
                                 width: MediaQuery.of(context).size.width,
-                                height: 55.0,
+                                height: 50.0,
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(5.0),
                                   border: Border.all(
@@ -283,13 +256,7 @@ class _MyHomePageState extends State<LoginScreen> {
                                               }
                                               return null;
                                             },
-                                            style: TextStyle(
-                                              fontSize: 14,
-
-                                                fontFamily: 'Roboto',
-                                                fontWeight: FontWeight.w600,
-                                                color: Color(0xFFe78337),
-                                            ),
+                                            style: CommonUtils.Mediumtext_o_14,
                                             decoration: InputDecoration(
                                               hintText: 'Enter Password',
                                               hintStyle: TextStyle(
@@ -345,12 +312,7 @@ class _MyHomePageState extends State<LoginScreen> {
                                       children: [
                                         Text(
                                           'LogIn',
-                                          style: TextStyle(
-                                            fontFamily: 'Calibri',
-                                            fontSize: 14,
-                                            color: Colors.white,
-                                            fontWeight: FontWeight.bold,
-                                          ),
+                                          style: CommonUtils.Buttonstyle
                                         ),
                                         Image.asset(
                                           'assets/right_arrow.png',
@@ -376,11 +338,7 @@ class _MyHomePageState extends State<LoginScreen> {
                               children: [
                                 Text(
                                   'Forgot Password?',
-                                  style: TextStyle(
-                                    fontSize: 14.0,
-                                    color: Colors.black,
-                                    fontWeight: FontWeight.bold,
-                                  ),
+                                  style: CommonUtils.Mediumtext_14
                                 ),
                                 SizedBox(width: 8.0),
                                 GestureDetector(
@@ -391,11 +349,7 @@ class _MyHomePageState extends State<LoginScreen> {
                                   },
                                   child: Text(
                                     'Click here!',
-                                    style: TextStyle(
-                                      fontSize: 14.0,
-                                      color: Color(0xFFe78337),
-                                      fontWeight: FontWeight.bold,
-                                    ),
+                                    style:CommonUtils.Mediumtext_o_14
                                   ),
                                 )
                               ],

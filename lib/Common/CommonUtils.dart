@@ -189,6 +189,61 @@ class CommonUtils {
       ),
     );
   }
+
+  // header style
+  static final TextStyle headerStyles = TextStyle(
+    fontSize: 25,
+    fontFamily: "Roboto",
+    fontWeight: FontWeight.w700,
+    color: Colors.black87,
+  );
+  // header style
+  // header style
+  static final TextStyle header_Styles18 = TextStyle(
+    fontSize: 18,
+    fontFamily: "Roboto",
+    fontWeight: FontWeight.w700,
+    color: Color(0xFFe78337),
+  );
+
+  static final TextStyle header_Styles16 = TextStyle(
+    fontSize: 16,
+    fontFamily: "Roboto",
+    fontWeight: FontWeight.w700,
+    color: Color(0xFFe78337),
+  );
+  static final TextStyle Mediumtext_o_14 = TextStyle(
+    fontSize: 14,
+    fontFamily: "Roboto",
+    fontWeight: FontWeight.w600,
+    color: Color(0xFFe78337),
+  );
+  static final TextStyle Mediumtext_14 = TextStyle(
+    fontSize: 14,
+    fontFamily: "Roboto",
+    fontWeight: FontWeight.w600,
+    color: Color(0xFF5f5f5f),
+  );
+  static final TextStyle Mediumtext_12 = TextStyle(
+    fontSize: 14,
+    fontFamily: "Roboto",
+    fontWeight: FontWeight.w600,
+    color: Color(0xFF5f5f5f),
+  );
+
+  static final TextStyle hintstyle_14 = TextStyle(
+    fontSize: 14,
+    fontFamily: "Roboto",
+    fontWeight: FontWeight.w600,
+    color: Color(0xFFC4C2C2),
+  );
+
+  static final TextStyle Buttonstyle = TextStyle(
+    fontSize: 14,
+    fontFamily: "Roboto",
+    fontWeight: FontWeight.w600,
+    color: Colors.white,
+  );
 }
 
 Future<void> saveIntToPreferences(String key, int value) async {
@@ -200,3 +255,4 @@ Future<int?> getIntFromPreferences(String key) async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
   return prefs.getInt(key);
 }
+

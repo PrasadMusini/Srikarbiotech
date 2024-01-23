@@ -129,70 +129,81 @@ class _imagesliderState extends State<imageslider> {
             child: Column(
               children: [
                 Expanded(
-                    child: SingleChildScrollView(
-                        child: Container(
-                            padding: EdgeInsets.only(
-                                left: 0.0, right: 0.0, top: 20.0),
-                            width: MediaQuery.of(context).size.width,
-                            child: Stack(
-                              children: [
-                                Align(
-                                  alignment: Alignment.topCenter,
-                                  child: CarouselSlider(
-                                    items: [
-                                      Image.asset(
-                                        'assets/slider1.png',
-                                        fit: BoxFit.fitWidth,
-                                        width:
-                                        MediaQuery.of(context).size.width,
-                                      ),
-                                      Image.asset(
-                                        'assets/slider2.png',
-                                        fit: BoxFit.fitWidth,
-                                        width:
-                                        MediaQuery.of(context).size.width,
-                                      ),
-                                      Image.asset(
-                                        'assets/slider3.png',
-                                        fit: BoxFit.fitWidth,
-                                        width:
-                                        MediaQuery.of(context).size.width,
-                                      ),
-                                      // Add more static images as needed
-                                    ],
-                                    options: CarouselOptions(
-                                      scrollPhysics:
-                                      const BouncingScrollPhysics(),
-                                      autoPlay: true,
-                                      aspectRatio: 23 / 9,
-                                      viewportFraction: 1,
-                                      onPageChanged: (index, reason) {
-                                        // Handle page change if needed
-                                      },
+                  //   child: SingleChildScrollView(
+
+                    child: Container(
+                      // width: MediaQuery.of(context).size.width,
+                      //  padding: EdgeInsets.all(20.0),
+
+                        height: MediaQuery.of(context).size.height,
+                        padding: EdgeInsets.only(
+                          left: 0.0,
+                          right: 0.0,
+                          top: 20.0,
+                        ),
+                        width: MediaQuery.of(context).size.width,
+                        child: Stack(
+                          children: [
+                            Align(
+                              alignment: Alignment.topCenter,
+                              child: CarouselSlider(
+                                items: [
+                                  Image.asset(
+                                    'assets/slider1.png',
+                                    fit: BoxFit.fitWidth,
+                                    width: MediaQuery.of(context).size.width,
+                                  ),
+                                  Image.asset(
+                                    'assets/slider2.png',
+                                    fit: BoxFit.fitWidth,
+                                    width: MediaQuery.of(context).size.width,
+                                  ),
+                                  Image.asset(
+                                    'assets/slider3.png',
+                                    fit: BoxFit.fitWidth,
+                                    width: MediaQuery.of(context).size.width,
+                                  ),
+                                  // Add more static images as needed
+                                ],
+                                options: CarouselOptions(
+                                  scrollPhysics: const BouncingScrollPhysics(),
+                                  autoPlay: true,
+                                  height: MediaQuery.of(context).size.height,
+                                  aspectRatio: 23 / 9,
+                                  viewportFraction: 1,
+                                  onPageChanged: (index, reason) {
+                                    // Handle page change if needed
+                                    setState(() {
+                                      currentIndex = index;
+                                    });
+                                  },
+                                ),
+                              ),
+                            ),
+                            Container(
+                              width: MediaQuery.of(context).size.width,
+                              //  padding: EdgeInsets.all(20.0),
+
+                              height: MediaQuery.of(context).size.height,
+                              child: Align(
+                                alignment: Alignment.bottomCenter,
+                                child: Padding(
+                                  padding: EdgeInsets.only(bottom: 20.0),
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: List.generate(
+                                      // Use the number of images from assets
+                                      3, // Replace with the actual number of assets
+                                          (index) => buildIndicator(index),
                                     ),
                                   ),
                                 ),
-                                Container(
-                                  width: MediaQuery.of(context).size.width,
-                                  height: 100,
-                                  child: Align(
-                                    alignment: Alignment.bottomCenter,
-                                    child: Padding(
-                                      padding: EdgeInsets.only(top: 0.0),
-                                      child: Row(
-                                        mainAxisAlignment:
-                                        MainAxisAlignment.center,
-                                        children: List.generate(
-                                          // Use the number of images from assets
-                                          3, // Replace with the actual number of assets
-                                              (index) => buildIndicator(index),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            )))),
+                              ),
+                            ),
+                          ],
+                        ))
+                  //  )
+                ),
                 SizedBox(
                   height: 10.0,
                 ),
@@ -370,6 +381,7 @@ class _imagesliderState extends State<imageslider> {
                                   },
                                 ),
                               ]),
+
                         ],
                       ),
                     ),
@@ -406,7 +418,7 @@ class _imagesliderState extends State<imageslider> {
           RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
           elevation: 8,
           child: Padding(
-            padding: EdgeInsets.only(left: 18, right: 15, top: 15, bottom: 8),
+            padding: EdgeInsets.only(left: 18, right: 15, top: 20, bottom: 8),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
@@ -424,7 +436,7 @@ class _imagesliderState extends State<imageslider> {
                     color: Color(0xFF414141),
                   ),
                 ),
-                SizedBox(height: 18),
+                SizedBox(height: 20),
                 Expanded(
                   child: Align(
                     alignment: Alignment.topLeft,
@@ -432,17 +444,38 @@ class _imagesliderState extends State<imageslider> {
                       item,
                       style: TextStyle(
                           fontSize: 20,
+                          fontFamily: "Roboto",
+                          fontWeight: FontWeight.w700,
                           color: textcolor,
-                          fontWeight: FontWeight.bold),
+                       ),
                     ),
                   ),
                 ),
                 Expanded(
                   child: Align(
                     alignment: Alignment.centerLeft,
-                    child: Text(
-                      item_1,
-                      style: TextStyle(fontSize: 14, color: textcolor),
+                    child: RichText(
+                      text: TextSpan(
+                        style: TextStyle(fontSize: 14, color: textcolor,  fontFamily: "Roboto",
+                            fontWeight: FontWeight.w600),
+                        children: [
+                          TextSpan(
+                            text: 'All Incoming and\n',
+                          ),
+                          WidgetSpan(
+                            child: SizedBox(height: 25),
+                          ),
+                          TextSpan(
+                            text: 'Outgoing Transactions\n',
+                          ),
+                          WidgetSpan(
+                            child: SizedBox(height: 25),
+                          ),
+                          TextSpan(
+                            text: 'Record',
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ),
@@ -504,7 +537,8 @@ class _imagesliderState extends State<imageslider> {
                     child: Text(
                       item,
                       maxLines: 1,
-                      style: TextStyle(fontSize: 16, color: textcolor),
+                      style: TextStyle(fontSize: 16,fontFamily: "Roboto",
+                          fontWeight: FontWeight.w700, color: textcolor),
                     ),
                   ),
                 ),
@@ -516,7 +550,8 @@ class _imagesliderState extends State<imageslider> {
                     alignment: Alignment.topLeft,
                     child: Text(
                       item1,
-                      style: TextStyle(fontSize: 10, color: Color(0xFF414141)),
+                      style: TextStyle(fontSize: 12,fontFamily: "Roboto",
+                          fontWeight: FontWeight.w700, color: Color(0xFF414141)),
                     ),
                   ),
                 ),
@@ -549,12 +584,12 @@ class _imagesliderState extends State<imageslider> {
           RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
           elevation: 8,
           child: Padding(
-            padding: EdgeInsets.only(left: 13, right: 15, top: 5, bottom: 3),
+            padding: EdgeInsets.only(left: 13, right: 15, top: 10, bottom: 3),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisAlignment: MainAxisAlignment.start,
               children: <Widget>[
-                SizedBox(height: 5),
+                SizedBox(height: 15),
                 Container(
                   //  margin: EdgeInsets.only(bottom: 3),
                   padding: EdgeInsets.all(8),
@@ -569,23 +604,25 @@ class _imagesliderState extends State<imageslider> {
                     color: Color(0xFF414141),
                   ),
                 ),
-                SizedBox(height: 8),
+                SizedBox(height: 10),
                 Align(
                   alignment: Alignment.topLeft,
                   child: Text(
                     item,
                     maxLines: 1,
-                    style: TextStyle(fontSize: 16, color: textcolor),
+                    style: TextStyle(fontSize: 16, fontFamily: "Roboto",
+                        fontWeight: FontWeight.w700, color: textcolor),
                   ),
                 ),
                 SizedBox(
-                  height: 3.0,
+                  height: 10.0,
                 ),
                 Align(
                   alignment: Alignment.topLeft,
                   child: Text(
                     item1,
-                    style: TextStyle(fontSize: 10, color: Color(0xFF414141)),
+                    style: TextStyle(fontSize: 12, fontFamily: "Roboto",
+                        fontWeight: FontWeight.w700, color: Color(0xFF414141)),
                   ),
                 ),
               ],
