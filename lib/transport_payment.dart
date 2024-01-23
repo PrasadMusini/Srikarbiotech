@@ -1,25 +1,29 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:srikarbiotech/Common/CommonUtils.dart';
 import 'package:srikarbiotech/Ordersubmit_screen.dart';
 
 import 'Billing_screen.dart';
 import 'Model/CartHelper.dart';
 
-
 class transport_payment extends StatefulWidget {
-
   final String cardName;
-  final String  cardCode;
-  final String  address;
+  final String cardCode;
+  final String address;
   final String proprietorName;
   final String gstRegnNo;
   final String state;
   final String phone;
 
   transport_payment(
-      {required this.cardName, required this.cardCode, required this.address, required  this.state, required  this.phone,
-        required  this.proprietorName, required  this.gstRegnNo});
+      {required this.cardName,
+      required this.cardCode,
+      required this.address,
+      required this.state,
+      required this.phone,
+      required this.proprietorName,
+      required this.gstRegnNo});
 
   @override
   _transportstate createState() => _transportstate();
@@ -47,10 +51,10 @@ class _transportstate extends State<transport_payment> {
     double screenHeight = MediaQuery.of(context).size.height;
     double screenWidth = MediaQuery.of(context).size.width;
     return Scaffold(
-      appBar:
-      AppBar(
+      appBar: AppBar(
         backgroundColor: Color(0xFFe78337),
-        automaticallyImplyLeading: false, // This line removes the default back arrow
+        automaticallyImplyLeading:
+            false, // This line removes the default back arrow
         title: Row(
           mainAxisAlignment: MainAxisAlignment.start,
           mainAxisSize: MainAxisSize.min,
@@ -70,7 +74,7 @@ class _transportstate extends State<transport_payment> {
               ),
             ),
             Text(
-              'Select Transport & Payment',
+              'Select Transport',
               style: TextStyle(
                 fontFamily: 'Roboto',
                 fontWeight: FontWeight.w600,
@@ -81,7 +85,6 @@ class _transportstate extends State<transport_payment> {
           ],
         ),
       ),
-
       body: SingleChildScrollView(
         child: Column(
           children: [
@@ -115,8 +118,7 @@ class _transportstate extends State<transport_payment> {
                                   color: Color(0xFF5f5f5f),
                                   fontFamily: 'Roboto',
                                   fontWeight: FontWeight.w600,
-                                  fontSize: 14
-                              ),
+                                  fontSize: 14),
                               textAlign: TextAlign.start,
                             ),
                           ),
@@ -131,10 +133,10 @@ class _transportstate extends State<transport_payment> {
                               width: MediaQuery.of(context).size.width,
                               height: 55.0,
                               decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(12.0),
+                                borderRadius: BorderRadius.circular(5.0),
                                 border: Border.all(
                                   color: Color(0xFFe78337),
-                                  width: 2,
+                                  width: 1,
                                 ),
                               ),
                               child: Row(
@@ -151,17 +153,10 @@ class _transportstate extends State<transport_payment> {
                                               color: Color(0xFF5f5f5f),
                                               fontFamily: 'Roboto',
                                               fontWeight: FontWeight.w600,
-                                              fontSize: 14
-                                          ),
+                                              fontSize: 14),
                                           decoration: InputDecoration(
                                             hintText: 'Enter Booking Place',
-                                            hintStyle: TextStyle(
-                                                color: Color(0xFF5f5f5f),
-                                                fontFamily: 'Roboto',
-                                                fontWeight: FontWeight.w600,
-                                                fontSize: 14
-
-                                            ),
+                                            hintStyle: CommonUtils.hintstyle_14,
                                             border: InputBorder.none,
                                           ),
                                         ),
@@ -175,7 +170,6 @@ class _transportstate extends State<transport_payment> {
                         ],
                       ),
                     ),
-
                     Padding(
                       padding:
                           EdgeInsets.only(top: 8.0, left: 15.0, right: 15.0),
@@ -188,11 +182,10 @@ class _transportstate extends State<transport_payment> {
                             child: Text(
                               'Preferable Transport',
                               style: TextStyle(
-
-                                  color: Color(0xFF5f5f5f),
-                                  fontFamily: 'Roboto',
-                                  fontWeight: FontWeight.w600,
-                                  fontSize: 14,
+                                color: Color(0xFF5f5f5f),
+                                fontFamily: 'Roboto',
+                                fontWeight: FontWeight.w600,
+                                fontSize: 14,
                               ),
                               textAlign: TextAlign.start,
                             ),
@@ -211,7 +204,7 @@ class _transportstate extends State<transport_payment> {
                                 borderRadius: BorderRadius.circular(12.0),
                                 border: Border.all(
                                   color: Color(0xFFe78337),
-                                  width: 2,
+                                  width: 1,
                                 ),
                               ),
                               child: Row(
@@ -225,21 +218,13 @@ class _transportstate extends State<transport_payment> {
                                         child: TextFormField(
                                           keyboardType: TextInputType.name,
                                           style: TextStyle(
-
                                               color: Color(0xFF5f5f5f),
                                               fontFamily: 'Roboto',
                                               fontWeight: FontWeight.w600,
-                                              fontSize: 14
-                                          ),
+                                              fontSize: 14),
                                           decoration: InputDecoration(
                                             hintText: 'Enter Parcel Service',
-                                            hintStyle: TextStyle(
-                                                color: Color(0xFF5f5f5f),
-                                                fontFamily: 'Roboto',
-                                                fontWeight: FontWeight.w600,
-                                                fontSize: 14,
-
-                                            ),
+                                            hintStyle: CommonUtils.hintstyle_14,
                                             border: InputBorder.none,
                                           ),
                                         ),
@@ -323,9 +308,9 @@ class _transportstate extends State<transport_payment> {
                     MaterialPageRoute(
                       builder: (context) => Ordersubmit_screen(
                           cardName: '${widget.cardName}',
-                          cardCode:'${widget.cardCode}',
+                          cardCode: '${widget.cardCode}',
                           address: '${widget.address}',
-                          state:'${widget.state}',
+                          state: '${widget.state}',
                           phone: '${widget.phone}',
                           proprietorName: '${widget.proprietorName}',
                           gstRegnNo: '${widget.gstRegnNo}'),
@@ -351,7 +336,6 @@ class _transportstate extends State<transport_payment> {
                             fontWeight: FontWeight.w700,
                             fontSize: 14,
                             color: Colors.white,
-
                           ),
                         ),
                       ]),
