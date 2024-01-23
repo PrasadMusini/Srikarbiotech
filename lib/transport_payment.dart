@@ -156,7 +156,8 @@ class _transportstate extends State<transport_payment> {
                                               fontSize: 14),
                                           decoration: InputDecoration(
                                             hintText: 'Enter Booking Place',
-                                            hintStyle: CommonUtils.hintstyle_14,
+                                            hintStyle:
+                                                CommonUtils.Mediumtext_12_0,
                                             border: InputBorder.none,
                                           ),
                                         ),
@@ -201,7 +202,7 @@ class _transportstate extends State<transport_payment> {
                               width: MediaQuery.of(context).size.width,
                               height: 55.0,
                               decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(12.0),
+                                borderRadius: BorderRadius.circular(5.0),
                                 border: Border.all(
                                   color: Color(0xFFe78337),
                                   width: 1,
@@ -224,7 +225,8 @@ class _transportstate extends State<transport_payment> {
                                               fontSize: 14),
                                           decoration: InputDecoration(
                                             hintText: 'Enter Parcel Service',
-                                            hintStyle: CommonUtils.hintstyle_14,
+                                            hintStyle:
+                                                CommonUtils.Mediumtext_12_0,
                                             border: InputBorder.none,
                                           ),
                                         ),
