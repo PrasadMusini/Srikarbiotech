@@ -1659,7 +1659,7 @@ class Createcollection_screen extends State<CreateCollectionscreen> {
 
   Future<void> fetchdropdownitems() async {
     final apiUrl =
-        'http://182.18.157.215/Srikar_Biotech_Dev/API/api/Collections/GetPurposes';
+        'http://182.18.157.215/Srikar_Biotech_Dev/API/api/Collections/GetPurposes/1';
 
     try {
       final response = await http.get(Uri.parse(apiUrl));
@@ -1682,7 +1682,7 @@ class Createcollection_screen extends State<CreateCollectionscreen> {
 
   Future<void> fetchdropdownitemscategory() async {
     final apiUrl =
-        'http://182.18.157.215/Srikar_Biotech_Dev/API/api/Item/GetItemGroups/null';
+        'http://182.18.157.215/Srikar_Biotech_Dev/API/api/Item/GetItemGroups/1/null';
 
     try {
       final response = await http.get(Uri.parse(apiUrl));

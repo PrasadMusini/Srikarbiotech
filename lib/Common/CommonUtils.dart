@@ -94,44 +94,21 @@ class CommonUtils {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              "Party Details",
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.w700,
-                fontFamily: 'Roboto', // Use 'Roboto-Bold' font family
-                // Orange color for the title
-              ),
-            ),
-            SizedBox(height: 8.0),
-            Text(
               title,
-              style: TextStyle(
-                color: Colors.orange,
-                fontFamily: 'Roboto',
-                fontWeight: FontWeight.w700,
-                fontSize: 14,
-              ),
+              style:CommonUtils.header_Styles16,
               maxLines: 2, // Display in 2 lines
               overflow: TextOverflow.ellipsis,
             ),
             SizedBox(height: 8.0),
             Text(
               subtitle1,
-              style: TextStyle(
-                  color: Colors.black,
-                  fontFamily: 'Roboto',
-                  fontWeight: FontWeight.w600,
-                  fontSize: 12),
+              style: CommonUtils.Mediumtext_14,
               overflow: TextOverflow.ellipsis,
             ),
             SizedBox(height: 8.0),
             Text(
               subtitle2,
-              style: TextStyle(
-                  color: Colors.orange,
-                  fontFamily: 'Roboto',
-                  fontWeight: FontWeight.w600,
-                  fontSize: 12),
+                style: CommonUtils.Mediumtext_14,
               maxLines: 2, // Display in 2 lines
               overflow: TextOverflow.ellipsis,
             ),
@@ -141,21 +118,11 @@ class CommonUtils {
                 children: <TextSpan>[
                   TextSpan(
                     text: 'GST No. ',
-                    style: TextStyle(
-                      color: Colors.black,
-                      fontFamily: 'Roboto',
-                      fontSize: 12,
-                      fontWeight: FontWeight.w600,
-                    ),
+                    style: CommonUtils.Mediumtext_12
                   ),
                   TextSpan(
                     text: subtitle3,
-                    style: TextStyle(
-                      color: Colors.orange,
-                      fontFamily: 'Roboto',
-                      fontSize: 12,
-                      fontWeight: FontWeight.w600,
-                    ),
+                    style: CommonUtils.Mediumtext_12_0
                   ),
                 ],
               ),
@@ -164,23 +131,13 @@ class CommonUtils {
             SizedBox(height: 8.0),
             Text(
               'Address',
-              style: TextStyle(
-                color: Colors.black,
-                fontFamily: 'Roboto',
-                fontWeight: FontWeight.w600,
-                fontSize: 12,
-              ),
+              style: CommonUtils.Mediumtext_12,
               overflow: TextOverflow.ellipsis,
             ),
             SizedBox(height: 8.0),
             Text(
               subtitle4,
-              style: TextStyle(
-                color: Colors.orange,
-                fontFamily: 'Roboto',
-                fontWeight: FontWeight.w600,
-                fontSize: 12,
-              ),
+              style: CommonUtils.Mediumtext_12_0,
               maxLines: 2, // Display in 2 lines
               overflow: TextOverflow.ellipsis,
             ),
@@ -225,10 +182,16 @@ class CommonUtils {
     color: Color(0xFF5f5f5f),
   );
   static final TextStyle Mediumtext_12 = TextStyle(
-    fontSize: 14,
+    fontSize: 12,
     fontFamily: "Roboto",
     fontWeight: FontWeight.w600,
     color: Color(0xFF5f5f5f),
+  );
+  static final TextStyle Mediumtext_12_0 = TextStyle(
+    fontSize: 12,
+    fontFamily: "Roboto",
+    fontWeight: FontWeight.w600,
+    color: Color(0xFFe78337),
   );
 
   static final TextStyle hintstyle_14 = TextStyle(

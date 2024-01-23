@@ -164,7 +164,7 @@ getslpcode();
                     ),
                   ),
                 ),
-                SizedBox(height: 20.0),
+                SizedBox(height: 10.0),
               ],
             ),
           ),
@@ -265,7 +265,7 @@ getslpcode();
                   },
 
                   child: Container(
-                    margin: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+                    margin: EdgeInsets.symmetric(horizontal: 16.0, vertical: 4.0),
                     child: Card(
                       elevation: 0,
                       color: selectedCardIndex == index ? Color(0xFFfff5ec) : null,
@@ -289,86 +289,51 @@ getslpcode();
                                 children: [
                                   Text(
                                     filteredDealers[index].cardName,
-                                    style: TextStyle(
-                                      color: Colors.orange,
-                                      fontFamily: 'Roboto',
-                                      fontWeight: FontWeight.w700,
-                                      fontSize: 16,
-                                    ),
+                                    style: CommonUtils.header_Styles16,
                                     maxLines: 2, // Display in 2 lines
                                     overflow: TextOverflow.ellipsis,
                                   ),
-                                  SizedBox(height: 5.0),
+                                  SizedBox(height: 8.0),
                                   Text(
                                     filteredDealers[index].cardCode,
-                                    style: TextStyle(
-                                      color: Colors.black,
-                                      fontFamily: 'Roboto',
-                                      fontWeight: FontWeight.w600,
-                                      fontSize: 14
-                                    ),
+                                   style: CommonUtils.Mediumtext_14,
                                     overflow: TextOverflow.ellipsis,
                                   ),
-                                  SizedBox(height: 5.0),
+                                  SizedBox(height: 8.0),
                                   Text(
                                     filteredDealers[index].proprietorName,
-                                    style: TextStyle(
-                                      color: Colors.orange,
-                                      fontFamily: 'Roboto',
-                                      fontWeight: FontWeight.w600,
-                                      fontSize: 12
-                                    ),
+                                    style:  CommonUtils.Mediumtext_12_0,
                                     maxLines: 2, // Display in 2 lines
                                     overflow: TextOverflow.ellipsis,
                                   ),
-                                  SizedBox(height: 5.0),
+                                  SizedBox(height: 8.0),
                                   RichText(
                                     text: TextSpan(
                                       style: DefaultTextStyle.of(context).style,
                                       children: <TextSpan>[
                                         TextSpan(
                                           text: 'GST No. ',
-                                          style: TextStyle(
-                                            color: Colors.black,
-                                            fontFamily: 'Roboto',
-                                            fontWeight: FontWeight.w600,
-                                              fontSize: 12
-                                          ),
+                                          style: CommonUtils.Mediumtext_12,
                                         ),
                                         TextSpan(
                                           text: filteredDealers[index].gstRegnNo,
-                                          style: TextStyle(
-                                            color: Colors.orange,
-                                            fontFamily: 'Roboto',
-                                            fontWeight: FontWeight.w600,
-                                              fontSize: 12
-                                          ),
+                                          style:CommonUtils.Mediumtext_12_0,
                                         ),
                                       ],
                                     ),
                                     overflow: TextOverflow.ellipsis,
                                   ),
 
-                                  SizedBox(height: 5.0),
+                                  SizedBox(height: 8.0),
                                   Text(
                                     'Address',
-                                    style: TextStyle(
-                                      color: Colors.black,
-                                      fontFamily: 'Roboto',
-                                      fontWeight: FontWeight.w600,
-                                        fontSize: 12
-                                    ),
+                                    style: CommonUtils.Mediumtext_12,
                                     overflow: TextOverflow.ellipsis,
                                   ),
                                   SizedBox(height: 5.0),
                                   Text(
                                     filteredDealers[index].fullAddress,
-                                    style: TextStyle(
-                                      color: Colors.orange,
-                                      fontFamily: 'Roboto',
-                                      fontWeight: FontWeight.w600,
-                                        fontSize: 12
-                                    ),
+                                    style: CommonUtils.Mediumtext_12_0,
                                     maxLines: 2, // Display in 2 lines
                                     overflow: TextOverflow.ellipsis,
                                   ),
