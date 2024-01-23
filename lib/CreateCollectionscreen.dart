@@ -238,10 +238,10 @@ class Createcollection_screen extends State<CreateCollectionscreen> {
                                     width: MediaQuery.of(context).size.width,
                                     height: 55.0,
                                     decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(12.0),
+                                      borderRadius: BorderRadius.circular(5.0),
                                       border: Border.all(
                                         color: Color(0xFFe78337),
-                                        width: 2,
+                                        width: 1,
                                       ),
                                     ),
                                     child: Row(
@@ -270,7 +270,7 @@ class Createcollection_screen extends State<CreateCollectionscreen> {
                                                     fontSize: 14,
                                                     fontFamily: 'Roboto',
                                                     fontWeight: FontWeight.w500,
-                                                    color: Color(0xFFe78337),
+                                                    color: Color(0xFFF8dac2),
                                                   ),
                                                   border: InputBorder.none,
                                                 ),
@@ -300,125 +300,129 @@ class Createcollection_screen extends State<CreateCollectionscreen> {
                               textAlign: TextAlign.start,
                             ),
                           ),
-                          SizedBox(height: 4.0),
+                          SizedBox(height: 2.0),
                           Container(
-                            height: 50,
+                            height: 45,
                             // child: Expanded(
-                              child: apiResponse == null
-                                  ? Center(child: CircularProgressIndicator())
-                                  : ListView.builder(
-                                      scrollDirection: Axis.horizontal,
-                                      itemCount: apiResponse!.listResult.length,
-                                      itemBuilder:
-                                          (BuildContext context, int index) {
-                                        bool isSelected =
-                                            index == indexselected;
-                                        PaymentMode currentPaymode = apiResponse!
-                                                .listResult[
-                                            index]; // Store the current paymode in a local variable
+                            child: apiResponse == null
+                                ? Center(child: CircularProgressIndicator())
+                                : ListView.builder(
+                                    scrollDirection: Axis.horizontal,
+                                    itemCount: apiResponse!.listResult.length,
+                                    itemBuilder:
+                                        (BuildContext context, int index) {
+                                      bool isSelected = index == indexselected;
+                                      PaymentMode currentPaymode = apiResponse!
+                                              .listResult[
+                                          index]; // Store the current paymode in a local variable
 
-                                        IconData iconData;
-                                        switch (currentPaymode.desc) {
-                                          case 'Cheque':
-                                            iconData = Icons.payment;
-                                            break;
-                                          case 'Online':
-                                            iconData = Icons.access_alarm;
-                                            break;
-                                          case 'UPI':
-                                            iconData = Icons.payment;
-                                            break;
-                                          // Add more cases as needed
-                                          default:
-                                            iconData =
-                                                Icons.payment; // Default icon
-                                            break;
-                                        }
+                                      String iconData;
+                                      switch (currentPaymode.desc) {
+                                        case 'Cheque':
+                                          iconData = 'assets/money-bills.svg';
+                                          break;
+                                        case 'Online':
+                                          iconData = 'assets/site-alt.svg';
+                                          break;
+                                        case 'UPI':
+                                          iconData =
+                                              'assets/indian-rupee-sign.svg';
+                                          break;
+                                        // Add more cases as needed
+                                        default:
+                                          iconData =
+                                              'assets/money-bills.svg'; // Default icon
+                                          break;
+                                      }
 
-                                        return GestureDetector(
-                                          onTap: () {
-                                            setState(() {
-                                              indexselected = index;
-                                              selectedPaymode =
-                                                  currentPaymode; // Update the selectedPaymode outside the build method
-                                            });
-                                            payid = currentPaymode.typeCdId;
-                                            Selected_PaymentMode =
-                                                currentPaymode.desc;
-                                            print('payid:$payid');
-                                            print(
-                                                'Selected Payment Mode: ${currentPaymode.desc}, TypeCdId: $payid');
-                                            print(
-                                                'Selected Payment Mode: ${Selected_PaymentMode}, TypeCdId: $payid');
-                                          },
-                                          child: Container(
-                                            margin: EdgeInsets.symmetric(
-                                                horizontal: 8.0),
-                                            decoration: BoxDecoration(
+                                      return GestureDetector(
+                                        onTap: () {
+                                          setState(() {
+                                            indexselected = index;
+                                            selectedPaymode =
+                                                currentPaymode; // Update the selectedPaymode outside the build method
+                                          });
+                                          payid = currentPaymode.typeCdId;
+                                          Selected_PaymentMode =
+                                              currentPaymode.desc;
+                                          print('payid:$payid');
+                                          print(
+                                              'Selected Payment Mode: ${currentPaymode.desc}, TypeCdId: $payid');
+                                          print(
+                                              'Selected Payment Mode: ${Selected_PaymentMode}, TypeCdId: $payid');
+                                        },
+                                        child: Container(
+                                          // color: Color(0xFFF8dac2),
+
+                                          margin: EdgeInsets.symmetric(
+                                              horizontal: 4.0),
+                                          decoration: BoxDecoration(
+                                            color: isSelected
+                                                ? Color(0xFFe78337)
+                                                : Color(0xFFF8dac2),
+                                            border: Border.all(
                                               color: isSelected
                                                   ? Color(0xFFe78337)
-                                                  : Colors.white,
-                                              border: Border.all(
-                                                color: isSelected
-                                                    ? Color(0xFFe78337)
-                                                    : Color(0xFFe78337),
-                                                width: 2.0,
-                                              ),
-                                              borderRadius:
-                                                  BorderRadius.circular(8.0),
+                                                  : Color(0xFFe78337),
+                                              width: 1,
                                             ),
-                                            child: IntrinsicWidth(
-                                              child: Column(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment.center,
-                                                children: [
-                                                  Container(
-                                                    padding:
-                                                        EdgeInsets.symmetric(
-                                                            horizontal: 8.0),
-                                                    child: Row(
-                                                      children: [
-                                                        Icon(
-                                                          iconData, // Use the dynamically determined icon
+                                            borderRadius:
+                                                BorderRadius.circular(5.0),
+                                          ),
+                                          child: IntrinsicWidth(
+                                            child: Column(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.center,
+                                              children: [
+                                                Container(
+                                                  padding: EdgeInsets.symmetric(
+                                                      horizontal: 5.0),
+                                                  child: Row(
+                                                    children: [
+                                                      SvgPicture.asset(
+                                                        iconData,
+                                                        height: 25,
+                                                        width: 25,
+                                                        fit: BoxFit.fitWidth,
+                                                        color: isSelected
+                                                            ? Colors.white
+                                                            : Colors.black,
+                                                      ),
+                                                      SizedBox(
+                                                          width:
+                                                              4.0), // Add some spacing between icon and text
+                                                      Text(
+                                                        '${currentPaymode.desc.toString()}',
+                                                        style: TextStyle(
                                                           color: isSelected
                                                               ? Colors.white
                                                               : Colors.black,
                                                         ),
-                                                        SizedBox(
-                                                            width:
-                                                                8.0), // Add some spacing between icon and text
-                                                        Text(
-                                                          '${currentPaymode.desc.toString()}',
-                                                          style: TextStyle(
-                                                            color: isSelected
-                                                                ? Colors.white
-                                                                : Colors.black,
-                                                          ),
-                                                        ),
-                                                      ],
-                                                    ),
+                                                      ),
+                                                    ],
                                                   ),
-                                                ],
-                                              ),
+                                                ),
+                                              ],
                                             ),
                                           ),
-                                        );
-                                      },
-                                    ),
-                            ),
-                       //   ),
+                                        ),
+                                      );
+                                    },
+                                  ),
+                          ),
+                          //   ),
                           SizedBox(height: 5.0),
                           Visibility(
                               visible: Selected_PaymentMode == 'Cheque',
                               child: Padding(
                                 padding: EdgeInsets.only(
-                                    top: 0.0, left: 5.0, right: 0.0),
+                                    top: 0.0, left: 0.0, right: 0.0),
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Padding(
                                       padding: EdgeInsets.only(
-                                          top: 0.0, left: 5.0, right: 0.0),
+                                          top: 0.0, left: 0.0, right: 0.0),
                                       child: Text(
                                         'Check Number',
                                         style: TextStyle(
@@ -441,10 +445,10 @@ class Createcollection_screen extends State<CreateCollectionscreen> {
                                         height: 55.0,
                                         decoration: BoxDecoration(
                                           borderRadius:
-                                              BorderRadius.circular(12.0),
+                                              BorderRadius.circular(5.0),
                                           border: Border.all(
                                             color: Color(0xFFe78337),
-                                            width: 2,
+                                            width: 1,
                                           ),
                                         ),
                                         child: Row(
@@ -477,7 +481,7 @@ class Createcollection_screen extends State<CreateCollectionscreen> {
                                                         fontWeight:
                                                             FontWeight.w600,
                                                         color:
-                                                            Color(0xFFe78337),
+                                                            Color(0xFFF8dac2),
                                                       ),
                                                       border: InputBorder.none,
                                                     ),
@@ -539,10 +543,10 @@ class Createcollection_screen extends State<CreateCollectionscreen> {
                                         height: 55.0,
                                         decoration: BoxDecoration(
                                           borderRadius:
-                                              BorderRadius.circular(12.0),
+                                              BorderRadius.circular(5.0),
                                           border: Border.all(
                                             color: Color(0xFFe78337),
-                                            width: 2,
+                                            width: 1,
                                           ),
                                         ),
                                         child: Row(
@@ -574,7 +578,7 @@ class Createcollection_screen extends State<CreateCollectionscreen> {
                                                         fontWeight:
                                                             FontWeight.w600,
                                                         color:
-                                                            Color(0xFFe78337),
+                                                            Color(0xFFF8dac2),
                                                       ),
                                                       border: InputBorder.none,
                                                     ),
@@ -594,7 +598,7 @@ class Createcollection_screen extends State<CreateCollectionscreen> {
                               visible: Selected_PaymentMode == 'Online',
                               child: Padding(
                                 padding: EdgeInsets.only(
-                                    top: 10.0, left: 0.0, right: 0.0),
+                                    top: 0.0, left: 0.0, right: 0.0),
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
@@ -623,10 +627,10 @@ class Createcollection_screen extends State<CreateCollectionscreen> {
                                         height: 55.0,
                                         decoration: BoxDecoration(
                                           borderRadius:
-                                              BorderRadius.circular(12.0),
+                                              BorderRadius.circular(5.0),
                                           border: Border.all(
                                             color: Color(0xFFe78337),
-                                            width: 2,
+                                            width: 1,
                                           ),
                                         ),
                                         child: Row(
@@ -658,7 +662,7 @@ class Createcollection_screen extends State<CreateCollectionscreen> {
                                                         fontWeight:
                                                             FontWeight.w600,
                                                         color:
-                                                            Color(0xFFe78337),
+                                                            Color(0xFFF8dac2),
                                                       ),
                                                       border: InputBorder.none,
                                                     ),
@@ -707,10 +711,10 @@ class Createcollection_screen extends State<CreateCollectionscreen> {
                                         height: 55.0,
                                         decoration: BoxDecoration(
                                           borderRadius:
-                                              BorderRadius.circular(12.0),
+                                              BorderRadius.circular(5.0),
                                           border: Border.all(
                                             color: Color(0xFFe78337),
-                                            width: 2,
+                                            width: 1,
                                           ),
                                         ),
                                         child: Row(
@@ -742,7 +746,7 @@ class Createcollection_screen extends State<CreateCollectionscreen> {
                                                         fontWeight:
                                                             FontWeight.w600,
                                                         color:
-                                                            Color(0xFFe78337),
+                                                            Color(0xFFF8dac2),
                                                       ),
                                                       border: InputBorder.none,
                                                     ),
@@ -792,10 +796,10 @@ class Createcollection_screen extends State<CreateCollectionscreen> {
                                         height: 55.0,
                                         decoration: BoxDecoration(
                                           borderRadius:
-                                              BorderRadius.circular(12.0),
+                                              BorderRadius.circular(5.0),
                                           border: Border.all(
                                             color: Color(0xFFe78337),
-                                            width: 2,
+                                            width: 1,
                                           ),
                                         ),
                                         child: Row(
@@ -825,7 +829,7 @@ class Createcollection_screen extends State<CreateCollectionscreen> {
                                                         fontWeight:
                                                             FontWeight.w600,
                                                         color:
-                                                            Color(0xFFe78337),
+                                                            Color(0xFFF8dac2),
                                                       ),
                                                       border: InputBorder.none,
                                                     ),
@@ -866,10 +870,10 @@ class Createcollection_screen extends State<CreateCollectionscreen> {
                                 width: MediaQuery.of(context).size.width,
                                 height: 55.0,
                                 decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(12.0),
+                                  borderRadius: BorderRadius.circular(5.0),
                                   border: Border.all(
                                     color: Color(0xFFe78337),
-                                    width: 2,
+                                    width: 1,
                                   ),
                                 ),
                                 child: Padding(
@@ -884,7 +888,7 @@ class Createcollection_screen extends State<CreateCollectionscreen> {
                                               fontSize: 14,
                                               fontFamily: 'Roboto',
                                               fontWeight: FontWeight.w600,
-                                              color: Color(0xFFe78337),
+                                              color: Color(0xFFF8dac2),
                                             ),
                                           ),
                                           value: selectedPurpose,
@@ -962,10 +966,10 @@ class Createcollection_screen extends State<CreateCollectionscreen> {
                                 width: MediaQuery.of(context).size.width,
                                 height: 55.0,
                                 decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(12.0),
+                                  borderRadius: BorderRadius.circular(5.0),
                                   border: Border.all(
                                     color: Color(0xFFe78337),
-                                    width: 2,
+                                    width: 1,
                                   ),
                                 ),
                                 child: Padding(
@@ -980,7 +984,7 @@ class Createcollection_screen extends State<CreateCollectionscreen> {
                                               fontSize: 14,
                                               fontFamily: 'Roboto',
                                               fontWeight: FontWeight.w600,
-                                              color: Color(0xFFe78337),
+                                              color: Color(0xFFF8dac2),
                                             ),
                                           ),
                                           value: categroyname,
@@ -1052,7 +1056,7 @@ class Createcollection_screen extends State<CreateCollectionscreen> {
                             child: Container(
                               width: MediaQuery.of(context).size.width,
                               decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(12.0),
+                                borderRadius: BorderRadius.circular(5.0),
                               ),
                               padding: EdgeInsets.all(0.0),
                               child: DottedBorder(
@@ -1060,7 +1064,7 @@ class Createcollection_screen extends State<CreateCollectionscreen> {
                                 color: Color(0xFFe78337),
                                 padding:
                                     const EdgeInsets.only(top: 0, bottom: 0.0),
-                                strokeWidth: 2,
+                                strokeWidth: 1,
                                 child: Container(
                                   //padding: const EdgeInsets.all(15),
                                   // margin: const EdgeInsets.only(top: 3, bottom: 15),
@@ -1403,10 +1407,10 @@ class Createcollection_screen extends State<CreateCollectionscreen> {
             width: MediaQuery.of(context).size.width,
             height: 55.0,
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(12.0),
+              borderRadius: BorderRadius.circular(5.0),
               border: Border.all(
                 color: Color(0xFFe78337),
-                width: 2,
+                width: 1,
               ),
             ),
             child: Row(
@@ -1431,7 +1435,7 @@ class Createcollection_screen extends State<CreateCollectionscreen> {
                               fontSize: 14,
                               fontFamily: 'Roboto',
                               fontWeight: FontWeight.w600,
-                              color: Color(0xFFe78337),
+                              color: Color(0xFFF8dac2),
                             ),
                             border: InputBorder.none,
                           ),
@@ -1460,8 +1464,6 @@ class Createcollection_screen extends State<CreateCollectionscreen> {
       ],
     );
   }
-
-
 
   Future<void> _selectcheckDate(
     BuildContext context,

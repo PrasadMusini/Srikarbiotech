@@ -116,6 +116,10 @@ flutter:
     - assets/box-circle-check.svg
     - assets/boxes.svg
     - assets/edit.svg
+    - assets/money-bills.svg
+    - assets/site-alt.svg
+    - assets/indian-rupee-sign.svg
+
   #   - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see
