@@ -28,10 +28,14 @@ class CreateCollectionscreen extends StatefulWidget {
   final String proprietorName;
   final String gstRegnNo;
 
-
   CreateCollectionscreen(
-      {required this.cardName, required this.cardCode, required this.address, required  this.state, required  this.phone,
-        required  this.proprietorName, required  this.gstRegnNo});
+      {required this.cardName,
+      required this.cardCode,
+      required this.address,
+      required this.state,
+      required this.phone,
+      required this.proprietorName,
+      required this.gstRegnNo});
 
   @override
   Createcollection_screen createState() => Createcollection_screen();
@@ -60,7 +64,7 @@ class Createcollection_screen extends State<CreateCollectionscreen> {
   String filename = '';
   String fileExtension = '';
   String base64Image = '';
-  String ? Selected_PaymentMode = "";
+  String? Selected_PaymentMode = "";
   int? payid;
   List<PaymentMode> paymentmode = [];
   bool status = false;
@@ -74,7 +78,7 @@ class Createcollection_screen extends State<CreateCollectionscreen> {
 
   Purpose? selectedPurposeObj; // Declare it globally
   String? categroyname;
- // List of category names
+  // List of category names
   List<ItemGroup> itemGroups = []; // List of ItemGroup objects
   List<Purpose> purposeList = [];
   ItemGroup? selectedcategoryObj;
@@ -97,12 +101,11 @@ class Createcollection_screen extends State<CreateCollectionscreen> {
 
     CommonUtils.checkInternetConnectivity().then((isConnected) {
       if (isConnected) {
-getpaymentmethods();
-selectedIndex = 0;
-fetchdropdownitems();
-getslpcode();
-fetchdropdownitemscategory();
-
+        getpaymentmethods();
+        selectedIndex = 0;
+        fetchdropdownitems();
+        getslpcode();
+        fetchdropdownitemscategory();
 
         print('The Internet Is Connected');
       } else {
@@ -125,7 +128,7 @@ fetchdropdownitemscategory();
               children: [
                 Padding(
                   padding:
-                  const EdgeInsets.symmetric(horizontal: 2, vertical: 2),
+                      const EdgeInsets.symmetric(horizontal: 2, vertical: 2),
                   child: GestureDetector(
                     onTap: () {
                       // Handle the click event for the back button
@@ -200,7 +203,7 @@ fetchdropdownitemscategory();
                             context,
                             ' Date',
                             DateController,
-                                () => _selectDate(context, DateController),
+                            () => _selectDate(context, DateController),
                           ),
 
                           // From Date TextFormField with Calendar Icon
@@ -251,7 +254,8 @@ fetchdropdownitemscategory();
                                                   left: 10.0, top: 0.0),
                                               child: TextFormField(
                                                 controller: Amounttext,
-                                                keyboardType: TextInputType.number,
+                                                keyboardType:
+                                                    TextInputType.number,
                                                 maxLength: 10,
                                                 style: TextStyle(
                                                   fontSize: 14,
@@ -283,7 +287,8 @@ fetchdropdownitemscategory();
                           ),
                           SizedBox(height: 5.0),
                           Padding(
-                            padding: EdgeInsets.only(top: 10.0, left: 0.0, right: 0.0),
+                            padding: EdgeInsets.only(
+                                top: 10.0, left: 0.0, right: 0.0),
                             child: Text(
                               'Payment Mode',
                               style: TextStyle(
@@ -302,88 +307,110 @@ fetchdropdownitemscategory();
                               child: apiResponse == null
                                   ? Center(child: CircularProgressIndicator())
                                   : ListView.builder(
-                                scrollDirection: Axis.horizontal,
-                                itemCount: apiResponse!.listResult.length,
-                                itemBuilder: (BuildContext context, int index) {
-                                  bool isSelected = index == indexselected;
-                                  PaymentMode currentPaymode = apiResponse!.listResult[index]; // Store the current paymode in a local variable
+                                      scrollDirection: Axis.horizontal,
+                                      itemCount: apiResponse!.listResult.length,
+                                      itemBuilder:
+                                          (BuildContext context, int index) {
+                                        bool isSelected =
+                                            index == indexselected;
+                                        PaymentMode currentPaymode = apiResponse!
+                                                .listResult[
+                                            index]; // Store the current paymode in a local variable
 
-                                  IconData iconData;
-                                  switch (currentPaymode.desc) {
-                                    case 'Cheque':
-                                      iconData = Icons.payment;
-                                      break;
-                                    case 'Online':
-                                      iconData = Icons.access_alarm;
-                                      break;
-                                    case 'UPI':
-                                      iconData = Icons.payment;
-                                      break;
-                                  // Add more cases as needed
-                                    default:
-                                      iconData = Icons.payment; // Default icon
-                                      break;
-                                  }
+                                        IconData iconData;
+                                        switch (currentPaymode.desc) {
+                                          case 'Cheque':
+                                            iconData = Icons.payment;
+                                            break;
+                                          case 'Online':
+                                            iconData = Icons.access_alarm;
+                                            break;
+                                          case 'UPI':
+                                            iconData = Icons.payment;
+                                            break;
+                                          // Add more cases as needed
+                                          default:
+                                            iconData =
+                                                Icons.payment; // Default icon
+                                            break;
+                                        }
 
-                                  return GestureDetector(
-                                    onTap: () {
-                                      setState(() {
-                                        indexselected = index;
-                                        selectedPaymode = currentPaymode; // Update the selectedPaymode outside the build method
-                                      });
-                                      payid = currentPaymode.typeCdId;
-                                      Selected_PaymentMode = currentPaymode.desc;
-                                      print('payid:$payid');
-                                      print('Selected Payment Mode: ${currentPaymode.desc}, TypeCdId: $payid');
-                                      print('Selected Payment Mode: ${Selected_PaymentMode}, TypeCdId: $payid');
-                                    },
-                                    child: Container(
-                                      margin: EdgeInsets.symmetric(horizontal: 8.0),
-                                      decoration: BoxDecoration(
-                                        color: isSelected ? Color(0xFFe78337) : Colors.white,
-                                        border: Border.all(
-                                          color: isSelected ? Color(0xFFe78337) : Color(0xFFe78337),
-                                          width: 2.0,
-                                        ),
-                                        borderRadius: BorderRadius.circular(8.0),
-                                      ),
-                                      child: IntrinsicWidth(
-                                        child: Column(
-                                          mainAxisAlignment: MainAxisAlignment.center,
-                                          children: [
-                                            Container(
-                                              padding: EdgeInsets.symmetric(horizontal: 8.0),
-                                              child: Row(
+                                        return GestureDetector(
+                                          onTap: () {
+                                            setState(() {
+                                              indexselected = index;
+                                              selectedPaymode =
+                                                  currentPaymode; // Update the selectedPaymode outside the build method
+                                            });
+                                            payid = currentPaymode.typeCdId;
+                                            Selected_PaymentMode =
+                                                currentPaymode.desc;
+                                            print('payid:$payid');
+                                            print(
+                                                'Selected Payment Mode: ${currentPaymode.desc}, TypeCdId: $payid');
+                                            print(
+                                                'Selected Payment Mode: ${Selected_PaymentMode}, TypeCdId: $payid');
+                                          },
+                                          child: Container(
+                                            margin: EdgeInsets.symmetric(
+                                                horizontal: 8.0),
+                                            decoration: BoxDecoration(
+                                              color: isSelected
+                                                  ? Color(0xFFe78337)
+                                                  : Colors.white,
+                                              border: Border.all(
+                                                color: isSelected
+                                                    ? Color(0xFFe78337)
+                                                    : Color(0xFFe78337),
+                                                width: 2.0,
+                                              ),
+                                              borderRadius:
+                                                  BorderRadius.circular(8.0),
+                                            ),
+                                            child: IntrinsicWidth(
+                                              child: Column(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.center,
                                                 children: [
-                                                  Icon(
-                                                    iconData, // Use the dynamically determined icon
-                                                    color: isSelected ? Colors.white : Colors.black,
-                                                  ),
-                                                  SizedBox(width: 8.0), // Add some spacing between icon and text
-                                                  Text(
-                                                    '${currentPaymode.desc.toString()}',
-                                                    style: TextStyle(
-                                                      color: isSelected ? Colors.white : Colors.black,
+                                                  Container(
+                                                    padding:
+                                                        EdgeInsets.symmetric(
+                                                            horizontal: 8.0),
+                                                    child: Row(
+                                                      children: [
+                                                        Icon(
+                                                          iconData, // Use the dynamically determined icon
+                                                          color: isSelected
+                                                              ? Colors.white
+                                                              : Colors.black,
+                                                        ),
+                                                        SizedBox(
+                                                            width:
+                                                                8.0), // Add some spacing between icon and text
+                                                        Text(
+                                                          '${currentPaymode.desc.toString()}',
+                                                          style: TextStyle(
+                                                            color: isSelected
+                                                                ? Colors.white
+                                                                : Colors.black,
+                                                          ),
+                                                        ),
+                                                      ],
                                                     ),
                                                   ),
                                                 ],
                                               ),
                                             ),
-                                          ],
-                                        ),
-                                      ),
+                                          ),
+                                        );
+                                      },
                                     ),
-                                  );
-                                },
-                              ),
                             ),
                           ),
                           SizedBox(height: 5.0),
                           Visibility(
-                              visible:Selected_PaymentMode == 'Cheque',
-
-                              child:
-                              Padding(
+                              visible: Selected_PaymentMode == 'Cheque',
+                              child: Padding(
                                 padding: EdgeInsets.only(
                                     top: 0.0, left: 5.0, right: 0.0),
                                 child: Column(
@@ -409,11 +436,12 @@ fetchdropdownitemscategory();
                                         print('first textview clicked');
                                       },
                                       child: Container(
-
-                                        width: MediaQuery.of(context).size.width,
+                                        width:
+                                            MediaQuery.of(context).size.width,
                                         height: 55.0,
                                         decoration: BoxDecoration(
-                                          borderRadius: BorderRadius.circular(12.0),
+                                          borderRadius:
+                                              BorderRadius.circular(12.0),
                                           border: Border.all(
                                             color: Color(0xFFe78337),
                                             width: 2,
@@ -428,13 +456,16 @@ fetchdropdownitemscategory();
                                                   padding: EdgeInsets.only(
                                                       left: 10.0, top: 0.0),
                                                   child: TextFormField(
-                                                    controller: checknumbercontroller,
-                                                    keyboardType: TextInputType.number,
+                                                    controller:
+                                                        checknumbercontroller,
+                                                    keyboardType:
+                                                        TextInputType.number,
                                                     maxLength: 25,
                                                     style: TextStyle(
                                                       fontSize: 14,
                                                       fontFamily: 'Roboto',
-                                                      fontWeight: FontWeight.w600,
+                                                      fontWeight:
+                                                          FontWeight.w600,
                                                       color: Color(0xFFe78337),
                                                     ),
                                                     decoration: InputDecoration(
@@ -443,8 +474,10 @@ fetchdropdownitemscategory();
                                                       hintStyle: TextStyle(
                                                         fontSize: 14,
                                                         fontFamily: 'Roboto',
-                                                        fontWeight: FontWeight.w600,
-                                                        color: Color(0xFFe78337),
+                                                        fontWeight:
+                                                            FontWeight.w600,
+                                                        color:
+                                                            Color(0xFFe78337),
                                                       ),
                                                       border: InputBorder.none,
                                                     ),
@@ -458,26 +491,23 @@ fetchdropdownitemscategory();
                                     ),
                                   ],
                                 ),
-                              )
-                          ),
+                              )),
                           // Check Number
                           SizedBox(height: 5.0),
                           Visibility(
-
-                            visible:Selected_PaymentMode == 'Cheque',
-
-                            child:
-                            buildDateInput(
+                            visible: Selected_PaymentMode == 'Cheque',
+                            child: buildDateInput(
                               context,
                               'Check Date ',
                               checkDateController,
-                                  () => _selectcheckDate(context, checkDateController),
-                            ),),
+                              () => _selectcheckDate(
+                                  context, checkDateController),
+                            ),
+                          ),
                           SizedBox(height: 5.0),
                           Visibility(
-                              visible:Selected_PaymentMode == 'Cheque',
-                              child:
-                              Padding(
+                              visible: Selected_PaymentMode == 'Cheque',
+                              child: Padding(
                                 padding: EdgeInsets.only(
                                     top: 10.0, left: 0.0, right: 0.0),
                                 child: Column(
@@ -504,10 +534,12 @@ fetchdropdownitemscategory();
                                         print('first textview clicked');
                                       },
                                       child: Container(
-                                        width: MediaQuery.of(context).size.width,
+                                        width:
+                                            MediaQuery.of(context).size.width,
                                         height: 55.0,
                                         decoration: BoxDecoration(
-                                          borderRadius: BorderRadius.circular(12.0),
+                                          borderRadius:
+                                              BorderRadius.circular(12.0),
                                           border: Border.all(
                                             color: Color(0xFFe78337),
                                             width: 2,
@@ -522,22 +554,27 @@ fetchdropdownitemscategory();
                                                   padding: EdgeInsets.only(
                                                       left: 10.0, top: 0.0),
                                                   child: TextFormField(
-                                                    controller:checkissuedbankcontroller ,
+                                                    controller:
+                                                        checkissuedbankcontroller,
                                                     keyboardType:
-                                                    TextInputType.name,
+                                                        TextInputType.name,
                                                     style: TextStyle(
                                                       fontSize: 14,
                                                       fontFamily: 'Roboto',
-                                                      fontWeight: FontWeight.w600,
+                                                      fontWeight:
+                                                          FontWeight.w600,
                                                       color: Color(0xFFe78337),
                                                     ),
                                                     decoration: InputDecoration(
-                                                      hintText: 'Enter Issued Bank',
+                                                      hintText:
+                                                          'Enter Issued Bank',
                                                       hintStyle: TextStyle(
                                                         fontSize: 14,
                                                         fontFamily: 'Roboto',
-                                                        fontWeight: FontWeight.w600,
-                                                        color: Color(0xFFe78337),
+                                                        fontWeight:
+                                                            FontWeight.w600,
+                                                        color:
+                                                            Color(0xFFe78337),
                                                       ),
                                                       border: InputBorder.none,
                                                     ),
@@ -554,7 +591,7 @@ fetchdropdownitemscategory();
                               )),
                           SizedBox(height: 5.0),
                           Visibility(
-                              visible:Selected_PaymentMode == 'Online',
+                              visible: Selected_PaymentMode == 'Online',
                               child: Padding(
                                 padding: EdgeInsets.only(
                                     top: 10.0, left: 0.0, right: 0.0),
@@ -574,17 +611,19 @@ fetchdropdownitemscategory();
                                         textAlign: TextAlign.start,
                                       ),
                                     ),
-                                      SizedBox(height: 4.0),
+                                    SizedBox(height: 4.0),
                                     GestureDetector(
                                       onTap: () {
                                         // Handle the click event for the second text view
                                         print('first textview clicked');
                                       },
                                       child: Container(
-                                        width: MediaQuery.of(context).size.width,
+                                        width:
+                                            MediaQuery.of(context).size.width,
                                         height: 55.0,
                                         decoration: BoxDecoration(
-                                          borderRadius: BorderRadius.circular(12.0),
+                                          borderRadius:
+                                              BorderRadius.circular(12.0),
                                           border: Border.all(
                                             color: Color(0xFFe78337),
                                             width: 2,
@@ -599,23 +638,27 @@ fetchdropdownitemscategory();
                                                   padding: EdgeInsets.only(
                                                       left: 10.0, top: 0.0),
                                                   child: TextFormField(
-                                                    controller:accountnumcontroller ,
+                                                    controller:
+                                                        accountnumcontroller,
                                                     keyboardType:
-                                                    TextInputType.number,
+                                                        TextInputType.number,
                                                     style: TextStyle(
                                                       fontSize: 14,
                                                       fontFamily: 'Roboto',
-                                                      fontWeight: FontWeight.w600,
+                                                      fontWeight:
+                                                          FontWeight.w600,
                                                       color: Color(0xFFe78337),
                                                     ),
                                                     decoration: InputDecoration(
                                                       hintText:
-                                                      'Enter Credit Account No',
+                                                          'Enter Credit Account No',
                                                       hintStyle: TextStyle(
                                                         fontSize: 14,
                                                         fontFamily: 'Roboto',
-                                                        fontWeight: FontWeight.w600,
-                                                        color: Color(0xFFe78337),
+                                                        fontWeight:
+                                                            FontWeight.w600,
+                                                        color:
+                                                            Color(0xFFe78337),
                                                       ),
                                                       border: InputBorder.none,
                                                     ),
@@ -632,7 +675,7 @@ fetchdropdownitemscategory();
                               )),
                           SizedBox(height: 5.0),
                           Visibility(
-                              visible:Selected_PaymentMode == 'Online',
+                              visible: Selected_PaymentMode == 'Online',
                               child: Padding(
                                 padding: EdgeInsets.only(
                                     top: 10.0, left: 0.0, right: 0.0),
@@ -652,17 +695,19 @@ fetchdropdownitemscategory();
                                         textAlign: TextAlign.start,
                                       ),
                                     ),
-                                     SizedBox(height: 4.0),
+                                    SizedBox(height: 4.0),
                                     GestureDetector(
                                       onTap: () {
                                         // Handle the click event for the second text view
                                         print('first textview clicked');
                                       },
                                       child: Container(
-                                        width: MediaQuery.of(context).size.width,
+                                        width:
+                                            MediaQuery.of(context).size.width,
                                         height: 55.0,
                                         decoration: BoxDecoration(
-                                          borderRadius: BorderRadius.circular(12.0),
+                                          borderRadius:
+                                              BorderRadius.circular(12.0),
                                           border: Border.all(
                                             color: Color(0xFFe78337),
                                             width: 2,
@@ -677,22 +722,27 @@ fetchdropdownitemscategory();
                                                   padding: EdgeInsets.only(
                                                       left: 10.0, top: 0.0),
                                                   child: TextFormField(
-                                                    controller: creditbankcontroller,
+                                                    controller:
+                                                        creditbankcontroller,
                                                     keyboardType:
-                                                    TextInputType.name,
+                                                        TextInputType.name,
                                                     style: TextStyle(
                                                       fontSize: 14,
                                                       fontFamily: 'Roboto',
-                                                      fontWeight: FontWeight.w600,
+                                                      fontWeight:
+                                                          FontWeight.w600,
                                                       color: Color(0xFFe78337),
                                                     ),
                                                     decoration: InputDecoration(
-                                                      hintText: 'Enter Credit Bank',
+                                                      hintText:
+                                                          'Enter Credit Bank',
                                                       hintStyle: TextStyle(
                                                         fontSize: 14,
                                                         fontFamily: 'Roboto',
-                                                        fontWeight: FontWeight.w600,
-                                                        color: Color(0xFFe78337),
+                                                        fontWeight:
+                                                            FontWeight.w600,
+                                                        color:
+                                                            Color(0xFFe78337),
                                                       ),
                                                       border: InputBorder.none,
                                                     ),
@@ -709,7 +759,7 @@ fetchdropdownitemscategory();
                               )),
                           SizedBox(height: 5.0),
                           Visibility(
-                              visible:Selected_PaymentMode == 'Online',
+                              visible: Selected_PaymentMode == 'Online',
                               child: Padding(
                                 padding: EdgeInsets.only(
                                     top: 10.0, left: 0.0, right: 0.0),
@@ -726,22 +776,23 @@ fetchdropdownitemscategory();
                                           color: Color(0xFF5f5f5f),
                                           fontFamily: 'Roboto',
                                           fontWeight: FontWeight.w600,
-
                                         ),
                                         textAlign: TextAlign.start,
                                       ),
                                     ),
-                                   SizedBox(height: 5.0),
+                                    SizedBox(height: 5.0),
                                     GestureDetector(
                                       onTap: () {
                                         // Handle the click event for the second text view
                                         print('first textview clicked');
                                       },
                                       child: Container(
-                                        width: MediaQuery.of(context).size.width,
+                                        width:
+                                            MediaQuery.of(context).size.width,
                                         height: 55.0,
                                         decoration: BoxDecoration(
-                                          borderRadius: BorderRadius.circular(12.0),
+                                          borderRadius:
+                                              BorderRadius.circular(12.0),
                                           border: Border.all(
                                             color: Color(0xFFe78337),
                                             width: 2,
@@ -757,20 +808,24 @@ fetchdropdownitemscategory();
                                                       left: 10.0, top: 0.0),
                                                   child: TextFormField(
                                                     keyboardType:
-                                                    TextInputType.name,
+                                                        TextInputType.name,
                                                     style: TextStyle(
                                                       fontSize: 14,
                                                       fontFamily: 'Roboto',
-                                                      fontWeight: FontWeight.w600,
+                                                      fontWeight:
+                                                          FontWeight.w600,
                                                       color: Color(0xFFe78337),
                                                     ),
                                                     decoration: InputDecoration(
-                                                      hintText: 'Enter UTR Number',
+                                                      hintText:
+                                                          'Enter UTR Number',
                                                       hintStyle: TextStyle(
                                                         fontSize: 14,
                                                         fontFamily: 'Roboto',
-                                                        fontWeight: FontWeight.w600,
-                                                        color: Color(0xFFe78337),
+                                                        fontWeight:
+                                                            FontWeight.w600,
+                                                        color:
+                                                            Color(0xFFe78337),
                                                       ),
                                                       border: InputBorder.none,
                                                     ),
@@ -787,12 +842,10 @@ fetchdropdownitemscategory();
                               )),
                           // Download and Share buttons
 
-
-
                           // Purpose
                           Padding(
-                            padding:
-                            EdgeInsets.only(top: 0.0, left: 0.0, right: 0.0),
+                            padding: EdgeInsets.only(
+                                top: 0.0, left: 0.0, right: 0.0),
                             child: Text(
                               'Purpose',
                               style: TextStyle(
@@ -809,76 +862,86 @@ fetchdropdownitemscategory();
                               // Handle the click event for the container
                               print('Container clicked');
                             },
-                            child:
-                            Container(
-                              width: MediaQuery.of(context).size.width,
-                              height: 55.0,
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(12.0),
-                                border: Border.all(
-                                  color: Color(0xFFe78337),
-                                  width: 2,
+                            child: Container(
+                                width: MediaQuery.of(context).size.width,
+                                height: 55.0,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(12.0),
+                                  border: Border.all(
+                                    color: Color(0xFFe78337),
+                                    width: 2,
+                                  ),
                                 ),
-                              ),
                                 child: Padding(
                                   padding: EdgeInsets.all(8.0),
                                   child: purposeList.isEmpty
-                                  ? CircularProgressIndicator() // Show a loading indicator
-                                  : DropdownButton<String>(
-                                hint: Text(
-                                  'Select Purpose',
-                                  style: TextStyle(
-                                    fontSize: 14,
-                                    fontFamily: 'Roboto',
-                                    fontWeight: FontWeight.w600,
-                                    color: Color(0xFFe78337),
-                                  ),
-                                ),
-                                value: selectedPurpose,
-                                onChanged: (String? newValue) {
-                                  setState(() {
-                                    selectedPurpose = newValue;
+                                      ? CircularProgressIndicator
+                                          .adaptive() // Show a loading indicator
+                                      : DropdownButton<String>(
+                                          hint: Text(
+                                            'Select Purpose',
+                                            style: TextStyle(
+                                              fontSize: 14,
+                                              fontFamily: 'Roboto',
+                                              fontWeight: FontWeight.w600,
+                                              color: Color(0xFFe78337),
+                                            ),
+                                          ),
+                                          value: selectedPurpose,
+                                          onChanged: (String? newValue) {
+                                            setState(() {
+                                              selectedPurpose = newValue;
 
-                                    // Find the selected Purpose object
-                                    selectedPurposeObj = purposeList.firstWhere(
-                                          (purpose) => purpose.fldValue == newValue,
-                                      orElse: () => Purpose(fldValue: '', descr: '', purposeName: ''),
-                                    );
+                                              // Find the selected Purpose object
+                                              selectedPurposeObj =
+                                                  purposeList.firstWhere(
+                                                (purpose) =>
+                                                    purpose.fldValue ==
+                                                    newValue,
+                                                orElse: () => Purpose(
+                                                  fldValue: '',
+                                                  descr: '',
+                                                  purposeName: '',
+                                                ),
+                                              );
 
-                                    // Print the selected values
-                                    print('fldValue: ${selectedPurposeObj?.fldValue}');
-                                    print('descr: ${selectedPurposeObj?.descr}');
-                                    print('purposeName: ${selectedPurposeObj?.purposeName}');
-                                  });
-                                },
-                                items: purposeList.map((Purpose purpose) {
-                                  return DropdownMenuItem<String>(
-                                    value: purpose.fldValue,
-                                    child: Text(
-                                      purpose.purposeName,
-                                      style: TextStyle(
-                                        fontSize: 14,
-                                        fontFamily: 'Roboto',
-                                        fontWeight: FontWeight.w600,
-                                        color: Color(0xFFe78337),
-                                      ),
-                                    ),
-                                  );
-                                }).toList(),
-                                icon: Icon(Icons.arrow_drop_down),
-                                iconSize: 24,
-                                isExpanded: true,
-                                underline: SizedBox(),
-                              ),
-                            )
-                          ),
+                                              // Print the selected values
+                                              print(
+                                                  'fldValue: ${selectedPurposeObj?.fldValue}');
+                                              print(
+                                                  'descr: ${selectedPurposeObj?.descr}');
+                                              print(
+                                                  'purposeName: ${selectedPurposeObj?.purposeName}');
+                                            });
+                                          },
+                                          items: purposeList
+                                              .map((Purpose purpose) {
+                                            return DropdownMenuItem<String>(
+                                              value: purpose.fldValue,
+                                              child: Text(
+                                                purpose.purposeName,
+                                                style: TextStyle(
+                                                  fontSize: 14,
+                                                  fontFamily: 'Roboto',
+                                                  fontWeight: FontWeight.w600,
+                                                  color: Color(0xFFe78337),
+                                                ),
+                                              ),
+                                            );
+                                          }).toList(),
+                                          icon: Icon(Icons.arrow_drop_down),
+                                          iconSize: 24,
+                                          isExpanded: true,
+                                          underline: SizedBox(),
+                                        ),
+                                )),
                           ),
 
                           SizedBox(height: 4.0),
 
                           Padding(
-                            padding:
-                            EdgeInsets.only(top: 0.0, left: 0.0, right: 0.0),
+                            padding: EdgeInsets.only(
+                                top: 0.0, left: 0.0, right: 0.0),
                             child: Text(
                               'Category',
                               style: TextStyle(
@@ -891,12 +954,11 @@ fetchdropdownitemscategory();
                           ),
                           SizedBox(height: 4.0),
                           GestureDetector(
-                              onTap: () {
-                                // Handle the click event for the container
-                                print('Container clicked');
-                              },
-                              child:
-                              Container(
+                            onTap: () {
+                              // Handle the click event for the container
+                              print('Container clicked');
+                            },
+                            child: Container(
                                 width: MediaQuery.of(context).size.width,
                                 height: 55.0,
                                 decoration: BoxDecoration(
@@ -906,63 +968,70 @@ fetchdropdownitemscategory();
                                     width: 2,
                                   ),
                                 ),
-                                  child: Padding(
-                                    padding: EdgeInsets.all(8.0), // Adjust the padding as needed
-                                child: itemGroups.isEmpty
-                                    ? CircularProgressIndicator() // Show a loading indicator
-                                    : DropdownButton<String>(
-                                  hint: Text(
-                                    'Select Category',
-                                    style: TextStyle(
-                                      fontSize: 14,
-                                      fontFamily: 'Roboto',
-                                      fontWeight: FontWeight.w600,
-                                      color: Color(0xFFe78337),
-                                    ),
-                                  ),
-                                  value: categroyname,
-                                  onChanged: (String? newValue) {
-                                    setState(() {
-                                      categroyname = newValue;
+                                child: Padding(
+                                  padding: EdgeInsets.all(
+                                      8.0), // Adjust the padding as needed
+                                  child: itemGroups.isEmpty
+                                      ? CircularProgressIndicator() // Show a loading indicator
+                                      : DropdownButton<String>(
+                                          hint: Text(
+                                            'Select Category',
+                                            style: TextStyle(
+                                              fontSize: 14,
+                                              fontFamily: 'Roboto',
+                                              fontWeight: FontWeight.w600,
+                                              color: Color(0xFFe78337),
+                                            ),
+                                          ),
+                                          value: categroyname,
+                                          onChanged: (String? newValue) {
+                                            setState(() {
+                                              categroyname = newValue;
 
-                                      // Find the selected Purpose object
-                                      selectedcategoryObj = itemGroups.firstWhere(
-                                            (category) => category.itmsGrpNam == newValue,
-                                        orElse: () => ItemGroup(itmsGrpCod: '', itmsGrpNam: '', itemClass: ''),
-                                      );
+                                              // Find the selected Purpose object
+                                              selectedcategoryObj =
+                                                  itemGroups.firstWhere(
+                                                (category) =>
+                                                    category.itmsGrpNam ==
+                                                    newValue,
+                                                orElse: () => ItemGroup(
+                                                    itmsGrpCod: '',
+                                                    itmsGrpNam: '',
+                                                    itemClass: ''),
+                                              );
 
-                                      // Print the selected values
-                                      print('itmsGrpCod: ${selectedcategoryObj?.itmsGrpCod}');
-                                      print('itmsGrpNam: ${selectedcategoryObj?.itmsGrpNam}');
-
-                                    });
-                                  },
-                                  items: itemGroups.map((ItemGroup category) {
-                                    return DropdownMenuItem<String>(
-                                      value: category.itmsGrpNam,
-                                      child: Text(
-                                        category.itmsGrpNam,
-                                        style: TextStyle(
-                                          fontSize: 14,
-                                          fontFamily: 'Roboto',
-                                          fontWeight: FontWeight.w600,
-                                          color: Color(0xFFe78337),
+                                              // Print the selected values
+                                              print(
+                                                  'itmsGrpCod: ${selectedcategoryObj?.itmsGrpCod}');
+                                              print(
+                                                  'itmsGrpNam: ${selectedcategoryObj?.itmsGrpNam}');
+                                            });
+                                          },
+                                          items: itemGroups
+                                              .map((ItemGroup category) {
+                                            return DropdownMenuItem<String>(
+                                              value: category.itmsGrpNam,
+                                              child: Text(
+                                                category.itmsGrpNam,
+                                                style: TextStyle(
+                                                  fontSize: 14,
+                                                  fontFamily: 'Roboto',
+                                                  fontWeight: FontWeight.w600,
+                                                  color: Color(0xFFe78337),
+                                                ),
+                                              ),
+                                            );
+                                          }).toList(),
+                                          icon: Icon(Icons.arrow_drop_down),
+                                          iconSize: 24,
+                                          isExpanded: true,
+                                          underline: SizedBox(),
                                         ),
-                                      ),
-                                    );
-                                  }).toList(),
-                                  icon: Icon(Icons.arrow_drop_down),
-                                  iconSize: 24,
-                                  isExpanded: true,
-                                  underline: SizedBox(),
-                                ),
-                              )
-                          ),
-
+                                )),
                           ),
                           Padding(
-                            padding:
-                            EdgeInsets.only(top: 10.0, left: 0.0, right: 0.0),
+                            padding: EdgeInsets.only(
+                                top: 10.0, left: 0.0, right: 0.0),
                             child: Text(
                               'Attachment',
                               style: TextStyle(
@@ -989,7 +1058,8 @@ fetchdropdownitemscategory();
                               child: DottedBorder(
                                 borderType: BorderType.RRect,
                                 color: Color(0xFFe78337),
-                                padding: const EdgeInsets.only(top: 0, bottom: 0.0),
+                                padding:
+                                    const EdgeInsets.only(top: 0, bottom: 0.0),
                                 strokeWidth: 2,
                                 child: Container(
                                   //padding: const EdgeInsets.all(15),
@@ -1016,7 +1086,8 @@ fetchdropdownitemscategory();
                                         // margin: const EdgeInsets.only(bottom: 5),
                                         decoration: BoxDecoration(
                                           color: Color(0xFFe78337),
-                                          borderRadius: BorderRadius.circular(10),
+                                          borderRadius:
+                                              BorderRadius.circular(10),
                                         ),
                                         child: const Icon(
                                           Icons.folder_rounded,
@@ -1050,13 +1121,12 @@ fetchdropdownitemscategory();
                           ),
                           SizedBox(height: 10.0),
 
-
                           GestureDetector(
                             onTap: () {
                               // Handle tap on uploaded image to remove it
                               setState(() {
                                 _imageFile =
-                                null; // Set _imageFile to null to remove the image
+                                    null; // Set _imageFile to null to remove the image
                               });
                             },
                             child: SizedBox(
@@ -1070,34 +1140,39 @@ fetchdropdownitemscategory();
                                 children: [
                                   _imageFile != null
                                       ? Image.file(
-                                    _imageFile!,
-                                    width: MediaQuery.of(context).size.width,
-                                    fit: BoxFit.fitWidth,
-                                  )
+                                          _imageFile!,
+                                          width:
+                                              MediaQuery.of(context).size.width,
+                                          fit: BoxFit.fitWidth,
+                                        )
                                       : Image.asset(
-                                    'assets/shopping_bag.png',
-                                    width: MediaQuery.of(context).size.width,
-                                    fit: BoxFit.fitWidth,
-                                  ),
+                                          'assets/shopping_bag.png',
+                                          width:
+                                              MediaQuery.of(context).size.width,
+                                          fit: BoxFit.fitWidth,
+                                        ),
                                   if (_imageFile != null)
                                     GestureDetector(
                                       onTap: () {
                                         // Handle tap on cross mark icon (optional)
                                         setState(() {
-                                          _imageFile = null; // Set _imageFile to null to remove the image
+                                          _imageFile =
+                                              null; // Set _imageFile to null to remove the image
                                         });
                                       },
                                       child: Container(
                                         padding: EdgeInsets.all(5.0),
-                                        margin:
-                                        EdgeInsets.only(top: 5, right: 10.0),
+                                        margin: EdgeInsets.only(
+                                            top: 5, right: 10.0),
                                         color: HexColor(
                                             '#ffeee0'), // Optional overlay color
                                         child: SvgPicture.asset(
                                           'assets/crosscircle.svg',
                                           color: Color(0xFFe78337),
-                                          width: 24.0, // Set the width as needed
-                                          height: 24.0, // Set the height as needed
+                                          width:
+                                              24.0, // Set the width as needed
+                                          height:
+                                              24.0, // Set the height as needed
                                         ),
                                       ),
                                     ),
@@ -1110,31 +1185,28 @@ fetchdropdownitemscategory();
                           SizedBox(height: 18.0),
 
                           // Submit Button
-                          GestureDetector(
-                            onTap: () {
-                              // Call Submit submit function or perform the desired action here
-                              print('Submit button clicked');
-                              AddUpdateCollections(context);
-                            },
-                            child: Container(
+                          Container(
                               padding: const EdgeInsets.all(10),
                               width: double.infinity,
                               decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(10),
                                 color: Color(0xFFe78337),
                               ),
-                              child: Center(
-                                child: Text(
-                                  'Submit',
-                                  style: TextStyle(
-                                    color: Colors.white,
+                              child: GestureDetector(
+                                onTap: () {
+                                  // Call Submit submit function or perform the desired action here
+                                  print('Submit button clicked');
+                                  AddUpdateCollections(context);
+                                },
+                                child: Center(
+                                  child: Text(
+                                    'Submit',
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                    ),
                                   ),
                                 ),
-                              ),
-                            ),
-                          ),
-
-
+                              )),
                         ],
                       ),
                     ),
@@ -1149,7 +1221,6 @@ fetchdropdownitemscategory();
   }
 
   Future<void> AddUpdateCollections(BuildContext context) async {
-
     bool isValid = true;
     bool hasValidationFailed = false;
     DateTime currentDate = DateTime.now();
@@ -1162,8 +1233,6 @@ fetchdropdownitemscategory();
     String checkdate = DateFormat('yyyy-MM-dd').format(selectedCheckDate);
     print('Formatted Date: $selecteddate');
     print('Formatted Date: $checkdate');
-
-
 
     if (isValid && DateController.text.isEmpty) {
       CommonUtils.showCustomToastMessageLong(
@@ -1205,7 +1274,6 @@ fetchdropdownitemscategory();
     });
 
     Map<String, dynamic> requestData = {
-
       "Id": "",
       "Date": selecteddate,
       "SlpCode": '$slpCode',
@@ -1243,16 +1311,16 @@ fetchdropdownitemscategory();
       "CreatedDate": formattedcurrentDate,
       "UpdatedBy": '$userId',
       "UpdatedDate": formattedcurrentDate,
-      "PartyGSTNumber":'${widget.gstRegnNo}',
-     "ProprietorName":'${widget.proprietorName}',
+      "PartyGSTNumber": '${widget.gstRegnNo}',
+      "ProprietorName": '${widget.proprietorName}',
       "FileString": '$base64Image'
-
     };
 
     print(requestData);
     print(jsonEncode(requestData));
     // URL for the API endpoint
-    String apiUrl = "http://182.18.157.215/Srikar_Biotech_Dev/API/api/Collections/AddUpdateCollections";
+    String apiUrl =
+        "http://182.18.157.215/Srikar_Biotech_Dev/API/api/Collections/AddUpdateCollections";
 
     // Encode the JSON data
     String requestBody = jsonEncode(requestData);
@@ -1287,10 +1355,8 @@ fetchdropdownitemscategory();
             context,
             MaterialPageRoute(builder: (context) => StatusScreen()),
           );
-        }
-        else{
-          CommonUtils.showCustomToastMessageLong(
-              'Error', context, 1, 6);
+        } else {
+          CommonUtils.showCustomToastMessageLong('Error', context, 1, 6);
         }
         //  CommonUtils.showCustomToastMessageLong(' Successfully', context, 0, 4);
       } else {
@@ -1307,11 +1373,11 @@ fetchdropdownitemscategory();
   }
 
   static Widget buildDateInput(
-      BuildContext context,
-      String labelText,
-      TextEditingController controller,
-      VoidCallback onTap,
-      ) {
+    BuildContext context,
+    String labelText,
+    TextEditingController controller,
+    VoidCallback onTap,
+  ) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -1349,7 +1415,6 @@ fetchdropdownitemscategory();
                       padding: EdgeInsets.only(left: 10.0, top: 0.0),
                       child: TextFormField(
                         controller: controller,
-
                         style: TextStyle(
                           fontSize: 14,
                           fontFamily: 'Roboto',
@@ -1388,11 +1453,10 @@ fetchdropdownitemscategory();
     );
   }
 
-
   Future<void> _selectcheckDate(
-      BuildContext context,
-      TextEditingController controller,
-      ) async {
+    BuildContext context,
+    TextEditingController controller,
+  ) async {
     DateTime currentDate = DateTime.now();
     DateTime initialDate;
 
@@ -1424,9 +1488,9 @@ fetchdropdownitemscategory();
         selectedCheckDate = picked;
         print("Selected check Date: $selectedCheckDate");
 
-
         // Print formatted date
-        print("Selected check Date: ${DateFormat('yyyy-MM-dd').format(picked)}");
+        print(
+            "Selected check Date: ${DateFormat('yyyy-MM-dd').format(picked)}");
       }
     } catch (e) {
       print("Error selecting date: $e");
@@ -1435,9 +1499,9 @@ fetchdropdownitemscategory();
   }
 
   Future<void> _selectDate(
-      BuildContext context,
-      TextEditingController controller,
-      ) async {
+    BuildContext context,
+    TextEditingController controller,
+  ) async {
     DateTime currentDate = DateTime.now();
     DateTime initialDate;
 
@@ -1469,7 +1533,6 @@ fetchdropdownitemscategory();
         selectedDate = picked;
         print("Selected  Date: $selectedDate");
 
-
         // Print formatted date
         print("Selected  Date: ${DateFormat('yyyy-MM-dd').format(picked)}");
       }
@@ -1478,7 +1541,6 @@ fetchdropdownitemscategory();
       // Handle the error, e.g., show a message to the user or log it.
     }
   }
-
 
   Future<void> getslpcode() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -1492,14 +1554,15 @@ fetchdropdownitemscategory();
       // Use userId and slpCode in your code
       print('Retrieved userId: $userId');
       print('Retrieved slpCode: $slpCode');
-
     } else {
       // Handle the case where userId or slpCode is null
       print('User not logged in or missing required data.');
     }
   }
+
   Future<void> getpaymentmethods() async {
-    final response = await http.get(Uri.parse('http://182.18.157.215/Srikar_Biotech_Dev/API/api/Master/GetAllTypeCdDmt/2'));
+    final response = await http.get(Uri.parse(
+        'http://182.18.157.215/Srikar_Biotech_Dev/API/api/Master/GetAllTypeCdDmt/2'));
 
     if (response.statusCode == 200) {
       setState(() {
@@ -1510,6 +1573,7 @@ fetchdropdownitemscategory();
       throw Exception('Failed to load data');
     }
   }
+
   void showBottomSheetForImageSelection(BuildContext context) {
     showModalBottomSheet(
       backgroundColor: Color(0xFFFFFFFF),
@@ -1583,11 +1647,9 @@ fetchdropdownitemscategory();
     }
   }
 
-
-
-
   Future<void> fetchdropdownitems() async {
-    final apiUrl = 'http://182.18.157.215/Srikar_Biotech_Dev/API/api/Collections/GetPurposes';
+    final apiUrl =
+        'http://182.18.157.215/Srikar_Biotech_Dev/API/api/Collections/GetPurposes';
 
     try {
       final response = await http.get(Uri.parse(apiUrl));
@@ -1597,7 +1659,8 @@ fetchdropdownitemscategory();
         final listResult = data['response']['listResult'] as List;
 
         setState(() {
-          purposeList = listResult.map((item) => Purpose.fromJson(item)).toList();
+          purposeList =
+              listResult.map((item) => Purpose.fromJson(item)).toList();
         });
       } else {
         throw Exception('Failed to load data');
@@ -1607,9 +1670,9 @@ fetchdropdownitemscategory();
     }
   }
 
-
   Future<void> fetchdropdownitemscategory() async {
-    final apiUrl = 'http://182.18.157.215/Srikar_Biotech_Dev/API/api/Item/GetItemGroups/null';
+    final apiUrl =
+        'http://182.18.157.215/Srikar_Biotech_Dev/API/api/Item/GetItemGroups/null';
 
     try {
       final response = await http.get(Uri.parse(apiUrl));
@@ -1636,5 +1699,3 @@ fetchdropdownitemscategory();
     }
   }
 }
-
-
