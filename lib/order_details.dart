@@ -15,6 +15,10 @@ class orderdetails extends StatefulWidget {
   final String transportmode;
   final String statusname;
   final String partyname;
+  final String partycode;
+  final String proprietorName;
+  final String partyGSTNumber;
+  final String partyAddress;
 
   orderdetails(
       {required this.partyname,
@@ -25,8 +29,12 @@ class orderdetails extends StatefulWidget {
       required this.Preferabletransport,
       required this.lrnumber,
       required this.lrdate,
+      required this.partycode,
+      required this.proprietorName,
+      required this.partyAddress,
       required this.paymentmode,
       required this.transportmode,
+      required this.partyGSTNumber,
       required this.statusname});
 
   @override
@@ -177,7 +185,7 @@ class _orderdetailsPageState extends State<orderdetails> {
                           padding:
                               EdgeInsets.only(top: 0.0, left: 0.0, right: 0.0),
                           child: Text(
-                            'XXXXX05',
+                            '${widget.partycode}',
                             style: TextStyle(
                               fontSize: 13.0,
                               color: Color(0xFF414141),
@@ -193,7 +201,7 @@ class _orderdetailsPageState extends State<orderdetails> {
                           padding:
                               EdgeInsets.only(top: 0.0, left: 0.0, right: 0.0),
                           child: Text(
-                            'Salesman Name',
+                            '${widget.proprietorName}',
                             style: TextStyle(
                               fontSize: 14.0,
                               color: Color(0xFFe78337),
@@ -218,7 +226,7 @@ class _orderdetailsPageState extends State<orderdetails> {
                                     textAlign: TextAlign.start,
                                   ),
                                   Text(
-                                    ' 65486GGG13588RL5',
+                                    '${widget.partyGSTNumber}',
                                     style: TextStyle(
                                       fontSize: 14.0,
                                       color: Color(0xFFe78337),
@@ -246,7 +254,7 @@ class _orderdetailsPageState extends State<orderdetails> {
                           padding:
                               EdgeInsets.only(top: 0.0, left: 0.0, right: 0.0),
                           child: Text(
-                            'Plotno:149/2,BHEL, Hyderbad -435667',
+                            '${widget.partyAddress}',
                             style: TextStyle(
                               fontSize: 12.0,
                               color: Color(0xFFe78337),
