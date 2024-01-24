@@ -25,10 +25,11 @@ class Ordersubmit_screen extends StatefulWidget {
   final String gstRegnNo;
   final String state;
   final String phone;
-
+  final String BookingPlace;
+  final String TransportName;
   Ordersubmit_screen(
       {required this.cardName, required this.cardCode, required this.address, required  this.state, required  this.phone,
-        required  this.proprietorName, required  this.gstRegnNo});
+        required  this.proprietorName, required  this.gstRegnNo, required this.BookingPlace, required this.TransportName});
   @override
   Order_submit_screen createState() => Order_submit_screen();
 }
@@ -38,6 +39,7 @@ class Order_submit_screen extends State<Ordersubmit_screen> {
   List<String>? cartItems = [];
   List<TextEditingController> textEditingControllers =[];
   List<int> quantities =[];
+
   @override
   initState() {
     super.initState();
@@ -88,7 +90,7 @@ class Order_submit_screen extends State<Ordersubmit_screen> {
                   ),
                 ),
                 Text(
-                  '( ' +'${cartItems!.length}' + ')',
+                  '(' +'${cartItems!.length}' + ')',
                   style: TextStyle(
                     color: Colors.white,
                     fontSize: 18,
@@ -113,14 +115,17 @@ class Order_submit_screen extends State<Ordersubmit_screen> {
           ],
         ),
       ),
-      body: Column(
+      body: SingleChildScrollView(
+        child:
+
+      Column(
         children: [
           Padding(
-            padding: EdgeInsets.only(top: 10.0, left: 20.0, right: 20.0),
+            padding: EdgeInsets.only(top: 5.0, left: 10.0, right: 10.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                SizedBox(height: 8.0),
+
                 CommonUtils.buildCard(
                   widget.cardName,
                   widget.cardCode,
@@ -134,9 +139,11 @@ class Order_submit_screen extends State<Ordersubmit_screen> {
               ],
             ),
           ),
-          Expanded(
-            child: cartItems != null && cartItems!.isNotEmpty
+          Container(
+            child: cartItems != null
+                && cartItems!.isNotEmpty
                 ? ListView.builder(
+              shrinkWrap: true,
               itemCount: cartItems!.length,
               itemBuilder: (context, index) {
                 return buildCartItem(index);
@@ -381,24 +388,44 @@ class Order_submit_screen extends State<Ordersubmit_screen> {
         ],
       ),
 
-      bottomNavigationBar: Padding(
-        padding: const EdgeInsets.all(10.0),
-        child: ElevatedButton(
-          onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => orderStatusScreen()),
-            );
-          },
-          style: ElevatedButton.styleFrom(
-            primary: Color(0xFFe78337), // Set your desired background color
-          ),
-          child: Text(
-            'Place Your Order',
-            style: TextStyle(
-              color: Colors.white, // Set your desired text color
+      ),
+      bottomNavigationBar: Container(
+        height: 60,
+        margin: const EdgeInsets.symmetric(vertical: 15, horizontal: 10),
+        padding: const EdgeInsets.all(8.0),
+        child: Row(
+          children: [
+            Expanded(
+              child: InkWell(
+                onTap: () {
+                  AddOrder();
+                  // Add logic for the download button
+
+                  print(' button clicked');
+
+                },
+                child: Container(
+                  padding: const EdgeInsets.all(10),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(10),
+                    color: Color(0xFFe78337),
+                  ),
+                  child: const Center(
+                    child:  Text(
+                      'Place Your Order',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 18,
+                        fontWeight: FontWeight.w700, // Set the font weight to bold
+                        fontFamily: 'Roboto', // Set the font family to Roboto
+                      ),
+                    ),
+                  ),
+                ),
+              ),
             ),
-          ),
+
+          ],
         ),
       ),
 
@@ -490,114 +517,117 @@ print('ordersubmitscreenquntity$quantity');
                     ),
                   ),
                   SizedBox(width: 8.0),
+                  Container(
+                    height: 36,
+                    width: MediaQuery.of(context)
+                        .size
+                        .width /
+                        2.5,
+                    decoration: BoxDecoration(
+                      color: Color(0xFFe78337),
+                      borderRadius:
+                      BorderRadius.circular(10.0),
+                    ),
+                    child: Row(
+                      children: [
+                        IconButton(
+                          icon: Icon(Icons.remove, color: Colors.white),
+                          onPressed: () {
+                            if (quantities[index] > 1) {
+                              setState(() {
+                                quantities[index]--;
+                              });
+                              textEditingControllers[index].text = quantities[index].toString();
+                            }
+                          },
+                          iconSize: 25.0,
+                        ),
+                        Expanded(
+                          child: Align(
+                            alignment: Alignment.center,
+                            child: Container(
+                              height: 35,
+                              child: Padding(
+                                padding: const EdgeInsets.all(2.0),
+                                child: Container(
+                                  alignment: Alignment.center,
+                                  width: MediaQuery.of(context).size.width / 5.1,
+                                  decoration: BoxDecoration(
+                                    color: Colors.white,
+                                  ),
+                                  child: TextField(
+                                    controller: textEditingControllers[index],
+                                    keyboardType: TextInputType.number,
+                                    inputFormatters: <TextInputFormatter>[
+                                      FilteringTextInputFormatter.digitsOnly,
+                                      LengthLimitingTextInputFormatter(5),
+                                    ],
+                                    onChanged: (value) {
+                                      setState(() {
+                                        quantities[index] = int.parse(value.isEmpty ? '$quantity' : value);
+                                      });
+                                    },
+                                    decoration: InputDecoration(
+                                      hintText: '1',
+                                      hintStyle: CommonUtils.Mediumtext_o_14,
+                                      border: InputBorder.none,
+                                      focusedBorder: InputBorder.none,
+                                      enabledBorder: InputBorder.none,
+                                      contentPadding: EdgeInsets.only(bottom: 10.0),
+                                    ),
+                                    textAlign: TextAlign.center,
+                                    style: CommonUtils.Mediumtext_o_14,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                        // IconButton(
+                        //   icon: Icon(Icons.add, color: Colors.white),
+                        //   onPressed: () {
+                        //     setState(() {
+                        //       quantities[index]++;
+                        //     });
+                        //     textEditingControllers[index].text = quantities[index].toString();
+                        //   },
+                        //   alignment: Alignment.centerLeft,
+                        //   iconSize: 25.0,
+                        // ),
 
-                  Row(
-                    children: [
-                      Text(
-                        'Quantity: ',
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 14.0,
+                        IconButton(
+                          icon: Icon(Icons.add, color: Colors.white),
+                          onPressed: () {
+                            setState(() {
+                              quantities[index]++;
+                              textEditingControllers[index].text = quantities[index].toString();
+
+                            });
+                          },
+                          alignment: Alignment.centerLeft,
+                          iconSize: 25.0,
                         ),
-                      ),
-                      Text(
-                        '$quantity',
-                        style: TextStyle(
-                          fontSize: 14.0,
-                        ),
-                      ),
-                    ],
+
+                      ],
+                    ),
+
                   ),
-                  // Padding(
-                  //   padding: const EdgeInsets.only(right: 0, left: 0, bottom: 0),
-                  //   child: Row(
-                  //     crossAxisAlignment: CrossAxisAlignment.start,
-                  //     mainAxisAlignment: MainAxisAlignment.start,
-                  //     children: [
-                  //       Container(
-                  //         height: 36,
-                  //         width: MediaQuery.of(context).size.width / 2.2,
-                  //         decoration: BoxDecoration(
-                  //           color: Colors.orange,
-                  //           borderRadius: BorderRadius.circular(10.0),
-                  //         ),
-                  //         child: Row(
-                  //           mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  //           crossAxisAlignment: CrossAxisAlignment.center,
-                  //           children: [
-                  //             IconButton(
-                  //               icon: Icon(Icons.remove, color: Colors.white),
-                  //               onPressed: () {
-                  //                 setState(() {
-                  //                   if (quantities[index] > 1) {
-                  //                     quantities[index]--;
-                  //                     textEditingControllers[index].text =
-                  //                         quantities[index].toString();
-                  //                   }
-                  //                 });
-                  //               },
-                  //               iconSize: 17.0,
-                  //             ),
-                  //             Expanded(
-                  //               child: Align(
-                  //                 alignment: Alignment.center,
-                  //                 child: Container(
-                  //                   height: 35,
-                  //                   child: Padding(
-                  //                     padding: const EdgeInsets.all(2.0),
-                  //                     child: Container(
-                  //                       alignment: Alignment.center,
-                  //                       width: MediaQuery.of(context).size.width / 5.1,
-                  //                       decoration: BoxDecoration(
-                  //                         color: Colors.white,
-                  //                       ),
-                  //                       child: TextField(
-                  //                         controller: textEditingControllers[index],
-                  //                         keyboardType: TextInputType.number,
-                  //                         inputFormatters: <TextInputFormatter>[
-                  //                           FilteringTextInputFormatter.digitsOnly,
-                  //                           LengthLimitingTextInputFormatter(5),
-                  //                         ],
-                  //                         onChanged: (value) {
-                  //                           setState(() {
-                  //                             quantities[index] =
-                  //                                 int.parse(value.isEmpty ? '0' : value);
-                  //                           });
-                  //                         },
-                  //                         decoration: InputDecoration(
-                  //                           hintText: '0',
-                  //                           border: InputBorder.none,
-                  //                           focusedBorder: InputBorder.none,
-                  //                           enabledBorder: InputBorder.none,
-                  //                           contentPadding: EdgeInsets.symmetric(
-                  //                             horizontal: 0.0,
-                  //                           ),
-                  //                         ),
-                  //                         textAlign: TextAlign.center,
-                  //                         style: TextStyle(fontSize: 12.5),
-                  //                       ),
-                  //                     ),
-                  //                   ),
-                  //                 ),
-                  //               ),
-                  //             ),
-                  //             IconButton(
-                  //               icon: Icon(Icons.add, color: Colors.white),
-                  //               onPressed: () {
-                  //                 setState(() {
-                  //                   quantities[index]++;
-                  //                   textEditingControllers[index].text =
-                  //                       quantities[index].toString();
-                  //                 });
-                  //               },
-                  //               alignment: Alignment.centerLeft,
-                  //               iconSize: 17.0,
-                  //             ),
-                  //           ],
-                  //         ),
+                  // Row(
+                  //   children: [
+                  //     Text(
+                  //       'Quantity: ',
+                  //       style: TextStyle(
+                  //         fontWeight: FontWeight.bold,
+                  //         fontSize: 14.0,
                   //       ),
-                  //     ],
-                  //   ),
+                  //     ),
+                  //     Text(
+                  //       '$quantity',
+                  //       style: TextStyle(
+                  //         fontSize: 14.0,
+                  //       ),
+                  //     ),
+                  //   ],
                   // ),
 
 
@@ -647,6 +677,100 @@ print('ordersubmitscreenquntity$quantity');
 
     // Print the count of items in the cart
     print('Total items in the cart: ${cartItems!.length}');
+  }
+
+  void AddOrder() async {
+    final String apiUrl = 'http://182.18.157.215/Srikar_Biotech_Dev/API/api/Order/AddOrder';
+
+    Map<String, dynamic> orderData = {
+      "OrderItemXrefTypeList": [
+        {
+          "Id": 1,
+          "OrderId": 2,
+          "ItemGrpCod": "sample string 3",
+          "ItemGrpName": "sample string 4",
+          "ItemCode": "sample string 5",
+          "ItemName": "sample string 6",
+          "NoOfPcs": "sample string 7",
+          "OrderQty": 8,
+          "Price": 9.1,
+          "IGST": 1.1,
+          "CGST": 1.1,
+          "SGST": 1.1
+        },
+        {
+          "Id": 1,
+          "OrderId": 2,
+          "ItemGrpCod": "sample string 3",
+          "ItemGrpName": "sample string 4",
+          "ItemCode": "sample string 5",
+          "ItemName": "sample string 6",
+          "NoOfPcs": "sample string 7",
+          "OrderQty": 8,
+          "Price": 9.1,
+          "IGST": 1.1,
+          "CGST": 1.1,
+          "SGST": 1.1
+        }
+      ],
+      "Id": 1,
+      "CompanyId": 2,
+      "OrderNumber": "123",
+      "OrderDate": "2024-01-24T10:39:00.9845541+05:30",
+      "PartyCode": '${widget.cardCode}',
+      "PartyName": '${widget.cardName}',
+      "PartyAddress":'${widget.address}',
+      "PartyState": '${widget.state}',
+      "PartyPhoneNumber": '${widget.phone}',
+      "PartyGSTNumber": '${widget.gstRegnNo}',
+      "ProprietorName": '${widget.proprietorName}',
+      "PartyOutStandingAmount": 1.1,
+      "BookingPlace": '${widget.BookingPlace}',
+      "TransportName":'${widget.TransportName}',
+      "FileName": "",
+      "FileLocation": "",
+      "FileExtension": "",
+      "StatusTypeId": 2,
+      "Discount": 1.1,
+      "IGST": 1.1,
+      "CGST": 1.1,
+      "SGST": 1.1,
+      "TotalCost": 1.1,
+      "Remarks": "test",
+      "IsActive": true,
+      "CreatedBy": "e39536e2-89d3-4cc7-ae79-3dd5291ff156",
+      "CreatedDate": "2024-01-24T10:39:00.9865556+05:30",
+      "UpdatedBy": "e39536e2-89d3-4cc7-ae79-3dd5291ff156",
+      "UpdatedDate": "2024-01-24T10:39:00.9865556+05:30"
+    };
+
+    try {
+      final response = await http.post(
+        Uri.parse(apiUrl),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: jsonEncode(orderData),
+      );
+
+      if (response.statusCode == 200) {
+        // Successful request
+        final responseData = jsonDecode(response.body);
+        print(responseData);
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => orderStatusScreen()),
+        );
+
+        // Handle the response accordingly
+      } else {
+        // Handle errors
+        print('Error: ${response.reasonPhrase}');
+      }
+    } catch (e) {
+      // Handle exceptions
+      print('Exception: $e');
+    }
   }
 
 

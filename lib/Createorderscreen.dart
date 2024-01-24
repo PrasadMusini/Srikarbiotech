@@ -41,14 +41,14 @@ class _ProductListState extends State<Createorderscreen > {
   // DBHelper dbHelper = DBHelper();
   bool isLoading = false;
   List<ProductResponse> products = [];
-  List<int> quantities =[];
-  List<TextEditingController> textEditingControllers =[];
+  // List<int> quantities =[];
+  // List<TextEditingController> textEditingControllers =[];
   bool isSelectedWeight1 = false;
   bool isSelectedWeight2 = false;
   bool isSelectedWeight3 = false;
   int selectedProductIndex = -1;
   int selectedIndex = -1;
-  late List<bool> isSelectedList;
+  // late List<bool> isSelectedList;
   List<ItemGroup> filtereditemgroup = [];
   TextEditingController searchController = TextEditingController();
   bool isButtonClicked = false;
@@ -61,6 +61,10 @@ class _ProductListState extends State<Createorderscreen > {
   ApiResponse? apiResponse;
   String parts = "";
   List<String>? cartItems = [];
+
+  List<int> quantities = [1]; // Initialize with default quantity
+  List<TextEditingController> textEditingControllers = [TextEditingController()];
+  List<bool> isSelectedList = [false];
 // Declare ApiResponse globally
   @override
   void initState() {
@@ -81,7 +85,7 @@ class _ProductListState extends State<Createorderscreen > {
   Future<ApiResponse> fetchProducts() async {
     try {
       final response = await http.get(Uri.parse(
-          'http://182.18.157.215/Srikar_Biotech_Dev/API/api/Item/GetItemGroups/null'));
+          'http://182.18.157.215/Srikar_Biotech_Dev/API/api/Item/GetItemGroups/1/null'));
       print('product group response: ${response.body}');
 
       if (response.statusCode == 200) {
@@ -115,7 +119,7 @@ class _ProductListState extends State<Createorderscreen > {
     productresponse.clear();
     final response = await http.get(
       Uri.parse(
-        'http://182.18.157.215/Srikar_Biotech_Dev/API/api/Item/GetAllItemsByItemGroupCode/'+'$Gropcode',
+        'http://182.18.157.215/Srikar_Biotech_Dev/API/api/Item/GetAllItemsByItemGroupCode/1/'+'$Gropcode',
       ),
     );
     print('productlistresponse: ${response.body}');
@@ -339,7 +343,7 @@ class _ProductListState extends State<Createorderscreen > {
                             return BorderSide(
                               color: isSelected
                                   ? Color(0xFFe78337) // Border when selected
-                                  : Color(0xFFe78337), // Default border color
+                                  : Color(0xFFfff6eb), // Default border color
                               width: 2.0,
                             );
                           },
@@ -401,7 +405,8 @@ class _ProductListState extends State<Createorderscreen > {
 
               ),
             ))
-                : ListView.builder(
+                :
+            ListView.builder(
               itemCount: productresponse.length,
               itemBuilder: (context, index) {
                 if (index < 0 || index >= productresponse.length) {
@@ -533,209 +538,18 @@ class _ProductListState extends State<Createorderscreen > {
                                 SizedBox(
                                   height: 5.0,
                                 ),
-                                Padding(
-                                  padding: const EdgeInsets.only(
-                                      right: 0, left: 0, bottom: 0),
-                                  child: Row(
-                                    crossAxisAlignment:
-                                    CrossAxisAlignment.start,
-                                    mainAxisAlignment:
-                                    MainAxisAlignment.start,
-                                    children: [
-                                      Container(
-                                        height: 36,
-                                        width: MediaQuery.of(context)
-                                            .size
-                                            .width /
-                                            2.2,
-                                        decoration: BoxDecoration(
-                                          color: Colors.orange,
-                                          borderRadius:
-                                          BorderRadius.circular(10.0),
-                                        ),
-                                        child: Row(
-                                          mainAxisAlignment:
-                                          MainAxisAlignment
-                                              .spaceAround,
-                                          crossAxisAlignment:
-                                          CrossAxisAlignment.center,
-                                          children: [
-                                            IconButton(
-                                              icon: Icon(Icons.remove,
-                                                  color: Colors.white),
-                                              onPressed: () {
-                                                if (quantities[index] > 1) {
-                                                  setState(() {
-                                                    quantities[index]--;
-                                                  });
-                                                  textEditingControllers[
-                                                  index]
-                                                      .text =
-                                                      quantities[index]
-                                                          .toString();
-                                                }
-                                              },
-                                              //alignment: Alignment.center,
-                                              iconSize: 17.0,
-                                            ),
-                                            Expanded(
-                                              child: Align(
-                                                alignment:
-                                                Alignment.center,
-                                                child: Container(
-                                                  height: 35,
-                                                  child: Padding(
-                                                    padding:
-                                                    const EdgeInsets
-                                                        .all(2.0),
-                                                    child: Container(
-                                                      alignment: Alignment
-                                                          .center,
-                                                      width: MediaQuery.of(
-                                                          context)
-                                                          .size
-                                                          .width /
-                                                          5.1,
-                                                      decoration:
-                                                      BoxDecoration(
-                                                        color:
-                                                        Colors.white,
-                                                      ),
-                                                      child: TextField(
-                                                        controller:
-                                                            textEditingControllers[
-                                                                index],
-                                                        keyboardType:
-                                                        TextInputType
-                                                            .number,
-                                                        inputFormatters: <TextInputFormatter>[
-                                                          FilteringTextInputFormatter
-                                                              .digitsOnly,
-                                                          LengthLimitingTextInputFormatter(
-                                                              5),
-                                                        ],
-                                                        onChanged:
-                                                            (value) {
-                                                          setState(() {
-                                                            quantities[
-                                                            index] = int.parse(value
-                                                                .isEmpty
-                                                                ? '0'
-                                                                : value);
-                                                          });
-                                                        },
-                                                        decoration:
-                                                        InputDecoration(
-                                                          hintText: '0',
-                                                          border:
-                                                          InputBorder
-                                                              .none,
-                                                          focusedBorder:
-                                                          InputBorder
-                                                              .none,
-                                                          enabledBorder:
-                                                          InputBorder
-                                                              .none,
-                                                          contentPadding:
-                                                          EdgeInsets.symmetric(
-                                                              horizontal:
-                                                              0.0),
-                                                        ),
-                                                        textAlign:
-                                                        TextAlign
-                                                            .center,
-                                                        style: TextStyle(
-                                                            fontSize:
-                                                            12.5),
-                                                      ),
-                                                    ),
-                                                  ),
-                                                ),
-                                              ),
-                                            ),
-                                            IconButton(
-                                              icon: Icon(Icons.add,
-                                                  color: Colors.white),
-                                              onPressed: () {
-                                                setState(() {
-                                                  quantities[index]++;
-                                                });
-                                                textEditingControllers[
-                                                index]
-                                                    .text =
-                                                    quantities[index]
-                                                        .toString();
-                                              },
-                                              alignment:
-                                              Alignment.centerLeft,
-                                              iconSize: 17.0,
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                      SizedBox(
-                                        width: 8.0,
-                                      ),
-                                      Padding(
-                                        padding: const EdgeInsets.symmetric(horizontal: 4.0), // Adjust the horizontal padding as needed
-                                        child: GestureDetector(
-                                          onTap: () {
-                                            setState(() {
-                                              isSelectedList[index] = !isSelectedList[index];
-                                            });
-                                          },
-                                          child: Container(
-                                            height: 40,
-                                            padding: const EdgeInsets.all(5.0),
-                                            decoration: BoxDecoration(
-                                              color: isSelectedList[index] ? Colors.orange : Colors.white,
-                                              border: Border.all(
-                                                color: Colors.orange,
-                                                width: 1.0,
-                                              ),
-                                              borderRadius: BorderRadius.circular(8.0),
-                                            ),
-                                            child: Padding(
-                                              padding: const EdgeInsets.symmetric(horizontal: 8.0), // Adjust the horizontal padding inside the container
-                                              child: Row(
-                                                children: [
-                                                  IconButton(
-                                                    icon: Icon(
-                                                      Icons.add_shopping_cart,
-                                                      size: 18.0,
-                                                      color: isSelectedList[index] ? Colors.white : Colors.orange,
-                                                    ),
-                                                    onPressed: () {
-                                                      setState(() {
-                                                        isSelectedList[index] = !isSelectedList[index];
-
-                                                        if (quantities[index] > 0) {
-                                                          saveData(index);
-                                                        }
-                                                      });
-                                                    },
-                                                  ),
-                                                  Text(
-                                                    isSelectedList[index] ? 'Added' : 'Add',
-                                                    style: TextStyle(
-                                                      color: isSelectedList[index] ? Colors.white : Colors.orange,
-                                                      fontWeight: FontWeight.bold,
-                                                    ),
-                                                  ),
-                                                  SizedBox(width: 8.0), // Add space after the "Add" or "Added" text
-                                                ],
-                                              ),
-                                            ),
-                                          ),
-
-
-                                        ),
-                                      )
-
-
-                                    ],
-                                  ),
-                                )
+                          Padding(
+                            padding: const EdgeInsets.only(right: 0, left: 0, bottom: 0),
+                            child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                buildQuantitySelector(0), // Adjust the index as needed
+                                SizedBox(width: 8.0),
+                                buildAddToCartButton(0), // Adjust the index as needed
+                              ],
+                            ),
+                          )
                               ],
                             ),
                           ),
@@ -851,6 +665,144 @@ class _ProductListState extends State<Createorderscreen > {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.clear();
   }
+
+  Widget buildQuantitySelector(int index) {
+    return Container(
+      height: 36,
+      width: MediaQuery.of(context).size.width / 2.2,
+      decoration: BoxDecoration(
+        color: Colors.orange,
+        borderRadius: BorderRadius.circular(10.0),
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          IconButton(
+            icon: Icon(Icons.remove, color: Colors.white),
+            onPressed: () {
+              if (quantities[index] > 1) {
+                setState(() {
+                  quantities[index]--;
+                });
+                textEditingControllers[index].text = quantities[index].toString();
+              }
+            },
+            iconSize: 17.0,
+          ),
+          Expanded(
+            child: Align(
+              alignment: Alignment.center,
+              child: Container(
+                height: 35,
+                child: Padding(
+                  padding: const EdgeInsets.all(2.0),
+                  child: Container(
+                    alignment: Alignment.center,
+                    width: MediaQuery.of(context).size.width / 5.1,
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                    ),
+                    child: TextField(
+                      controller: textEditingControllers[index],
+                      keyboardType: TextInputType.number,
+                      inputFormatters: <TextInputFormatter>[
+                        FilteringTextInputFormatter.digitsOnly,
+                        LengthLimitingTextInputFormatter(5),
+                      ],
+                      onChanged: (value) {
+                        setState(() {
+                          quantities[index] = int.parse(value.isEmpty ? '0' : value);
+                        });
+                      },
+                      decoration: InputDecoration(
+                        hintText: '0',
+                        border: InputBorder.none,
+                        focusedBorder: InputBorder.none,
+                        enabledBorder: InputBorder.none,
+                        contentPadding: EdgeInsets.symmetric(horizontal: 0.0),
+                      ),
+                      textAlign: TextAlign.center,
+                      style: TextStyle(fontSize: 12.5),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
+          IconButton(
+            icon: Icon(Icons.add, color: Colors.white),
+            onPressed: () {
+              setState(() {
+                quantities[index]++;
+              });
+              textEditingControllers[index].text = quantities[index].toString();
+            },
+            alignment: Alignment.centerLeft,
+            iconSize: 17.0,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget buildAddToCartButton(int index) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 4.0),
+      child: GestureDetector(
+        onTap: () {
+          setState(() {
+            isSelectedList[index] = !isSelectedList[index];
+          });
+          if (quantities[index] > 0) {
+            saveData(index);
+          }
+        },
+        child: Container(
+          height: 36,
+          decoration: BoxDecoration(
+            color: isSelectedList[index] ? Colors.orange : Colors.white,
+            border: Border.all(
+              color: Colors.orange,
+              width: 1.0,
+            ),
+            borderRadius: BorderRadius.circular(8.0),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 2.0),
+            child: Row(
+              children: [
+                IconButton(
+                  icon: Icon(
+                    Icons.add_shopping_cart,
+                    size: 18.0,
+                    color: isSelectedList[index] ?Color(0xFFfff6eb) : Colors.orange,
+                  ),
+                  onPressed: () {
+                    setState(() {
+                      isSelectedList[index] = !isSelectedList[index];
+                      if (quantities[index] > 0) {
+                        saveData(index);
+                      }
+                    });
+                  },
+                ),
+                Text(
+                  isSelectedList[index] ? 'Added' : 'Add',
+                  style: TextStyle(
+                    color: isSelectedList[index] ? Color(0xFFfff6eb) : Colors.orange,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                // SizedBox(width: 8.0),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
 
 }
 

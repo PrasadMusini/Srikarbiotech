@@ -6,7 +6,8 @@ import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:srikarbiotech/Common/CommonUtils.dart';
-import 'package:srikarbiotech/Createorderscreen.dart';
+import 'package:srikarbiotech/Services/Createorderscreen.dart';
+
 import 'package:srikarbiotech/Services/api_config.dart';
 import 'dart:convert';
 
@@ -122,7 +123,6 @@ getslpcode();
                   },
                   child: Container(
                     width: MediaQuery.of(context).size.width,
-                    height: 55.0,
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(5.0),
                       border: Border.all(
@@ -130,39 +130,40 @@ getslpcode();
                         width: 2,
                       ),
                     ),
-                    child:
-                    Row(
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Expanded(
-                          child: Align(
-                            alignment: Alignment.centerRight,
-                            child: Padding(
-                              padding: EdgeInsets.only(left: 10.0, top: 0.0),
-                              child: TextFormField(
-                                controller: searchController,
-                                onChanged: (value) {
-                                  filterDealers();
-                                },
-                                keyboardType: TextInputType.name,
-                                style:CommonUtils.Mediumtext_12,
-                                decoration: InputDecoration(
-
-                                  suffixIcon: Icon(
-                                    Icons.search,
-                                    color: Color(0xFFC4C2C2),
-                                  ),
-                                  hintText: 'Search for Party Name or Id',
-                                  hintStyle: CommonUtils.hintstyle_14,
-
-                                  border: InputBorder.none,
-                                ),
+                          child: Padding(
+                            padding: EdgeInsets.only(left: 10.0),
+                            child: TextFormField(
+                              controller: searchController,
+                              onChanged: (value) {
+                                filterDealers();
+                              },
+                              keyboardType: TextInputType.name,
+                              style: CommonUtils.Mediumtext_12,
+                              decoration: InputDecoration(
+                                hintText: 'Search for Party Name or Id',
+                                hintStyle: CommonUtils.hintstyle_14,
+                                border: InputBorder.none,
                               ),
                             ),
+                          ),
+                        ),
+                        Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 10.0),
+                          child: Icon(
+                            Icons.search,
+                            color: Colors.black54,
                           ),
                         ),
                       ],
                     ),
                   ),
+
+
+
                 ),
                 SizedBox(height: 10.0),
               ],

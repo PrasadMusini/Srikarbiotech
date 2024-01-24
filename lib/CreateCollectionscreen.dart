@@ -267,10 +267,10 @@ class Createcollection_screen extends State<CreateCollectionscreen> {
                                                   counterText: '',
                                                   hintText: 'Enter  Amount',
                                                   hintStyle: TextStyle(
-                                                    fontSize: 14,
-                                                    fontFamily: 'Roboto',
-                                                    fontWeight: FontWeight.w500,
-                                                    color: Color(0xFFF8dac2),
+                                                      fontSize: 14,
+                                                      fontFamily: 'Roboto',
+                                                      fontWeight: FontWeight.w700,
+                                                      color: Color(0xa0e78337),
                                                   ),
                                                   border: InputBorder.none,
                                                 ),
@@ -381,8 +381,8 @@ class Createcollection_screen extends State<CreateCollectionscreen> {
                                                     children: [
                                                       SvgPicture.asset(
                                                         iconData,
-                                                        height: 25,
-                                                        width: 25,
+                                                        height: 20,
+                                                        width: 20,
                                                         fit: BoxFit.fitWidth,
                                                         color: isSelected
                                                             ? Colors.white
@@ -411,12 +411,12 @@ class Createcollection_screen extends State<CreateCollectionscreen> {
                                   ),
                           ),
                           //   ),
-                          SizedBox(height: 5.0),
+                        //  SizedBox(height: 5.0),
                           Visibility(
                               visible: Selected_PaymentMode == 'Cheque',
                               child: Padding(
                                 padding: EdgeInsets.only(
-                                    top: 0.0, left: 0.0, right: 0.0),
+                                    top: 10.0, left: 0.0, right: 0.0),
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
@@ -476,12 +476,10 @@ class Createcollection_screen extends State<CreateCollectionscreen> {
                                                       counterText: '',
                                                       hintText: 'XXXXXXXXXX',
                                                       hintStyle: TextStyle(
-                                                        fontSize: 14,
-                                                        fontFamily: 'Roboto',
-                                                        fontWeight:
-                                                            FontWeight.w600,
-                                                        color:
-                                                            Color(0xFFF8dac2),
+                                                          fontSize: 14,
+                                                          fontFamily: 'Roboto',
+                                                          fontWeight: FontWeight.w700,
+                                                          color: Color(0xa0e78337),
                                                       ),
                                                       border: InputBorder.none,
                                                     ),
@@ -497,7 +495,7 @@ class Createcollection_screen extends State<CreateCollectionscreen> {
                                 ),
                               )),
                           // Check Number
-                          SizedBox(height: 5.0),
+                        //  SizedBox(height: 5.0),
                           Visibility(
                             visible: Selected_PaymentMode == 'Cheque',
                             child: buildDateInput(
@@ -508,7 +506,7 @@ class Createcollection_screen extends State<CreateCollectionscreen> {
                                   context, checkDateController),
                             ),
                           ),
-                          SizedBox(height: 5.0),
+                          // SizedBox(height: 5.0),
                           Visibility(
                               visible: Selected_PaymentMode == 'Cheque',
                               child: Padding(
@@ -575,10 +573,8 @@ class Createcollection_screen extends State<CreateCollectionscreen> {
                                                       hintStyle: TextStyle(
                                                         fontSize: 14,
                                                         fontFamily: 'Roboto',
-                                                        fontWeight:
-                                                            FontWeight.w600,
-                                                        color:
-                                                            Color(0xFFF8dac2),
+                                                        fontWeight: FontWeight.w700,
+                                                        color: Color(0xa0e78337),
                                                       ),
                                                       border: InputBorder.none,
                                                     ),
@@ -593,12 +589,12 @@ class Createcollection_screen extends State<CreateCollectionscreen> {
                                   ],
                                 ),
                               )),
-                          SizedBox(height: 5.0),
+                          // SizedBox(height: 5.0),
                           Visibility(
                               visible: Selected_PaymentMode == 'Online',
                               child: Padding(
                                 padding: EdgeInsets.only(
-                                    top: 0.0, left: 0.0, right: 0.0),
+                                    top: 10.0, left: 0.0, right: 0.0),
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
@@ -659,10 +655,8 @@ class Createcollection_screen extends State<CreateCollectionscreen> {
                                                       hintStyle: TextStyle(
                                                         fontSize: 14,
                                                         fontFamily: 'Roboto',
-                                                        fontWeight:
-                                                            FontWeight.w600,
-                                                        color:
-                                                            Color(0xFFF8dac2),
+                                                        fontWeight: FontWeight.w700,
+                                                        color: Color(0xa0e78337),
                                                       ),
                                                       border: InputBorder.none,
                                                     ),
@@ -677,7 +671,7 @@ class Createcollection_screen extends State<CreateCollectionscreen> {
                                   ],
                                 ),
                               )),
-                          SizedBox(height: 5.0),
+                          // SizedBox(height: 5.0),
                           Visibility(
                               visible: Selected_PaymentMode == 'Online',
                               child: Padding(
@@ -743,10 +737,8 @@ class Createcollection_screen extends State<CreateCollectionscreen> {
                                                       hintStyle: TextStyle(
                                                         fontSize: 14,
                                                         fontFamily: 'Roboto',
-                                                        fontWeight:
-                                                            FontWeight.w600,
-                                                        color:
-                                                            Color(0xFFF8dac2),
+                                                        fontWeight: FontWeight.w700,
+                                                        color: Color(0xa0e78337),
                                                       ),
                                                       border: InputBorder.none,
                                                     ),
@@ -761,7 +753,7 @@ class Createcollection_screen extends State<CreateCollectionscreen> {
                                   ],
                                 ),
                               )),
-                          SizedBox(height: 5.0),
+                          // SizedBox(height: 5.0),
                           Visibility(
                               visible: Selected_PaymentMode == 'Online',
                               child: Padding(
@@ -826,10 +818,8 @@ class Createcollection_screen extends State<CreateCollectionscreen> {
                                                       hintStyle: TextStyle(
                                                         fontSize: 14,
                                                         fontFamily: 'Roboto',
-                                                        fontWeight:
-                                                            FontWeight.w600,
-                                                        color:
-                                                            Color(0xFFF8dac2),
+                                                        fontWeight: FontWeight.w700,
+                                                        color: Color(0xa0e78337),
                                                       ),
                                                       border: InputBorder.none,
                                                     ),
@@ -849,7 +839,7 @@ class Createcollection_screen extends State<CreateCollectionscreen> {
                           // Purpose
                           Padding(
                             padding: EdgeInsets.only(
-                                top: 0.0, left: 0.0, right: 0.0),
+                                top: 10.0, left: 0.0, right: 0.0),
                             child: Text(
                               'Purpose',
                               style: TextStyle(
@@ -887,8 +877,8 @@ class Createcollection_screen extends State<CreateCollectionscreen> {
                                             style: TextStyle(
                                               fontSize: 14,
                                               fontFamily: 'Roboto',
-                                              fontWeight: FontWeight.w600,
-                                              color: Color(0xFFF8dac2),
+                                              fontWeight: FontWeight.w700,
+                                              color: Color(0xa0e78337),
                                             ),
                                           ),
                                           value: selectedPurpose,
@@ -983,8 +973,8 @@ class Createcollection_screen extends State<CreateCollectionscreen> {
                                             style: TextStyle(
                                               fontSize: 14,
                                               fontFamily: 'Roboto',
-                                              fontWeight: FontWeight.w600,
-                                              color: Color(0xFFF8dac2),
+                                              fontWeight: FontWeight.w700,
+                                              color: Color(0xa0e78337),
                                             ),
                                           ),
                                           value: categroyname,
@@ -1434,8 +1424,8 @@ class Createcollection_screen extends State<CreateCollectionscreen> {
                             hintStyle: TextStyle(
                               fontSize: 14,
                               fontFamily: 'Roboto',
-                              fontWeight: FontWeight.w600,
-                              color: Color(0xFFF8dac2),
+                              fontWeight: FontWeight.w700,
+                              color: Color(0xa0e78337),
                             ),
                             border: InputBorder.none,
                           ),

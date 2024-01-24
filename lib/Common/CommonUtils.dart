@@ -207,6 +207,12 @@ class CommonUtils {
     fontWeight: FontWeight.w600,
     color: Colors.white,
   );
+  static const TextStyle Mediumtext_14_cb = TextStyle(
+    fontSize: 14,
+    fontFamily: "Roboto",
+    fontWeight: FontWeight.w600,
+    color: Colors.black,
+  );
 }
 
 Future<void> saveIntToPreferences(String key, int value) async {

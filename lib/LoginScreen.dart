@@ -64,7 +64,7 @@ class _MyHomePageState extends State<LoginScreen> {
               child: Image.asset(
                 compneyid == 1
                     ? 'assets/login_screen_logo.png'
-                    : 'assets/sreekar_seeds.png',
+                    : 'assets/srikar_seeds.png',
                 width: MediaQuery.of(context).size.height / 3.2,
                 height: MediaQuery.of(context).size.height / 3.2,
                 // Other styling properties as needed

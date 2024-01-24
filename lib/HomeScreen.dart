@@ -436,7 +436,7 @@ class _imagesliderState extends State<imageslider> {
                     color: Color(0xFF414141),
                   ),
                 ),
-                SizedBox(height: 20),
+                SizedBox(height: 10),
                 Expanded(
                   child: Align(
                     alignment: Alignment.topLeft,

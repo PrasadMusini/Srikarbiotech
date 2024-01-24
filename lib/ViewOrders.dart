@@ -861,7 +861,7 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
 
   Future<void> fetchdropdownitems() async {
     final apiUrl =
-        'http://182.18.157.215/Srikar_Biotech_Dev/API/api/Collections/GetPurposes';
+        'http://182.18.157.215/Srikar_Biotech_Dev/API/api/Collections/GetPurposes/1';
 
     try {
       final response = await http.get(Uri.parse(apiUrl));
@@ -1152,7 +1152,7 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
 
   Future<void> fetchData() async {
     final response = await http.get(Uri.parse(
-        'http://182.18.157.215/Srikar_Biotech_Dev/API/api/Account/GetAllDealersBySlpCode/100'));
+        'http://182.18.157.215/Srikar_Biotech_Dev/API/api/Account/GetAllDealersBySlpCode/1/100'));
 
     if (response.statusCode == 200) {
       Map<String, dynamic> data = json.decode(response.body);

@@ -30,20 +30,13 @@ class transport_payment extends StatefulWidget {
 }
 
 class _transportstate extends State<transport_payment> {
-  int selectedIndex = -1;
-  int selectedIndexPayment = -1;
+
+  TextEditingController bookingplacecontroller = TextEditingController();
+  TextEditingController Parcelservicecontroller = TextEditingController();
   @override
   void initState() {
     super.initState();
-    // Set the default selected index to 0 when the screen is entered
-    selectedIndex = 0;
-    selectedIndexPayment = 0;
 
-    // for (SelectedProducts product in widget.productitems) {
-    //   print(
-    //       'transportscreenID: ${product.id}, transportscreenName: ${product.productName}');
-    //   // Access other properties as needed
-    // }
   }
 
   @override
@@ -122,7 +115,7 @@ class _transportstate extends State<transport_payment> {
                               textAlign: TextAlign.start,
                             ),
                           ),
-                          SizedBox(height: 4.0),
+                          SizedBox(height: 8.0),
                           //  SizedBox(height: 8.0),
                           GestureDetector(
                             onTap: () {
@@ -131,7 +124,6 @@ class _transportstate extends State<transport_payment> {
                             },
                             child: Container(
                               width: MediaQuery.of(context).size.width,
-                              height: 55.0,
                               decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(5.0),
                                 border: Border.all(
@@ -147,17 +139,22 @@ class _transportstate extends State<transport_payment> {
                                       child: Padding(
                                         padding: EdgeInsets.only(
                                             left: 10.0, top: 0.0),
-                                        child: TextFormField(
+                                        child: TextFormField( controller:
+                                        bookingplacecontroller,
                                           keyboardType: TextInputType.name,
                                           style: TextStyle(
-                                              color: Color(0xFF5f5f5f),
+                                              color:  Color(0xFFe78337),
                                               fontFamily: 'Roboto',
                                               fontWeight: FontWeight.w600,
                                               fontSize: 14),
                                           decoration: InputDecoration(
                                             hintText: 'Enter Booking Place',
-                                            hintStyle:
-                                                CommonUtils.Mediumtext_12_0,
+                                            hintStyle: TextStyle(
+                                              fontSize: 14,
+                                              fontFamily: 'Roboto',
+                                              fontWeight: FontWeight.w700,
+                                              color: Color(0xa0e78337),
+                                            ),
                                             border: InputBorder.none,
                                           ),
                                         ),
@@ -191,7 +188,7 @@ class _transportstate extends State<transport_payment> {
                               textAlign: TextAlign.start,
                             ),
                           ),
-                          SizedBox(height: 4.0),
+                          SizedBox(height: 8.0),
                           //  SizedBox(height: 8.0),
                           GestureDetector(
                             onTap: () {
@@ -200,7 +197,6 @@ class _transportstate extends State<transport_payment> {
                             },
                             child: Container(
                               width: MediaQuery.of(context).size.width,
-                              height: 55.0,
                               decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(5.0),
                                 border: Border.all(
@@ -217,16 +213,22 @@ class _transportstate extends State<transport_payment> {
                                         padding: EdgeInsets.only(
                                             left: 10.0, top: 0.0),
                                         child: TextFormField(
+                                          controller:
+                                          Parcelservicecontroller,
                                           keyboardType: TextInputType.name,
                                           style: TextStyle(
-                                              color: Color(0xFF5f5f5f),
+                                              color: Color(0xFFe78337),
                                               fontFamily: 'Roboto',
                                               fontWeight: FontWeight.w600,
                                               fontSize: 14),
                                           decoration: InputDecoration(
                                             hintText: 'Enter Parcel Service',
-                                            hintStyle:
-                                                CommonUtils.Mediumtext_12_0,
+                                            hintStyle: TextStyle(
+                                              fontSize: 14,
+                                              fontFamily: 'Roboto',
+                                              fontWeight: FontWeight.w700,
+                                              color: Color(0xa0e78337),
+                                            ),
                                             border: InputBorder.none,
                                           ),
                                         ),
@@ -246,65 +248,21 @@ class _transportstate extends State<transport_payment> {
               ),
             ),
 
-            // Padding(
-            //   padding: EdgeInsets.only(top: 0.0, left: 14.0, right: 14.0),
-            //   child: Container(
-            //     alignment: Alignment.bottomCenter,
-            //     width: MediaQuery.of(context).size.width,
-            //     height: 55.0,
-            //     child: Center(
-            //       child: GestureDetector(
-            //         onTap: () {},
-            //         child: Container(
-            //           // width: desiredWidth * 0.9,
-            //           width: MediaQuery.of(context).size.width,
-            //           height: 55.0,
-            //           decoration: BoxDecoration(
-            //             borderRadius: BorderRadius.circular(6.0),
-            //             color: Color(0xFFe78337),
-            //           ),
-            //           child: Row(
-            //               crossAxisAlignment: CrossAxisAlignment.center,
-            //               mainAxisAlignment: MainAxisAlignment.center,
-            //               children: [
-            //                 Text(
-            //                   'Save & Goto Cart',
-            //                   style: TextStyle(
-            //                     fontFamily: 'Calibri',
-            //                     fontSize: 14,
-            //                     color: Colors.white,
-            //                     fontWeight: FontWeight.bold,
-            //                   ),
-            //                 ),
-            //               ]),
-            //         ),
-            //       ),
-            //     ),
-            //   ),
-            // ),
+
           ],
         ),
       ),
-      bottomNavigationBar: InkWell(
-        onTap: () {
-          // ScaffoldMessenger.of(context).showSnackBar(
-          //   const SnackBar(
-          //     content: Text('Payment Successful'),
-          //     duration: Duration(seconds: 2),
-          //   ),
-          // );
-          print('clicked ');
-        },
-        child: Padding(
-          padding:
-              EdgeInsets.only(top: 0.0, left: 14.0, right: 14.0, bottom: 10.0),
-          child: Container(
-            alignment: Alignment.bottomCenter,
-            width: MediaQuery.of(context).size.width,
-            height: 55.0,
-            child: Center(
-              child: GestureDetector(
+
+      bottomNavigationBar: Container(
+        height: 60,
+        margin: const EdgeInsets.symmetric(vertical: 15, horizontal: 10),
+        padding: const EdgeInsets.all(8.0),
+        child: Row(
+          children: [
+            Expanded(
+              child: InkWell(
                 onTap: () {
+                  // Add logic for the download button
                   Navigator.push(
                     context,
                     MaterialPageRoute(
@@ -315,130 +273,43 @@ class _transportstate extends State<transport_payment> {
                           state: '${widget.state}',
                           phone: '${widget.phone}',
                           proprietorName: '${widget.proprietorName}',
-                          gstRegnNo: '${widget.gstRegnNo}'),
+                          gstRegnNo: '${widget.gstRegnNo}',
+                        BookingPlace :bookingplacecontroller.text,
+                        TransportName: Parcelservicecontroller.text,),
                     ),
                   );
+
+
+                  print(' button clicked');
+
                 },
                 child: Container(
-                  // width: desiredWidth * 0.9,
-                  width: MediaQuery.of(context).size.width,
-                  height: 55.0,
+                  padding: const EdgeInsets.all(10),
                   decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(6.0),
+                    borderRadius: BorderRadius.circular(10),
                     color: Color(0xFFe78337),
                   ),
-                  child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(
-                          'Save & Goto Cart',
-                          style: TextStyle(
-                            fontFamily: 'Roboto',
-                            fontWeight: FontWeight.w700,
-                            fontSize: 14,
-                            color: Colors.white,
-                          ),
-                        ),
-                      ]),
+                  child: const Center(
+                    child:  Text(
+                      'Save & Proceed',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 18,
+                        fontWeight: FontWeight.w700, // Set the font weight to bold
+                        fontFamily: 'Roboto', // Set the font family to Roboto
+                      ),
+                    ),
+                  ),
                 ),
               ),
             ),
-          ),
+
+          ],
         ),
       ),
+
+
     );
   }
 
-  Widget buildTransportCard(
-      int index, String mode, String svgAsset, Function onTap) {
-    return GestureDetector(
-      onTap: () {
-        setState(() {
-          selectedIndex = index;
-        });
-        onTap(); // Call the onTap function passed as a parameter
-      },
-      child: Container(
-        width: 80,
-        height: 50,
-        child: Card(
-          elevation: 0.0,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(7.0),
-            side: BorderSide(
-              color: index == selectedIndex ? Colors.white : Color(0xFFe78337),
-            ),
-          ),
-          color: index == selectedIndex ? Color(0xFFe78337) : Color(0xFFF8dac2),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              SvgPicture.asset(
-                svgAsset,
-                color: index == selectedIndex ? Colors.white : null,
-                width: 20,
-                height: 15,
-              ),
-              SizedBox(width: 5.0),
-              Text(
-                mode,
-                style: TextStyle(
-                  color: index == selectedIndex ? Colors.white : null,
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget buildpaymentmode(
-      int index, String mode, String svgAsset, Function onTap) {
-    return GestureDetector(
-      onTap: () {
-        setState(() {
-          selectedIndexPayment = index;
-        });
-        onTap(); // Call the onTap function passed as a parameter
-      },
-      child: Container(
-        width: 80,
-        height: 50,
-        child: Card(
-          elevation: 0.0,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(7.0),
-            side: BorderSide(
-              color: index == selectedIndexPayment
-                  ? Colors.white
-                  : Color(0xFFe78337),
-            ),
-          ),
-          color: index == selectedIndexPayment
-              ? Color(0xFFe78337)
-              : Color(0xFFF8dac2),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              SvgPicture.asset(
-                svgAsset,
-                color: index == selectedIndexPayment ? Colors.white : null,
-                width: 20,
-                height: 15,
-              ),
-              SizedBox(width: 5.0),
-              Text(
-                mode,
-                style: TextStyle(
-                  color: index == selectedIndexPayment ? Colors.white : null,
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
 }

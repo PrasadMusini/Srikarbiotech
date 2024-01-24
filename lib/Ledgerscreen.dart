@@ -210,20 +210,22 @@ class Ledger_screen extends State<Ledgerscreen> {
               },
 
               child: Container(
-                padding: const EdgeInsets.all(5),
+                padding: const EdgeInsets.all(10),
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(10),
                   border: Border.all(
                     color: Color(0xFFe78337),
                   ),
+                  color: Color(0xFFF8dac2), // Replace with the desired background color
                 ),
                 child: SvgPicture.asset(
                   'assets/share.svg', // Replace with your SVG file path
-                  color: Colors.orange,
-                  width: 30,
-                  height: 30,
+                  color: Color(0xFFe78337),
+                  width: 25,
+                  height: 25,
                 ),
               ),
+
             )
           ],
         ),
@@ -272,10 +274,10 @@ class Ledger_screen extends State<Ledgerscreen> {
             width: MediaQuery.of(context).size.width,
             height: 55.0,
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(12.0),
+              borderRadius: BorderRadius.circular(5.0),
               border: Border.all(
                 color: Color(0xFFe78337),
-                width: 2,
+                width: 1,
               ),
             ),
             child: Row(
@@ -300,7 +302,7 @@ class Ledger_screen extends State<Ledgerscreen> {
                               fontSize: 14,
                               fontFamily: 'Roboto',
                               fontWeight: FontWeight.w700,
-                              color: Color(0xFFe78337),
+                              color: Color(0xa0e78337),
                             ),
                             border: InputBorder.none,
                           ),
@@ -452,18 +454,19 @@ class Ledger_screen extends State<Ledgerscreen> {
     if (isValid) {
       final apiUrl = 'http://182.18.157.215/Srikar_Biotech_Dev/API/api/Party/GetCustomerLedgerReport';
       final requestHeaders = {'Content-Type': 'application/json'};
-      final requestBody = {
-        "PartyCode": "SRIKARTS00139",
-        "FromDate": "2023-05-24",
-        "ToDate": "2023-06-05"
-      };
-
       // final requestBody = {
-      //   "PartyCode":'${widget.cardCode}',
-      //   "FromDate": fromdate,
-      //   "ToDate": todate
+      //   "PartyCode": "SRIKARTS00139",
+      //   "FromDate": "2023-05-24",
+      //   "ToDate": "2023-06-05"
       // };
 
+      final requestBody = {
+        "PartyCode":'${widget.cardCode}',
+        "FromDate": fromdate,
+        "ToDate": todate
+      };
+      print(requestBody);
+      print(jsonEncode(requestBody));
       try {
         final response = await http.post(
           Uri.parse(apiUrl),
@@ -476,6 +479,16 @@ class Ledger_screen extends State<Ledgerscreen> {
 
           if (jsonResponse['isSuccess']) {
             // Convert base64 string to bytes
+            if (jsonResponse['response'] == null) {
+              // Handle null response
+              CommonUtils.showCustomToastMessageLong(
+                  'PDF is not available.', context, 1, 4);
+              print('Response is null.');
+            } else {
+              // Handle non-null response
+              print(jsonResponse);
+              // Your further processing logic here
+            }
             List<int> pdfBytes = base64.decode(jsonResponse['response']);
             var status = await Permission.storage.request();
             var manageExternalStorage = await Permission.manageExternalStorage.request();
@@ -520,64 +533,109 @@ class Ledger_screen extends State<Ledgerscreen> {
 
 
   Future<void> shareData() async {
-    final apiUrl = 'http://182.18.157.215/Srikar_Biotech_Dev/API/api/Party/GetCustomerLedgerReport';
-    final requestHeaders = {'Content-Type': 'application/json'};
+    bool isValid = true;
+    bool hasValidationFailed = false;
+    String fromdate = DateFormat('yyyy-MM-dd').format(selectedFromDate);
+    String todate = DateFormat('yyyy-MM-dd').format(selectedToDate);
 
-    final requestBody = {
-      "PartyCode": "SRIKARTS00139",
-      "FromDate": "2023-05-24",
-      "ToDate": "2023-06-05"
-    };
+    if (isValid && fromDateController.text.isEmpty) {
+      CommonUtils.showCustomToastMessageLong(
+          'Please Select From Date', context, 1, 4);
+      isValid = false;
+      hasValidationFailed = true;
+    }
+    if (isValid && toDateController.text.isEmpty) {
+      CommonUtils.showCustomToastMessageLong(
+          'Please Select to Date', context, 1, 4);
+      isValid = false;
+      hasValidationFailed = true;
+    }
 
-    try {
-      final response = await http.post(
-        Uri.parse(apiUrl),
-        headers: requestHeaders,
-        body: jsonEncode(requestBody),
-      );
+    if (isValid && todate.compareTo(fromdate) < 0) {
+      CommonUtils.showCustomToastMessageLong(
+          "To Date is less than From Date", context, 1, 5);
+      isValid = false;
+      hasValidationFailed = true;
+    }
 
-      if (response.statusCode == 200) {
-        final jsonResponse = json.decode(response.body);
+    if (isValid) {
+      final apiUrl = 'http://182.18.157.215/Srikar_Biotech_Dev/API/api/Party/GetCustomerLedgerReport';
+      final requestHeaders = {'Content-Type': 'application/json'};
 
-        if (jsonResponse['isSuccess']) {
-          // Convert base64 string to bytes
-          List<int> pdfBytes = base64.decode(jsonResponse['response']);
-       //   var status = await Permission.storage.request();
-          final status = await Permission.storage.request();
-          // if (status.isDenied ||
-          //     status.isPermanentlyDenied ||
-          //     status.isRestricted) {
-          var manageExternalStorage = await Permission.manageExternalStorage.request();
-          if (status!.isGranted || manageExternalStorage!.isGranted) {
-            Directory downloadsDirectory = Directory('/storage/emulated/0/Download');
+      // final requestBody = {
+      //   "PartyCode": "SRIKARTS00139",
+      //   "FromDate": "2023-05-24",
+      //   "ToDate": "2023-06-05"
+      // };
+      final requestBody = {
+        "PartyCode":'${widget.cardCode}',
+        "FromDate": fromdate,
+        "ToDate": todate
+      };
+      print(requestBody);
+      print(jsonEncode(requestBody));
+      try {
+        final response = await http.post(
+          Uri.parse(apiUrl),
+          headers: requestHeaders,
+          body: jsonEncode(requestBody),
+        );
 
-            String fileName = "srikar_${DateFormat('yyyyMMdd_HHmmss').format(DateTime.now())}.pdf";
+        if (response.statusCode == 200) {
+          final jsonResponse = json.decode(response.body);
 
-            String filePath = '${downloadsDirectory.path}/$fileName';
+          if (jsonResponse['isSuccess']) {
+            // Convert base64 string to bytes
+            if (jsonResponse['response'] == null) {
+              // Handle null response
+              CommonUtils.showCustomToastMessageLong(
+                  'PDF is not available.', context, 1, 4);
+              print('Response is null.');
+            } else {
+              // Handle non-null response
+              print(jsonResponse);
+              // Your further processing logic here
+            }
+            List<int> pdfBytes = base64.decode(jsonResponse['response']);
+            //   var status = await Permission.storage.request();
+            final status = await Permission.storage.request();
+            // if (status.isDenied ||
+            //     status.isPermanentlyDenied ||
+            //     status.isRestricted) {
+            var manageExternalStorage = await Permission.manageExternalStorage
+                .request();
+            if (status!.isGranted || manageExternalStorage!.isGranted) {
+              Directory downloadsDirectory = Directory(
+                  '/storage/emulated/0/Download');
 
-            // Write the bytes to a file
-            await File(filePath).writeAsBytes(pdfBytes);
-            // Permission granted, proceed with file operations
-            // ... (your existing code)
-            print('PDF saved to: $filePath');
-            await _sharePdf(filePath);
+              String fileName = "srikar_${DateFormat('yyyyMMdd_HHmmss').format(
+                  DateTime.now())}.pdf";
+
+              String filePath = '${downloadsDirectory.path}/$fileName';
+
+              // Write the bytes to a file
+              await File(filePath).writeAsBytes(pdfBytes);
+              // Permission granted, proceed with file operations
+              // ... (your existing code)
+              print('PDF saved to: $filePath');
+              await _sharePdf(filePath);
+            } else {
+              //  requestPermission();
+              print('Permission denied');
+            }
+
+            // Get the directory for saving files
+
+
           } else {
-          //  requestPermission();
-            print('Permission denied');
+            print('API Error: ${jsonResponse['endUserMessage']}');
           }
-
-          // Get the directory for saving files
-
-
-
         } else {
-          print('API Error: ${jsonResponse['endUserMessage']}');
+          print('Error: ${response.reasonPhrase}');
         }
-      } else {
-        print('Error: ${response.reasonPhrase}');
+      } catch (error) {
+        print('Error: $error');
       }
-    } catch (error) {
-      print('Error: $error');
     }
   }
 
