@@ -17,27 +17,30 @@ import 'Model/CartHelper.dart';
 import 'Model/GetItemGroups.dart';
 import 'Model/cart_provider.dart';
 import 'cart_screen.dart';
-class Createorderscreen extends StatefulWidget {
 
+class Createorderscreen extends StatefulWidget {
   final String cardName;
-  final String  cardCode;
-  final String  address;
+  final String cardCode;
+  final String address;
   final String proprietorName;
   final String gstRegnNo;
   final String state;
   final String phone;
 
   Createorderscreen(
-      {required this.cardName, required this.cardCode, required this.address, required  this.state, required  this.phone,
-        required  this.proprietorName, required  this.gstRegnNo});
-
-
+      {required this.cardName,
+      required this.cardCode,
+      required this.address,
+      required this.state,
+      required this.phone,
+      required this.proprietorName,
+      required this.gstRegnNo});
 
   @override
-  State<Createorderscreen > createState() => _ProductListState();
+  State<Createorderscreen> createState() => _ProductListState();
 }
 
-class _ProductListState extends State<Createorderscreen > {
+class _ProductListState extends State<Createorderscreen> {
   // DBHelper dbHelper = DBHelper();
   bool isLoading = false;
   List<ProductResponse> products = [];
@@ -52,7 +55,7 @@ class _ProductListState extends State<Createorderscreen > {
   List<ItemGroup> filtereditemgroup = [];
   TextEditingController searchController = TextEditingController();
   bool isButtonClicked = false;
- // List<int> selectedIndices = [];
+  // List<int> selectedIndices = [];
   String Groupname = "";
   String ItemCode = "";
   int selectindex = 0;
@@ -63,7 +66,9 @@ class _ProductListState extends State<Createorderscreen > {
   List<String>? cartItems = [];
 
   List<int> quantities = [1]; // Initialize with default quantity
-  List<TextEditingController> textEditingControllers = [TextEditingController()];
+  List<TextEditingController> textEditingControllers = [
+    TextEditingController()
+  ];
   List<bool> isSelectedList = [false];
 // Declare ApiResponse globally
   @override
@@ -90,7 +95,7 @@ class _ProductListState extends State<Createorderscreen > {
 
       if (response.statusCode == 200) {
         final ApiResponse apiResponse =
-        ApiResponse.fromJson(json.decode(response.body));
+            ApiResponse.fromJson(json.decode(response.body));
 
         if (response.statusCode == 200) {
           return ApiResponse.fromJson(json.decode(response.body));
@@ -119,7 +124,8 @@ class _ProductListState extends State<Createorderscreen > {
     productresponse.clear();
     final response = await http.get(
       Uri.parse(
-        'http://182.18.157.215/Srikar_Biotech_Dev/API/api/Item/GetAllItemsByItemGroupCode/1/'+'$Gropcode',
+        'http://182.18.157.215/Srikar_Biotech_Dev/API/api/Item/GetAllItemsByItemGroupCode/1/' +
+            '$Gropcode',
       ),
     );
     print('productlistresponse: ${response.body}');
@@ -132,7 +138,7 @@ class _ProductListState extends State<Createorderscreen > {
         }
 
         final List<dynamic>? appointmentsData =
-        responseData['response']['listResult'];
+            responseData['response']['listResult'];
 
         if (appointmentsData == null) {
           print('List result is null');
@@ -141,15 +147,15 @@ class _ProductListState extends State<Createorderscreen > {
           print('productlength ${appointmentsData.length}');
 
           setState(() {
-
-              isLoading = true; // or false
-              productresponse = appointmentsData
+            isLoading = true; // or false
+            productresponse = appointmentsData
                 .map((appointment) => ProductResponse.fromJson(appointment))
                 .toList();
 
-     quantities = List<int>.filled(productresponse.length, 0);
-          isSelectedList = List<bool>.filled(productresponse.length, false);
-            textEditingControllers = List.generate(productresponse.length, (index) => TextEditingController());
+            quantities = List<int>.filled(productresponse.length, 0);
+            isSelectedList = List<bool>.filled(productresponse.length, false);
+            textEditingControllers = List.generate(
+                productresponse.length, (index) => TextEditingController());
             print('productresponse ${productresponse.length}');
           });
         }
@@ -167,7 +173,6 @@ class _ProductListState extends State<Createorderscreen > {
     // ... (the rest of your existing build method)
 
     return Scaffold(
-
       appBar: AppBar(
         backgroundColor: Color(0xFFe78337),
         leading: IconButton(
@@ -182,50 +187,45 @@ class _ProductListState extends State<Createorderscreen > {
         ),
         titleSpacing: -10,
         centerTitle: false,
-    actions: [
-    Stack(
-    children: [
-    IconButton(
-    onPressed: () {
-    // Navigator.push(
-    // context,
-    // MaterialPageRoute(
-    // builder: (context) => const CartScreen(),
-    // ),
-    // );
-    },
-    icon: const Icon(Icons.shopping_cart),
-    ),
-
-    Positioned(
-    right: 8,
-    top: 8,
-    child: Container(
-    padding: const EdgeInsets.all(5),
-    decoration: BoxDecoration(
-    shape: BoxShape.circle,
-    color: Colors.red, // Customize the badge color
-    ),
-    child: Text(
-   '${cartItems!.length}',
-    style: TextStyle(
-    color: Colors.white,
-    fontWeight: FontWeight.bold,
-    ),
-    ),
-    ),
-    ),
-    ],
-    ),
-    const SizedBox(
-    width: 20.0,
-    ),
-    ],
-    ),
-
-
-
-
+        actions: [
+          Stack(
+            children: [
+              IconButton(
+                onPressed: () {
+                  // Navigator.push(
+                  // context,
+                  // MaterialPageRoute(
+                  // builder: (context) => const CartScreen(),
+                  // ),
+                  // );
+                },
+                icon: const Icon(Icons.shopping_cart),
+              ),
+              Positioned(
+                right: 8,
+                top: 8,
+                child: Container(
+                  padding: const EdgeInsets.all(5),
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: Colors.red, // Customize the badge color
+                  ),
+                  child: Text(
+                    '${cartItems!.length}',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(
+            width: 20.0,
+          ),
+        ],
+      ),
       body: Column(
         children: [
           Padding(
@@ -239,8 +239,7 @@ class _ProductListState extends State<Createorderscreen > {
                     // Handle the click event for the second text view
                     print('first textview clicked');
                   },
-                  child:
-                  Container(
+                  child: Container(
                     width: MediaQuery.of(context).size.width,
                     height: 55.0,
                     decoration: BoxDecoration(
@@ -250,315 +249,312 @@ class _ProductListState extends State<Createorderscreen > {
                         width: 2,
                       ),
                     ),
-                    child:
-                    Row(
-                children: [
-                  Expanded(
-                    child: Align(
-                      alignment: Alignment.centerRight,
-                      child: Padding(
-                        padding: EdgeInsets.only(left: 10.0, top: 0.0),
-                        child: TextFormField(
-                          controller: searchController,
-                          onChanged: (value) {
-                            filterDealers();
-                          },
-                          keyboardType: TextInputType.name,
-                          style: TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.w300,
-                          ),
-                          decoration: InputDecoration(
-
-                            suffixIcon: Icon(
-                              Icons.search,
-                              color: Color(0xFFC4C2C2),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: Align(
+                            alignment: Alignment.centerRight,
+                            child: Padding(
+                              padding: EdgeInsets.only(left: 10.0, top: 0.0),
+                              child: TextFormField(
+                                controller: searchController,
+                                onChanged: (value) {
+                                  filterDealers();
+                                },
+                                keyboardType: TextInputType.name,
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w300,
+                                ),
+                                decoration: InputDecoration(
+                                  suffixIcon: Icon(
+                                    Icons.search,
+                                    color: Color(0xFFC4C2C2),
+                                  ),
+                                  hintText: 'Search for Product Name',
+                                  hintStyle: TextStyle(
+                                    fontSize: 14,
+                                    fontFamily: 'Roboto-Bold',
+                                    fontWeight: FontWeight.w500,
+                                    color: Color(0xFFC4C2C2),
+                                  ),
+                                  border: InputBorder.none,
+                                ),
+                              ),
                             ),
-                            hintText: 'Search for Product Name',
-                            hintStyle: TextStyle(
-                              fontSize: 14,
-                              fontFamily: 'Roboto-Bold',
-                              fontWeight: FontWeight.w500,
-                              color: Color(0xFFC4C2C2),
-                            ),
-                            border: InputBorder.none,
                           ),
                         ),
-                      ),
+                      ],
                     ),
                   ),
-                ],
                 ),
-                ),
-                ),
-
               ],
             ),
           ),
           SizedBox(
             height: 10.0,
           ),
-
           Padding(
             padding: EdgeInsets.all(5.0),
             child: Container(
               height: 50.0,
               child: apiResponse == null
                   ? Center(
-                child: CircularProgressIndicator.adaptive(), // Loading indicator
-              )
+                      child: CircularProgressIndicator
+                          .adaptive(), // Loading indicator
+                    )
                   : ListView.builder(
-                shrinkWrap: false,
-                scrollDirection: Axis.horizontal,
-                itemCount: apiResponse?.listResult.length,
-                itemBuilder: (BuildContext context, int i) {
-                  bool isSelected = i == selectindex;
+                      shrinkWrap: false,
+                      scrollDirection: Axis.horizontal,
+                      itemCount: apiResponse?.listResult.length,
+                      itemBuilder: (BuildContext context, int i) {
+                        bool isSelected = i == selectindex;
 
-                  ItemGroup? itemGroup = apiResponse?.listResult[i];
+                        ItemGroup? itemGroup = apiResponse?.listResult[i];
 
-                  return Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 10.0),
-                    child: ElevatedButton(
-                      onPressed: () {
-                        setState(() {
-                          selectindex = i;
-                        });
-                        getgropcode = itemGroup!.itmsGrpCod;
-                        print('getitemgroupcode:$getgropcode');
-                        fetchproductlist(getgropcode);
-                      },
-                      style: ButtonStyle(
-                        padding: MaterialStateProperty.all<EdgeInsetsGeometry>(
-                          EdgeInsets.symmetric(vertical: 8.0, horizontal: 12.0), // Adjust the padding as needed
-                        ),
-                        backgroundColor: MaterialStateProperty.resolveWith<Color>(
-                              (Set<MaterialState> states) {
-                            return isSelected
-                                ? Color(0xFFe78337) // Color when selected
-                                : Colors.white; // Default background color
-                          },
-                        ),
-                        side: MaterialStateProperty.resolveWith<BorderSide>(
-                              (Set<MaterialState> states) {
-                            return BorderSide(
-                              color: isSelected
-                                  ? Color(0xFFe78337) // Border when selected
-                                  : Color(0xFFfff6eb), // Default border color
-                              width: 2.0,
-                            );
-                          },
-                        ),
-                        shape: MaterialStateProperty.all<OutlinedBorder>(
-                          RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(5.0),
+                        return Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 10.0),
+                          child: ElevatedButton(
+                            onPressed: () {
+                              setState(() {
+                                selectindex = i;
+                              });
+                              getgropcode = itemGroup!.itmsGrpCod;
+                              print('getitemgroupcode:$getgropcode');
+                              fetchproductlist(getgropcode);
+                            },
+                            style: ButtonStyle(
+                              padding:
+                                  MaterialStateProperty.all<EdgeInsetsGeometry>(
+                                EdgeInsets.symmetric(
+                                    vertical: 8.0,
+                                    horizontal:
+                                        12.0), // Adjust the padding as needed
+                              ),
+                              backgroundColor:
+                                  MaterialStateProperty.resolveWith<Color>(
+                                (Set<MaterialState> states) {
+                                  return isSelected
+                                      ? Color(0xFFe78337) // Color when selected
+                                      : Colors
+                                          .white; // Default background color
+                                },
+                              ),
+                              side:
+                                  MaterialStateProperty.resolveWith<BorderSide>(
+                                (Set<MaterialState> states) {
+                                  return BorderSide(
+                                    color: isSelected
+                                        ? Color(
+                                            0xFFe78337) // Border when selected
+                                        : Color(
+                                            0xFFfff6eb), // Default border color
+                                    width: 2.0,
+                                  );
+                                },
+                              ),
+                              shape: MaterialStateProperty.all<OutlinedBorder>(
+                                RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(5.0),
+                                ),
+                              ),
+                              textStyle:
+                                  MaterialStateProperty.resolveWith<TextStyle>(
+                                (Set<MaterialState> states) {
+                                  return TextStyle(
+                                    color: isSelected
+                                        ? Colors.white
+                                        : Colors.black,
+                                  );
+                                },
+                              ),
+                            ),
+                            child: Text(
+                              '${itemGroup?.itmsGrpNam}',
+                              style: TextStyle(
+                                color: isSelected ? Colors.white : Colors.black,
+                                fontFamily: 'Calibri',
+                                fontSize: 12,
+                              ),
+                            ),
                           ),
-                        ),
-                        textStyle: MaterialStateProperty.resolveWith<TextStyle>(
-                              (Set<MaterialState> states) {
-                            return TextStyle(
-                              color: isSelected ? Colors.white : Colors.black,
-                            );
-                          },
-                        ),
-                      ),
-                      child: Text(
-                        '${itemGroup?.itmsGrpNam}',
-                        style: TextStyle(
-                          color: isSelected ? Colors.white : Colors.black,
-                          fontFamily: 'Calibri',
-                          fontSize: 12,
-                        ),
-                      ),
+                        );
+                      },
                     ),
-                  );
-                },
-              ),
             ),
           ),
-
-
-
-
           Expanded(
-
             child: productresponse == null
                 ? (isLoading
-                ? Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  CircularProgressIndicator.adaptive(),
-                  SizedBox(height: 16.0),
-                  Text(
-                    'Loading, please wait...',
-                    style: TextStyle(fontSize: 18.0, color: Color(0xFF424242)),
-                  ),
-                ],
-              ),
-            )
-                : Center(
-              child: Text(
-                'No products available for this Category',
-                style: TextStyle(fontSize: 18.0,
-                color: Color(0xFF424242),
-                fontWeight: FontWeight.bold)
+                    ? Center(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            CircularProgressIndicator.adaptive(),
+                            SizedBox(height: 16.0),
+                            Text(
+                              'Loading, please wait...',
+                              style: TextStyle(
+                                  fontSize: 18.0, color: Color(0xFF424242)),
+                            ),
+                          ],
+                        ),
+                      )
+                    : Center(
+                        child: Text('No products available for this Category',
+                            style: TextStyle(
+                                fontSize: 18.0,
+                                color: Color(0xFF424242),
+                                fontWeight: FontWeight.bold)),
+                      ))
+                : ListView.builder(
+                    itemCount: productresponse.length,
+                    itemBuilder: (context, index) {
+                      if (index < 0 || index >= productresponse.length) {
+                        return Container(
+                          child: Text('Error: Index out of bounds'),
+                        );
+                      }
 
-              ),
-            ))
-                :
-            ListView.builder(
-              itemCount: productresponse.length,
-              itemBuilder: (context, index) {
-                if (index < 0 || index >= productresponse.length) {
-                  return Container(
-                    child: Text('Error: Index out of bounds'),
-                  );
-                }
+                      final productresp = productresponse[index];
 
-                final productresp = productresponse[index];
-
-                return GestureDetector(
-                    onTap: () {
-                      print('Tapped on ID: ${productresp.itemCode}');
-                    },
-
-
-                    child: Container(
-                      child: Card(
-                        color: Colors.white,
-                        elevation: 5.0,
-                        child: Padding(
-                          padding: const EdgeInsets.all(15.0),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            children: [
-                                RichText(
-                                  overflow: TextOverflow.ellipsis,
-                                  maxLines: 1,
-                                  text: TextSpan(
-                                    text:
-                                    '${productresp.itemName.toString()}\n',
-                                    style: TextStyle(
-                                      color: Color(0xFF424242),
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 16.0,
-                                    ),
-                                  ),
-                                ),
-                                SizedBox(
-                                  height: 8.0,
-                                ),
-
-                                Row(
-                                  // crossAxisAlignment: CrossAxisAlignment.start,
-                                  // mainAxisAlignment: MainAxisAlignment.start,
+                      return GestureDetector(
+                          onTap: () {
+                            print('Tapped on ID: ${productresp.itemCode}');
+                          },
+                          child: Container(
+                            child: Card(
+                              color: Colors.white,
+                              elevation: 5.0,
+                              child: Padding(
+                                padding: const EdgeInsets.all(15.0),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  mainAxisAlignment: MainAxisAlignment.start,
                                   children: [
-                                    Container(
-                                      child: Text(
-                                        '${productresp.itmsGrpNam.toString()}',
+                                    RichText(
+                                      overflow: TextOverflow.ellipsis,
+                                      maxLines: 1,
+                                      text: TextSpan(
+                                        text:
+                                            '${productresp.itemName.toString()}\n',
                                         style: TextStyle(
-                                          color: Color(0xFF848484),
+                                          color: Color(0xFF424242),
                                           fontWeight: FontWeight.bold,
-                                          fontSize: 12.0,
+                                          fontSize: 16.0,
                                         ),
                                       ),
                                     ),
-                                    Spacer(),
+                                    SizedBox(
+                                      height: 8.0,
+                                    ),
                                     Row(
-                                      crossAxisAlignment:
-                                      CrossAxisAlignment.end,
-                                      mainAxisAlignment:
-                                      MainAxisAlignment.end,
+                                      // crossAxisAlignment: CrossAxisAlignment.start,
+                                      // mainAxisAlignment: MainAxisAlignment.start,
                                       children: [
                                         Container(
-                                          //   width: MediaQuery.of(context).size.width / 1.8,
-                                          child: Row(
-                                            crossAxisAlignment:
-                                            CrossAxisAlignment.end,
-                                            mainAxisAlignment:
-                                            MainAxisAlignment.end,
-                                            children: [
-                                              Text(
-                                                '${productresp.ugpName.toString()}',
-                                                style: TextStyle(
-                                                  color:
-                                                  Color(0xFFe78337),
-                                                  fontWeight:
-                                                  FontWeight.w600,
-                                                  fontSize: 13.0,
-                                                ),
-                                              ),
-                                            ],
+                                          child: Text(
+                                            '${productresp.itmsGrpNam.toString()}',
+                                            style: TextStyle(
+                                              color: Color(0xFF848484),
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 12.0,
+                                            ),
                                           ),
-                                        )
+                                        ),
+                                        Spacer(),
+                                        Row(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.end,
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.end,
+                                          children: [
+                                            Container(
+                                              //   width: MediaQuery.of(context).size.width / 1.8,
+                                              child: Row(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.end,
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.end,
+                                                children: [
+                                                  Text(
+                                                    '${productresp.ugpName.toString()}',
+                                                    style: TextStyle(
+                                                      color: Color(0xFFe78337),
+                                                      fontWeight:
+                                                          FontWeight.w600,
+                                                      fontSize: 13.0,
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            )
+                                          ],
+                                        ),
                                       ],
                                     ),
+                                    SizedBox(
+                                      height: 5.0,
+                                    ),
+                                    RichText(
+                                      maxLines: 1,
+                                      text: TextSpan(
+                                        text:
+                                            '₹${productresp.cstGrpCode.toString()}  ',
+                                        style: TextStyle(
+                                          color: Colors.orange,
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 16.0,
+                                        ),
+                                        children: [
+                                          TextSpan(
+                                            text: '/ ',
+                                            style: TextStyle(
+                                              color: Color(0xFFa6a6a6),
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 13.0,
+                                              // decoration: TextDecoration.lineThrough,
+                                            ),
+                                          ),
+                                          TextSpan(
+                                            text: '${productresp.uMuom}',
+                                            style: TextStyle(
+                                              color: Color(0xFFa6a6a6),
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 13.0,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    SizedBox(
+                                      height: 5.0,
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.only(
+                                          right: 0, left: 0, bottom: 0),
+                                      child: Row(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.start,
+                                        children: [
+                                          buildQuantitySelector(
+                                              0), // Adjust the index as needed
+                                          SizedBox(width: 8.0),
+                                          buildAddToCartButton(
+                                              0), // Adjust the index as needed
+                                        ],
+                                      ),
+                                    )
                                   ],
                                 ),
-                                SizedBox(
-                                  height: 5.0,
-                                ),
-
-
-                                RichText(
-                                  maxLines: 1,
-                                  text: TextSpan(
-                                    text:
-                                    '₹${productresp.cstGrpCode.toString()}  ',
-                                    style: TextStyle(
-                                      color: Colors.orange,
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 16.0,
-                                    ),
-                                    children: [
-                                      TextSpan(
-                                        text: '/ ',
-                                        style: TextStyle(
-                                          color: Color(0xFFa6a6a6),
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 13.0,
-                                          // decoration: TextDecoration.lineThrough,
-                                        ),
-                                      ),
-                                      TextSpan(
-                                        text: '${productresp.uMuom}',
-                                        style: TextStyle(
-                                          color: Color(0xFFa6a6a6),
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 13.0,
-
-                                        ),
-                                      ),
-
-                                    ],
-                                  ),
-                                ),
-
-                                SizedBox(
-                                  height: 5.0,
-                                ),
-                          Padding(
-                            padding: const EdgeInsets.only(right: 0, left: 0, bottom: 0),
-                            child: Row(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              children: [
-                                buildQuantitySelector(0), // Adjust the index as needed
-                                SizedBox(width: 8.0),
-                                buildAddToCartButton(0), // Adjust the index as needed
-                              ],
+                              ),
                             ),
-                          )
-                              ],
-                            ),
-                          ),
-                        ),
-                      ));
-                  // rest of your code...
-
-              },
-            ),
+                          ));
+                      // rest of your code...
+                    },
+                  ),
           ),
         ],
       ),
@@ -569,16 +565,18 @@ class _ProductListState extends State<Createorderscreen > {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => transport_payment( cardName: '${widget.cardName}',
-                    cardCode:'${widget.cardCode}',
+                builder: (context) => transport_payment(
+                    cardName: '${widget.cardName}',
+                    cardCode: '${widget.cardCode}',
                     address: '${widget.address}',
-                    state:'${widget.state}',
+                    state: '${widget.state}',
                     phone: '${widget.phone}',
+                    bookingplace: '',
+                    preferabletransport: '',
                     proprietorName: '${widget.proprietorName}',
                     gstRegnNo: '${widget.gstRegnNo}'),
               ),
             );
-
           },
           style: ElevatedButton.styleFrom(
             primary: Color(0xFFe78337), // Set your desired background color
@@ -598,9 +596,8 @@ class _ProductListState extends State<Createorderscreen > {
     // Check if the cart items have valid data (replace with your own validation logic)
     return cartItems.isNotEmpty &&
         cartItems.any((product) =>
-        product.productName.isNotEmpty && product.productPrice > 0);
+            product.productName.isNotEmpty && product.productPrice > 0);
   }
-
 
   Widget buildweight(int index, String mode, Function onTap,
       {bool isSelected = false}) {
@@ -642,10 +639,11 @@ class _ProductListState extends State<Createorderscreen > {
     SharedPreferences prefs = await SharedPreferences.getInstance();
 
     // Get existing cart data from SharedPreferences
-   cartItems = prefs.getStringList('cartItems') ?? [];
+    cartItems = prefs.getStringList('cartItems') ?? [];
 
     // Add the current product data to the cart
-    String productData = '${productresponse[index].itemCode},${productresponse[index].itemName},${quantities[index]}';
+    String productData =
+        '${productresponse[index].itemCode},${productresponse[index].itemName},${quantities[index]}';
     cartItems!.add(productData);
 
     // Save the updated cart data in SharedPreferences
@@ -685,7 +683,8 @@ class _ProductListState extends State<Createorderscreen > {
                 setState(() {
                   quantities[index]--;
                 });
-                textEditingControllers[index].text = quantities[index].toString();
+                textEditingControllers[index].text =
+                    quantities[index].toString();
               }
             },
             iconSize: 17.0,
@@ -712,7 +711,8 @@ class _ProductListState extends State<Createorderscreen > {
                       ],
                       onChanged: (value) {
                         setState(() {
-                          quantities[index] = int.parse(value.isEmpty ? '0' : value);
+                          quantities[index] =
+                              int.parse(value.isEmpty ? '0' : value);
                         });
                       },
                       decoration: InputDecoration(
@@ -776,7 +776,9 @@ class _ProductListState extends State<Createorderscreen > {
                   icon: Icon(
                     Icons.add_shopping_cart,
                     size: 18.0,
-                    color: isSelectedList[index] ?Color(0xFFfff6eb) : Colors.orange,
+                    color: isSelectedList[index]
+                        ? Color(0xFFfff6eb)
+                        : Colors.orange,
                   ),
                   onPressed: () {
                     setState(() {
@@ -790,7 +792,9 @@ class _ProductListState extends State<Createorderscreen > {
                 Text(
                   isSelectedList[index] ? 'Added' : 'Add',
                   style: TextStyle(
-                    color: isSelectedList[index] ? Color(0xFFfff6eb) : Colors.orange,
+                    color: isSelectedList[index]
+                        ? Color(0xFFfff6eb)
+                        : Colors.orange,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
@@ -802,8 +806,6 @@ class _ProductListState extends State<Createorderscreen > {
       ),
     );
   }
-
-
 }
 
 // Static product details

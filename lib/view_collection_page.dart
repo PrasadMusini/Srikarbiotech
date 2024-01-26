@@ -20,6 +20,8 @@ class ViewCollectionPage extends StatefulWidget {
 }
 
 class _ViewCollectionPageState extends State<ViewCollectionPage> {
+  final GlobalKey<_ViewCollectionPageState> _mainScreenStateKey =
+      GlobalKey<_ViewCollectionPageState>();
   String url =
       'http://182.18.157.215/Srikar_Biotech_Dev/API/api/Collections/GetCollections/null';
 
@@ -38,7 +40,15 @@ class _ViewCollectionPageState extends State<ViewCollectionPage> {
   @override
   void initState() {
     apiData = getCollection();
+
     super.initState();
+  }
+
+  void refreshData() {
+    setState(() {
+      apiData =
+          getCollection(); // Assuming `apiData` is your Future<List<ListResult>>
+    });
   }
 
   Future<List<ListResult>> getCollection() async {
@@ -127,6 +137,7 @@ class _ViewCollectionPageState extends State<ViewCollectionPage> {
           } else {
             if (snapshot.hasData) {
               List<ListResult> data = snapshot.data!;
+
               return Padding(
                 // wrap FutureBuilder here with padding widget
                 padding: const EdgeInsets.all(12),
@@ -166,7 +177,8 @@ class _ViewCollectionPageState extends State<ViewCollectionPage> {
                               print('Container clicked!');
                               showModalBottomSheet(
                                 context: context,
-                                builder: (context) => const FilterBottomSheet(),
+                                builder: (context) => FilterBottomSheet(
+                                    mainScreenStateKey: _mainScreenStateKey),
                               );
                               // Add your specific logic or navigation here
                             },
@@ -188,6 +200,8 @@ class _ViewCollectionPageState extends State<ViewCollectionPage> {
 
                     // cards
                     Expanded(
+                      //   width: MediaQuery.of(context).size.width,
+
                       child: ListView.builder(
                         itemCount: data.length,
                         itemBuilder: ((context, index) {
@@ -211,7 +225,10 @@ class _ViewCollectionPageState extends State<ViewCollectionPage> {
 }
 
 class FilterBottomSheet extends StatefulWidget {
-  const FilterBottomSheet({super.key});
+  // const FilterBottomSheet({super.key});
+  final GlobalKey<_ViewCollectionPageState> mainScreenStateKey;
+
+  FilterBottomSheet({required this.mainScreenStateKey});
 
   @override
   State<FilterBottomSheet> createState() => _FilterBottomSheetState();
@@ -242,13 +259,7 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
   DateTime toDate = DateTime.now();
   DateTime fromDate = DateTime.now();
   String? selectedValue;
-  List dropDownItems = [
-    'item 1',
-    'item 2',
-    'item 3',
-    'item 4',
-    'item 5',
-  ];
+  List dropDownItems = [];
   List<dynamic> dropdownItems = [];
   PaymentMode? selectedPaymode;
   int? payid;
@@ -265,7 +276,7 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
   Purpose? selectedPurposeObj; // Declare it globally
   String purposename = '';
   int? savedCompanyId = 0;
-
+  String fdlvalue = '';
   @override
   void initState() {
     fetchData();
@@ -569,7 +580,7 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
 
   Future<void> fetchData() async {
     final response = await http.get(Uri.parse(
-        'http://182.18.157.215/Srikar_Biotech_Dev/API/api/Account/GetAllDealersBySlpCode/100'));
+        'http://182.18.157.215/Srikar_Biotech_Dev/API/api/Account/GetAllDealersBySlpCode/1/100'));
 
     if (response.statusCode == 200) {
       Map<String, dynamic> data = json.decode(response.body);
@@ -740,12 +751,13 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
                                 );
 
                                 // Print the selected values
-                                print(
-                                    'fldValue: ${selectedPurposeObj?.fldValue}');
+                                // print(
+                                //     'fldValue: ${selectedPurposeObj?.fldValue}');
                                 print('descr: ${selectedPurposeObj?.descr}');
                                 print(
                                     'purposeName: ${selectedPurposeObj?.purposeName}');
-
+                                fdlvalue = selectedPurposeObj!.fldValue;
+                                print('fldValue: ${fdlvalue}');
                                 purposename = selectedPurposeObj!.purposeName;
                                 print('selectpurposeName: $purposename');
                               });
@@ -876,7 +888,21 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
 
           SizedBox(
             height: 10.0,
+          ),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              buildDateInputfromdate(
+                context,
+                'From Date',
+                fromdateController,
+                () => _selectfromDate(context, fromdateController),
+              ),
+            ],
           ), // From date
+          SizedBox(
+            height: 10.0,
+          ),
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -888,21 +914,9 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
               ),
             ],
           ),
-          SizedBox(
-            height: 10.0,
-          ),
+
           // To Date
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              buildDateInputfromdate(
-                context,
-                'From Date',
-                fromdateController,
-                () => _selectfromDate(context, fromdateController),
-              ),
-            ],
-          ),
+
           SizedBox(
             height: 10.0,
           ),
@@ -975,12 +989,12 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
           'http://182.18.157.215/Srikar_Biotech_Dev/API/api/Collections/GetCollectionsbyMobileSearch');
       print('applyfilter: $url');
       final request = {
-        "PurposeName": purposename,
+        "PurposeName": fdlvalue,
         "StatusId": payid,
         "PartyCode": selectedValue,
         "FormDate": selectformattedfromdate,
         "ToDate": selectformattedtodate,
-        "CompanyId": savedCompanyId
+        "CompanyId": 1
       };
       // final headers = {
       //   'Authorization': '$accessToken',
@@ -1008,6 +1022,7 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
 
       if (response.statusCode == 200) {
         print('response is success');
+        widget.mainScreenStateKey.currentState?.refreshData();
       } else {
         print('response is not success');
         // Commonutils.showCustomToastMessageLong(
@@ -1062,6 +1077,7 @@ class _MyCardState extends State<MyCard> {
     String dateString = widget.listResult.date;
     DateTime date = DateTime.parse(dateString);
     String formattedDate = DateFormat('dd MMM, yyyy').format(date);
+
     return GestureDetector(
       onTap: () {
         // Navigator.of(context)

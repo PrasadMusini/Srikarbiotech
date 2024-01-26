@@ -15,12 +15,16 @@ class transport_payment extends StatefulWidget {
   final String gstRegnNo;
   final String state;
   final String phone;
+  final String bookingplace;
+  final String preferabletransport;
 
   transport_payment(
       {required this.cardName,
       required this.cardCode,
       required this.address,
       required this.state,
+      required this.bookingplace,
+      required this.preferabletransport,
       required this.phone,
       required this.proprietorName,
       required this.gstRegnNo});
@@ -30,13 +34,14 @@ class transport_payment extends StatefulWidget {
 }
 
 class _transportstate extends State<transport_payment> {
-
   TextEditingController bookingplacecontroller = TextEditingController();
   TextEditingController Parcelservicecontroller = TextEditingController();
   @override
   void initState() {
+    bookingplacecontroller = TextEditingController(text: widget.bookingplace);
+    Parcelservicecontroller =
+        TextEditingController(text: widget.preferabletransport);
     super.initState();
-
   }
 
   @override
@@ -139,11 +144,11 @@ class _transportstate extends State<transport_payment> {
                                       child: Padding(
                                         padding: EdgeInsets.only(
                                             left: 10.0, top: 0.0),
-                                        child: TextFormField( controller:
-                                        bookingplacecontroller,
+                                        child: TextFormField(
+                                          controller: bookingplacecontroller,
                                           keyboardType: TextInputType.name,
                                           style: TextStyle(
-                                              color:  Color(0xFFe78337),
+                                              color: Color(0xFFe78337),
                                               fontFamily: 'Roboto',
                                               fontWeight: FontWeight.w600,
                                               fontSize: 14),
@@ -192,7 +197,6 @@ class _transportstate extends State<transport_payment> {
                           //  SizedBox(height: 8.0),
                           GestureDetector(
                             onTap: () {
-                              // Handle the click event for the second text view
                               print('first textview clicked');
                             },
                             child: Container(
@@ -213,8 +217,7 @@ class _transportstate extends State<transport_payment> {
                                         padding: EdgeInsets.only(
                                             left: 10.0, top: 0.0),
                                         child: TextFormField(
-                                          controller:
-                                          Parcelservicecontroller,
+                                          controller: Parcelservicecontroller,
                                           keyboardType: TextInputType.name,
                                           style: TextStyle(
                                               color: Color(0xFFe78337),
@@ -247,12 +250,9 @@ class _transportstate extends State<transport_payment> {
                 )),
               ),
             ),
-
-
           ],
         ),
       ),
-
       bottomNavigationBar: Container(
         height: 60,
         margin: const EdgeInsets.symmetric(vertical: 15, horizontal: 10),
@@ -267,21 +267,20 @@ class _transportstate extends State<transport_payment> {
                     context,
                     MaterialPageRoute(
                       builder: (context) => Ordersubmit_screen(
-                          cardName: '${widget.cardName}',
-                          cardCode: '${widget.cardCode}',
-                          address: '${widget.address}',
-                          state: '${widget.state}',
-                          phone: '${widget.phone}',
-                          proprietorName: '${widget.proprietorName}',
-                          gstRegnNo: '${widget.gstRegnNo}',
-                        BookingPlace :bookingplacecontroller.text,
-                        TransportName: Parcelservicecontroller.text,),
+                        cardName: '${widget.cardName}',
+                        cardCode: '${widget.cardCode}',
+                        address: '${widget.address}',
+                        state: '${widget.state}',
+                        phone: '${widget.phone}',
+                        proprietorName: '${widget.proprietorName}',
+                        gstRegnNo: '${widget.gstRegnNo}',
+                        BookingPlace: bookingplacecontroller.text,
+                        TransportName: Parcelservicecontroller.text,
+                      ),
                     ),
                   );
 
-
                   print(' button clicked');
-
                 },
                 child: Container(
                   padding: const EdgeInsets.all(10),
@@ -290,12 +289,13 @@ class _transportstate extends State<transport_payment> {
                     color: Color(0xFFe78337),
                   ),
                   child: const Center(
-                    child:  Text(
+                    child: Text(
                       'Save & Proceed',
                       style: TextStyle(
                         color: Colors.white,
                         fontSize: 18,
-                        fontWeight: FontWeight.w700, // Set the font weight to bold
+                        fontWeight:
+                            FontWeight.w700, // Set the font weight to bold
                         fontFamily: 'Roboto', // Set the font family to Roboto
                       ),
                     ),
@@ -303,13 +303,9 @@ class _transportstate extends State<transport_payment> {
                 ),
               ),
             ),
-
           ],
         ),
       ),
-
-
     );
   }
-
 }

@@ -9,7 +9,6 @@ import 'package:srikarbiotech/view_collection_page.dart';
 import 'Selectpartyscreen.dart';
 import 'ViewReturnorder.dart';
 
-
 class HomeScreen extends StatefulWidget {
   @override
   _home_Screen createState() => _home_Screen();
@@ -40,14 +39,14 @@ class _home_Screen extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    double  height = MediaQuery.of(context).size.height / 3;
+    double height = MediaQuery.of(context).size.height / 3;
     return Scaffold(
       appBar: AppBar(
         elevation: 5.0,
         backgroundColor: Colors.white,
         //  centerTitle: true,
         automaticallyImplyLeading:
-        false, // Set this to false to remove back arrow
+            false, // Set this to false to remove back arrow
         title: Row(
           mainAxisAlignment: MainAxisAlignment.start,
           mainAxisSize: MainAxisSize.min,
@@ -129,11 +128,11 @@ class _imagesliderState extends State<imageslider> {
             child: Column(
               children: [
                 Expanded(
-                  //   child: SingleChildScrollView(
+                    //   child: SingleChildScrollView(
 
                     child: Container(
-                      // width: MediaQuery.of(context).size.width,
-                      //  padding: EdgeInsets.all(20.0),
+                        // width: MediaQuery.of(context).size.width,
+                        //  padding: EdgeInsets.all(20.0),
 
                         height: MediaQuery.of(context).size.height,
                         padding: EdgeInsets.only(
@@ -194,7 +193,7 @@ class _imagesliderState extends State<imageslider> {
                                     children: List.generate(
                                       // Use the number of images from assets
                                       3, // Replace with the actual number of assets
-                                          (index) => buildIndicator(index),
+                                      (index) => buildIndicator(index),
                                     ),
                                   ),
                                 ),
@@ -202,14 +201,13 @@ class _imagesliderState extends State<imageslider> {
                             ),
                           ],
                         ))
-                  //  )
-                ),
+                    //  )
+                    ),
                 SizedBox(
                   height: 10.0,
                 ),
                 Expanded(
-                  flex:
-                  3,
+                  flex: 3,
                   child: SingleChildScrollView(
                     child: Container(
                       width: MediaQuery.of(context).size.width,
@@ -221,167 +219,371 @@ class _imagesliderState extends State<imageslider> {
                             // mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                             //  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                             children: [
-                              _customheightCard(
-                                imageUrl: "receipt.svg",
-                                item: "Ledger",
-                                color: Color(0xFFe78337),
-                                item_1:
-                                "All Incoming and Outgoing Transactions record",
-                                color_1: Color(0xFFF8dac2),
-                                textcolor: Colors.white,
-                                onTap: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) =>
-                                          Selectpartyscreen( from: 'Ledger'),
-                                    ),
-                                  );
-
-                                },
-                              ),
-                              SizedBox(
-                                width: 7.0,
-                              ),
                               Container(
                                 height: MediaQuery.of(context).size.height / 3,
-                                //     (4 / 9) -
-                                // 160 / 2,
-
-                                child: Column(
-                                  mainAxisAlignment:
-                                  MainAxisAlignment.spaceBetween,
+                                child: Row(
                                   children: [
-                                    _customcontainerCard(
-                                      imageUrl: "shopping_cart_add.svg",
-                                      item: "Create Order",
-                                      item1: "Create a New Order",
-                                      color: Color(0xFFF8dac2),
-                                      color_1: Color(0xFFec9d62),
-                                      textcolor: Color(0xFFe78337),
+                                    _customheightCard(
+                                      imageUrl: "receipt.svg",
+                                      item: "Ledger",
+                                      color: Color(0xFFe78337),
+                                      item_1:
+                                          "All Incoming and Outgoing Transactions record",
+                                      color_1: Color(0xFFF8dac2),
+                                      textcolor: Colors.white,
                                       onTap: () {
-
                                         Navigator.push(
                                           context,
                                           MaterialPageRoute(
                                             builder: (context) =>
-                                                Selectpartyscreen( from: 'CreateOrder'),
+                                                Selectpartyscreen(
+                                                    from: 'Ledger'),
                                           ),
                                         );
+                                      },
+                                    ),
+                                    SizedBox(
+                                      width: 7.0,
+                                    ),
+                                    Container(
+                                      height:
+                                          MediaQuery.of(context).size.height /
+                                              3,
+                                      //     (4 / 9) -
+                                      // 160 / 2,
 
-                                      },
+                                      child: Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          _customcontainerCard(
+                                            imageUrl: "shopping_cart_add.svg",
+                                            item: "Create Order",
+                                            item1: "Create a New Order",
+                                            color: Color(0xFFF8dac2),
+                                            color_1: Color(0xFFec9d62),
+                                            textcolor: Color(0xFFe78337),
+                                            onTap: () {
+                                              Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      Selectpartyscreen(
+                                                          from: 'CreateOrder'),
+                                                ),
+                                              );
+                                            },
+                                          ),
+                                          // Spacer(),
+                                          // SizedBox(
+                                          //   height: 4.0,
+                                          // ),
+                                          // SizedBox(
+                                          //   height: MediaQuery.of(context).size.height *
+                                          //       0.02, // 2% of the screen height
+                                          // ),
+                                          _customcontainerCard(
+                                            imageUrl: "shoppingbag.svg",
+                                            item: "View Orders",
+                                            item1: "View All Order",
+                                            color: Color(0xFFb7dbc1),
+                                            color_1: Color(0xFF43a05a),
+                                            textcolor: Color(0xFF118730),
+                                            onTap: () {
+                                              Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                    builder: (context) =>
+                                                        ViewOrders()),
+                                              );
+                                            },
+                                          ),
+                                        ],
+                                      ),
                                     ),
-                                    // Spacer(),
-                                    // SizedBox(
-                                    //   height: 4.0,
+                                    // _customheightCard(
+                                    //   imageUrl: "receipt.svg",
+                                    //   item: "Ledger",
+                                    //   color: Color(0xFFe78337),
+                                    //   item_1:
+                                    //       "All Incoming and Outgoing Transactions record",
+                                    //   color_1: Color(0xFFF8dac2),
+                                    //   textcolor: Colors.white,
+                                    //   onTap: () {
+                                    //     Navigator.push(
+                                    //       context,
+                                    //       MaterialPageRoute(
+                                    //         builder: (context) =>
+                                    //             Selectpartyscreen(from: 'Ledger'),
+                                    //       ),
+                                    //     );
+                                    //   },
                                     // ),
                                     // SizedBox(
-                                    //   height: MediaQuery.of(context).size.height *
-                                    //       0.02, // 2% of the screen height
+                                    //   width: 7.0,
                                     // ),
-                                    _customcontainerCard(
-                                      imageUrl: "shoppingbag.svg",
-                                      item: "View Orders",
-                                      item1: "View All Order",
-                                      color: Color(0xFFb7dbc1),
-                                      color_1: Color(0xFF43a05a),
-                                      textcolor: Color(0xFF118730),
-                                      onTap: () {
-                                        Navigator.push(
-                                          context,
-                                          MaterialPageRoute(builder: (context) => ViewOrders()),
-                                        );
-                                      },
-                                    ),
+                                    // Container(
+                                    //   height: MediaQuery.of(context).size.height / 3,
+                                    //   //     (4 / 9) -
+                                    //   // 160 / 2,
+                                    //
+                                    //   child: Column(
+                                    //     mainAxisAlignment:
+                                    //         MainAxisAlignment.spaceBetween,
+                                    //     children: [
+                                    //       _customcontainerCard(
+                                    //         imageUrl: "shopping_cart_add.svg",
+                                    //         item: "Create Order",
+                                    //         item1: "Create a New Order",
+                                    //         color: Color(0xFFF8dac2),
+                                    //         color_1: Color(0xFFec9d62),
+                                    //         textcolor: Color(0xFFe78337),
+                                    //         onTap: () {
+                                    //           Navigator.push(
+                                    //             context,
+                                    //             MaterialPageRoute(
+                                    //               builder: (context) =>
+                                    //                   Selectpartyscreen(
+                                    //                       from: 'CreateOrder'),
+                                    //             ),
+                                    //           );
+                                    //         },
+                                    //       ),
+                                    //       // Spacer(),
+                                    //       // SizedBox(
+                                    //       //   height: 4.0,
+                                    //       // ),
+                                    //       // SizedBox(
+                                    //       //   height: MediaQuery.of(context).size.height *
+                                    //       //       0.02, // 2% of the screen height
+                                    //       // ),
+                                    //       _customcontainerCard(
+                                    //         imageUrl: "shoppingbag.svg",
+                                    //         item: "View Orders",
+                                    //         item1: "View All Order",
+                                    //         color: Color(0xFFb7dbc1),
+                                    //         color_1: Color(0xFF43a05a),
+                                    //         textcolor: Color(0xFF118730),
+                                    //         onTap: () {
+                                    //           Navigator.push(
+                                    //             context,
+                                    //             MaterialPageRoute(
+                                    //                 builder: (context) =>
+                                    //                     ViewOrders()),
+                                    //           );
+                                    //         },
+                                    //       ),
                                   ],
                                 ),
                               )
                             ],
                           ),
                           SizedBox(
-                            height: 10.0,
+                            height: 5.0,
                           ),
                           Row(
-                            //   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            // crossAxisAlignment: CrossAxisAlignment.start,
+                              //   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              // crossAxisAlignment: CrossAxisAlignment.start,
+                              //   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              // mainAxisAlignment: MainAxisAlignment.spaceAround,
+                              // mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                _customwidthCard(
-                                  imageUrl: "creditcard.svg",
-                                  item: "Create Collections",
-                                  item1: "Create a New Collection",
-                                  color: Color(0xFFb7dbc1),
-                                  color_1: Color(0xFF43a05a),
-                                  textcolor: Color(0xFF118730),
-                                  onTap: () {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) =>
-                                            Selectpartyscreen( from: 'CreateCollections'),
+                                Container(
+                                  height:
+                                      MediaQuery.of(context).size.height / 6,
+                                  child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceAround,
+                                    children: [
+                                      _customwidthCard(
+                                        imageUrl: "creditcard.svg",
+                                        item: "Create Collections",
+                                        item1: "Create a New Collection",
+                                        color: Color(0xFFb7dbc1),
+                                        color_1: Color(0xFF43a05a),
+                                        textcolor: Color(0xFF118730),
+                                        onTap: () {
+                                          Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder: (context) =>
+                                                  Selectpartyscreen(
+                                                      from:
+                                                          'CreateCollections'),
+                                            ),
+                                          );
+                                        },
                                       ),
-                                    );
-                                  },
+                                    ],
+                                  ),
                                 ),
                                 SizedBox(
-                                  width: 8.0,
+                                  width: 4.0,
                                 ),
-                                _customwidthCard(
-                                  imageUrl: "album_collection.svg",
-                                  item: "View Collections",
-                                  item1: "View All Collections",
-                                  color: Color(0xFFF8dac2),
-                                  color_1: Color(0xFFec9d62),
-                                  textcolor: Color(0xFFe78337),
-                                  onTap: () {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(builder: (context) => ViewCollectionPage()),
-                                    );
-                                  },
+                                Container(
+                                  height:
+                                      MediaQuery.of(context).size.height / 6,
+                                  child: Row(
+                                    // mainAxisAlignment:
+                                    //     MainAxisAlignment.spaceAround,
+                                    children: [
+                                      _customcontainerCard(
+                                        imageUrl: "album_collection.svg",
+                                        item: "View Collections",
+                                        item1: "View All Collections",
+                                        color: Color(0xFFF8dac2),
+                                        color_1: Color(0xFFec9d62),
+                                        textcolor: Color(0xFFe78337),
+                                        onTap: () {
+                                          Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) =>
+                                                    ViewCollectionPage()),
+                                          );
+                                        },
+                                      ),
+                                    ],
+                                  ),
                                 ),
+                                // _customwidthCard(
+                                //   imageUrl: "creditcard.svg",
+                                //   item: "Create Collections",
+                                //   item1: "Create a New Collection",
+                                //   color: Color(0xFFb7dbc1),
+                                //   color_1: Color(0xFF43a05a),
+                                //   textcolor: Color(0xFF118730),
+                                //   onTap: () {
+                                //     Navigator.push(
+                                //       context,
+                                //       MaterialPageRoute(
+                                //         builder: (context) => Selectpartyscreen(
+                                //             from: 'CreateCollections'),
+                                //       ),
+                                //     );
+                                //   },
+                                // ),
+                                // SizedBox(
+                                //   width: 8.0,
+                                // ),
+                                // _customwidthCard(
+                                //   imageUrl: "album_collection.svg",
+                                //   item: "View Collections",
+                                //   item1: "View All Collections",
+                                //   color: Color(0xFFF8dac2),
+                                //   color_1: Color(0xFFec9d62),
+                                //   textcolor: Color(0xFFe78337),
+                                //   onTap: () {
+                                //     Navigator.push(
+                                //       context,
+                                //       MaterialPageRoute(
+                                //           builder: (context) =>
+                                //               ViewCollectionPage()),
+                                //     );
+                                //   },
+                                // ),
                               ]),
-                          SizedBox(height: 10), // Add spacing between rows
+                          SizedBox(height: 5), // Add spacing between rows
 
                           Row(
-                            //  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              //  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                _customwidthCard(
-                                  imageUrl: "arrows_repeat.svg",
-                                  item: "Create Return order",
-                                  item1: "Create a Reorder",
-                                  color: Color(0xFFF8dac2),
-                                  color_1: Color(0xFFec9d62),
-                                  textcolor: Color(0xFFe78337),
-
-                                  onTap: () {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) =>
-                                            Selectpartyscreen( from: 'CreatereturnOrder'),
+                                Container(
+                                  height:
+                                      MediaQuery.of(context).size.height / 6,
+                                  child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceAround,
+                                    children: [
+                                      _customwidthCard(
+                                        imageUrl: "arrows_repeat.svg",
+                                        item: "Create Return order",
+                                        item1: "Create a Reorder",
+                                        color: Color(0xFFF8dac2),
+                                        color_1: Color(0xFFec9d62),
+                                        textcolor: Color(0xFFe78337),
+                                        onTap: () {
+                                          Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder: (context) =>
+                                                  Selectpartyscreen(
+                                                      from:
+                                                          'CreatereturnOrder'),
+                                            ),
+                                          );
+                                        },
                                       ),
-                                    );
-                                  },
+                                    ],
+                                  ),
                                 ),
                                 SizedBox(
-                                  width: 8.0,
+                                  width: 4.0,
                                 ),
-                                _customwidthCard(
-                                  imageUrl: "shoppingbag.svg",
-                                  item: "View Return order",
-                                  item1: "View All Reorders",
-                                  color: Color(0xFFb7dbc1),
-                                  color_1: Color(0xFF43a05a),
-                                  textcolor: Color(0xFF118730),
-                                  onTap: () {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(builder: (context) => ViewReturnorder()),
-                                    );
-                                  },
+                                Container(
+                                  height:
+                                      MediaQuery.of(context).size.height / 6,
+                                  child: Row(
+                                    // mainAxisAlignment:
+                                    //     MainAxisAlignment.spaceAround,
+                                    children: [
+                                      _customcontainerCard(
+                                        imageUrl: "shoppingbag.svg",
+                                        item: "View Return order",
+                                        item1: "View All Reorders",
+                                        color: Color(0xFFb7dbc1),
+                                        color_1: Color(0xFF43a05a),
+                                        textcolor: Color(0xFF118730),
+                                        onTap: () {
+                                          Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) =>
+                                                    ViewReturnorder()),
+                                          );
+                                        },
+                                      ),
+                                    ],
+                                  ),
                                 ),
+                                // _customwidthCard(
+                                //   imageUrl: "arrows_repeat.svg",
+                                //   item: "Create Return order",
+                                //   item1: "Create a Reorder",
+                                //   color: Color(0xFFF8dac2),
+                                //   color_1: Color(0xFFec9d62),
+                                //   textcolor: Color(0xFFe78337),
+                                //   onTap: () {
+                                //     Navigator.push(
+                                //       context,
+                                //       MaterialPageRoute(
+                                //         builder: (context) => Selectpartyscreen(
+                                //             from: 'CreatereturnOrder'),
+                                //       ),
+                                //     );
+                                //   },
+                                // ),
+                                // SizedBox(
+                                //   width: 8.0,
+                                // ),
+                                // _customwidthCard(
+                                //   imageUrl: "shoppingbag.svg",
+                                //   item: "View Return order",
+                                //   item1: "View All Reorders",
+                                //   color: Color(0xFFb7dbc1),
+                                //   color_1: Color(0xFF43a05a),
+                                //   textcolor: Color(0xFF118730),
+                                //   onTap: () {
+                                //     Navigator.push(
+                                //       context,
+                                //       MaterialPageRoute(
+                                //           builder: (context) =>
+                                //               ViewReturnorder()),
+                                //     );
+                                //   },
+                                // ),
                               ]),
-
                         ],
                       ),
                     ),
@@ -408,14 +610,14 @@ class _imagesliderState extends State<imageslider> {
     return GestureDetector(
       onTap: onTap,
       child: SizedBox(
-   //  height: MediaQuery.of(context).size.height * (4 / 9) - 250 / 2,
+        //  height: MediaQuery.of(context).size.height * (4 / 9) - 250 / 2,
         height: MediaQuery.of(context).size.height / 3,
-       // height: height,
+        // height: height,
         width: MediaQuery.of(context).size.width / 2.1,
         child: Card(
           color: color,
           shape:
-          RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
           elevation: 8,
           child: Padding(
             padding: EdgeInsets.only(left: 18, right: 15, top: 20, bottom: 8),
@@ -443,11 +645,11 @@ class _imagesliderState extends State<imageslider> {
                     child: Text(
                       item,
                       style: TextStyle(
-                          fontSize: 20,
-                          fontFamily: "Roboto",
-                          fontWeight: FontWeight.w700,
-                          color: textcolor,
-                       ),
+                        fontSize: 20,
+                        fontFamily: "Roboto",
+                        fontWeight: FontWeight.w700,
+                        color: textcolor,
+                      ),
                     ),
                   ),
                 ),
@@ -456,7 +658,10 @@ class _imagesliderState extends State<imageslider> {
                     alignment: Alignment.centerLeft,
                     child: RichText(
                       text: TextSpan(
-                        style: TextStyle(fontSize: 14, color: textcolor,  fontFamily: "Roboto",
+                        style: TextStyle(
+                            fontSize: 14,
+                            color: textcolor,
+                            fontFamily: "Roboto",
                             fontWeight: FontWeight.w600),
                         children: [
                           TextSpan(
@@ -501,13 +706,13 @@ class _imagesliderState extends State<imageslider> {
       onTap: onTap,
       child: SizedBox(
         //  height: MediaQuery.of(context).size.width * (3.8 / 9) - 110 / 2,
-        width: MediaQuery.of(context).size.width / 2.2,
-      //  height: 275 / 2,
+        width: MediaQuery.of(context).size.width / 2.1,
+        //  height: 275 / 2,
         height: MediaQuery.of(context).size.height / 6,
         child: Card(
           color: color,
           shape:
-          RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
           elevation: 8,
           child: Padding(
             padding: EdgeInsets.only(left: 10, right: 15, top: 7, bottom: 3),
@@ -537,8 +742,11 @@ class _imagesliderState extends State<imageslider> {
                     child: Text(
                       item,
                       maxLines: 1,
-                      style: TextStyle(fontSize: 16,fontFamily: "Roboto",
-                          fontWeight: FontWeight.w700, color: textcolor),
+                      style: TextStyle(
+                          fontSize: 16,
+                          fontFamily: "Roboto",
+                          fontWeight: FontWeight.w700,
+                          color: textcolor),
                     ),
                   ),
                 ),
@@ -550,8 +758,11 @@ class _imagesliderState extends State<imageslider> {
                     alignment: Alignment.topLeft,
                     child: Text(
                       item1,
-                      style: TextStyle(fontSize: 12,fontFamily: "Roboto",
-                          fontWeight: FontWeight.w700, color: Color(0xFF414141)),
+                      style: TextStyle(
+                          fontSize: 12,
+                          fontFamily: "Roboto",
+                          fontWeight: FontWeight.w500,
+                          color: Color(0xFF414141)),
                     ),
                   ),
                 ),
@@ -576,23 +787,23 @@ class _imagesliderState extends State<imageslider> {
       onTap: onTap,
       child: SizedBox(
         //height: 260 / 2,
-        height:  MediaQuery.of(context).size.height / 6,
+        height: MediaQuery.of(context).size.height / 6,
         width: MediaQuery.of(context).size.width / 2.2,
         child: Card(
           color: color,
           shape:
-          RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
           elevation: 8,
           child: Padding(
-            padding: EdgeInsets.only(left: 13, right: 15, top: 10, bottom: 3),
+            padding: EdgeInsets.only(left: 10, right: 15, top: 7, bottom: 3),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisAlignment: MainAxisAlignment.start,
               children: <Widget>[
-                SizedBox(height: 15),
+                SizedBox(height: 8),
                 Container(
-                  //  margin: EdgeInsets.only(bottom: 3),
-                  padding: EdgeInsets.all(8),
+                  margin: EdgeInsets.only(bottom: 8),
+                  padding: EdgeInsets.all(6),
                   decoration: BoxDecoration(
                     color: color_1,
                     borderRadius: BorderRadius.circular(15),
@@ -600,29 +811,39 @@ class _imagesliderState extends State<imageslider> {
                   child: SvgPicture.asset(
                     "assets/" + imageUrl,
                     width: 20.0,
-                    height: 20.0,
+                    height: 25.0,
                     color: Color(0xFF414141),
                   ),
                 ),
-                SizedBox(height: 10),
-                Align(
-                  alignment: Alignment.topLeft,
-                  child: Text(
-                    item,
-                    maxLines: 1,
-                    style: TextStyle(fontSize: 16, fontFamily: "Roboto",
-                        fontWeight: FontWeight.w700, color: textcolor),
+                SizedBox(height: 8),
+                Expanded(
+                  child: Align(
+                    alignment: Alignment.topLeft,
+                    child: Text(
+                      item,
+                      maxLines: 1,
+                      style: TextStyle(
+                          fontSize: 16,
+                          fontFamily: "Roboto",
+                          fontWeight: FontWeight.w700,
+                          color: textcolor),
+                    ),
                   ),
                 ),
-                SizedBox(
-                  height: 10.0,
-                ),
-                Align(
-                  alignment: Alignment.topLeft,
-                  child: Text(
-                    item1,
-                    style: TextStyle(fontSize: 12, fontFamily: "Roboto",
-                        fontWeight: FontWeight.w700, color: Color(0xFF414141)),
+                // SizedBox(
+                //   height: 8.0,
+                // ),
+                Expanded(
+                  child: Align(
+                    alignment: Alignment.topLeft,
+                    child: Text(
+                      item1,
+                      style: TextStyle(
+                          fontSize: 12,
+                          fontFamily: "Roboto",
+                          fontWeight: FontWeight.w500,
+                          color: Color(0xFF414141)),
+                    ),
                   ),
                 ),
               ],

@@ -32,7 +32,7 @@ class Companies_selection extends State<Companiesselection> {
       DeviceOrientation.portraitUp,
     ]);
     CommonUtils.checkInternetConnectivity().then(
-          (isConnected) {
+      (isConnected) {
         if (isConnected) {
           fetchGetCompaniesData();
           print('The Internet Is Connected');
@@ -128,7 +128,7 @@ class Companies_selection extends State<Companiesselection> {
 
         final List<dynamic> listResult = responseData['response']['listResult'];
         final List<CompanyModel> fetchedCompanies =
-        listResult.map((data) => CompanyModel.fromJson(data)).toList();
+            listResult.map((data) => CompanyModel.fromJson(data)).toList();
 
         setState(() {
           companies = fetchedCompanies;
@@ -200,13 +200,13 @@ class CardForScreenOne extends StatelessWidget {
                       children: [
                         Container(
                           alignment:
-                          Alignment.center, // Center the text vertically
+                              Alignment.center, // Center the text vertically
                           child: RichText(
                             text: TextSpan(
                               children: [
                                 TextSpan(
                                   text:
-                                  "${companyName.split(" ")[0]}\n", // First word
+                                      "${companyName.split(" ")[0]}\n", // First word
                                   style: TextStyle(
                                     fontSize: 28,
                                     fontFamily: 'Roboto',
@@ -248,7 +248,7 @@ class CardForScreenOne extends StatelessWidget {
                     child: Container(
                       height: 100,
                       alignment:
-                      Alignment.center, // Center the image horizontally
+                          Alignment.center, // Center the image horizontally
                       child: cardIndex == 0
                           ? SvgPicture.asset(cardColors[2][0])
                           : Image.asset(cardColors[2][1]),

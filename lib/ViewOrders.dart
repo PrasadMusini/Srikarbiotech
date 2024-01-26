@@ -202,6 +202,7 @@ class _vieworderPageState extends State<ViewOrders> {
             ),
             Expanded(
               child: ListView.builder(
+                shrinkWrap: true,
                 itemCount: orderesponselist.length,
                 // Change this to the number of static items you want
                 itemBuilder: (context, index) {
@@ -403,7 +404,8 @@ class _vieworderPageState extends State<ViewOrders> {
                                           color: Colors.white30,
                                         ),
                                         child: Center(
-                                          child: getSvgAsset(statusnames),
+                                          child: getSvgAsset(
+                                              orderresul.statusName),
 
                                           //    color: Colors.black, // Set color as needed
                                         ),
@@ -574,19 +576,10 @@ class _vieworderPageState extends State<ViewOrders> {
                                 children: [
                                   Container(
                                     height: 30,
-                                    //   width: 110,
-                                    // width:
-                                    //     MediaQuery.of(context).size.width / 3.2,
-                                    // margin: EdgeInsets.all(10.0),
-                                    // padding: EdgeInsets.only(left: 10.0),
-
                                     decoration: BoxDecoration(
                                       borderRadius: BorderRadius.circular(10),
                                       color: getStatusTypeBackgroundColor(
-                                          statusnames),
-
-                                      // color: getStatusTypeBackgroundColor(
-                                      //     widget.listResult.statusTypeId),
+                                          orderresul.statusName),
                                     ),
                                     child: IntrinsicWidth(
                                       stepWidth: 60.0,
@@ -598,8 +591,7 @@ class _vieworderPageState extends State<ViewOrders> {
                                             '${orderresul.statusName}',
                                             style: TextStyle(
                                               color: getStatusTypeTextColor(
-                                                  statusnames),
-                                              // Add other text styles as needed
+                                                  orderresul.statusName),
                                             ),
                                           ),
                                         ],
@@ -707,18 +699,18 @@ class _vieworderPageState extends State<ViewOrders> {
 
   Color getStatusTypeBackgroundColor(String statusTypeId) {
     switch (statusTypeId) {
-      case 'Pending':
+      case 'Pedning':
         return Color(0xFFE58338).withOpacity(0.1);
       case 'Shipped':
         // Set background color for statusTypeId 8
         return Colors.blue.withOpacity(0.1);
-      case 'Delivered':
+      case 'Accept':
         // Set background color for statusTypeId 9
         return Colors.green.withOpacity(0.1);
-      case 'Partially Shipped':
-        // Set background color for statusTypeId 9
-        return Colors.purple.withOpacity(0.1);
-      case 'Rejected':
+      // case 'Partially Shipped':
+      //   // Set background color for statusTypeId 9
+      //   return Colors.purple.withOpacity(0.1);
+      case 'Reject':
         return Colors.red.withOpacity(0.1);
         break;
       // Add more cases as needed for other statusTypeId values
@@ -731,24 +723,22 @@ class _vieworderPageState extends State<ViewOrders> {
 
   Color getStatusTypeTextColor(String statusTypeId) {
     switch (statusTypeId) {
-      case 'Pending':
+      case 'Pedning':
         return Color(0xFFe58338);
       case 'Shipped':
         // Set background color for statusTypeId 8
         return Colors.blue;
-      case 'Delivered':
+      case 'Accept':
         // Set background color for statusTypeId 9
         return Colors.green;
-      case 'Partially Shipped':
-        // Set background color for statusTypeId 9
-        return Colors.purple;
-      case 'Rejected':
+      // case 'Partially Shipped':
+      //   // Set background color for statusTypeId 9
+      //   return Colors.purple;
+      case 'Reject':
         return Colors.red;
         break;
-      // Add more cases as needed for other statusTypeId values
 
       default:
-        // Default background color or handle other cases if needed
         return Colors.white;
     }
   }
@@ -757,7 +747,7 @@ class _vieworderPageState extends State<ViewOrders> {
     String assetPath;
     late Color iconColor;
     switch (status) {
-      case "Pending":
+      case "Pedning":
         assetPath = 'assets/shipping-timed.svg';
         iconColor = Color(0xFFe58338);
         break;
@@ -765,16 +755,15 @@ class _vieworderPageState extends State<ViewOrders> {
         assetPath = 'assets/shipping-fast.svg';
         iconColor = Colors.blue;
         break;
-      case 'Delivered':
-        assetPath =
-            'assets/box-circle-check.svg'; // Replace with the path to your delivered SVG
+      case 'Accept':
+        assetPath = 'assets/box-circle-check.svg';
         iconColor = Colors.green;
         break;
-      case 'Partially Shipped':
-        assetPath = 'assets/boxes.svg';
-        iconColor = Colors.purple;
-        break;
-      case 'Rejected':
+      // case 'Partially Shipped':
+      //   assetPath = 'assets/boxes.svg';
+      //   iconColor = Colors.purple;
+      //   break;
+      case 'Reject':
         assetPath = 'assets/shipping-timed.svg';
         iconColor = Colors.red;
         break;

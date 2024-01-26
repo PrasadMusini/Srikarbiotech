@@ -13,14 +13,16 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:srikarbiotech/Common/CommonUtils.dart';
 import 'package:http/http.dart' as http;
 import 'package:srikarbiotech/sb_status.dart';
+import 'package:srikarbiotech/transport_payment.dart';
 
 import 'HomeScreen.dart';
+import 'Model/CartHelper.dart';
 import 'orderStatusScreen.dart';
 
 class Ordersubmit_screen extends StatefulWidget {
   final String cardName;
-  final String  cardCode;
-  final String  address;
+  final String cardCode;
+  final String address;
   final String proprietorName;
   final String gstRegnNo;
   final String state;
@@ -28,18 +30,25 @@ class Ordersubmit_screen extends StatefulWidget {
   final String BookingPlace;
   final String TransportName;
   Ordersubmit_screen(
-      {required this.cardName, required this.cardCode, required this.address, required  this.state, required  this.phone,
-        required  this.proprietorName, required  this.gstRegnNo, required this.BookingPlace, required this.TransportName});
+      {required this.cardName,
+      required this.cardCode,
+      required this.address,
+      required this.state,
+      required this.phone,
+      required this.proprietorName,
+      required this.gstRegnNo,
+      required this.BookingPlace,
+      required this.TransportName});
   @override
   Order_submit_screen createState() => Order_submit_screen();
 }
 
 class Order_submit_screen extends State<Ordersubmit_screen> {
+  List<String> cartItems = [];
 
-  List<String>? cartItems = [];
-  List<TextEditingController> textEditingControllers =[];
-  List<int> quantities =[];
-
+  List<String> cartlistItems = [];
+  List<TextEditingController> textEditingControllers = [];
+  List<int> quantities = [];
   @override
   initState() {
     super.initState();
@@ -47,28 +56,45 @@ class Order_submit_screen extends State<Ordersubmit_screen> {
       DeviceOrientation.portraitDown,
       DeviceOrientation.portraitUp,
     ]);
-   loadData();
+    fetchData();
+    loadData();
     print('cardName: ${widget.cardName}');
     print('cardCode: ${widget.cardCode}');
     print('address: ${widget.address}');
   }
 
+  Future<List<String>> fetchData() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    cartItems = prefs.getStringList('cartItems') ?? [];
+    print('CartItems: $cartItems');
+
+    return cartItems;
+  }
+
+  Future<void> loadData() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      cartlistItems = prefs.getStringList('cartItems') ?? [];
+
+      print('cartlistItems: $cartlistItems');
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar:
-      AppBar(
+      appBar: AppBar(
         backgroundColor: Color(0xFFe78337),
         automaticallyImplyLeading: false,
         // This line removes the default back arrow
         title: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
-
           children: [
             Row(
               children: [
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 2, vertical: 2),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 2, vertical: 2),
                   child: GestureDetector(
                     onTap: () {
                       // Handle the click event for the back button
@@ -90,7 +116,7 @@ class Order_submit_screen extends State<Ordersubmit_screen> {
                   ),
                 ),
                 Text(
-                  '(' +'${cartItems!.length}' + ')',
+                  '(' + '${cartlistItems.length}' + ')',
                   style: TextStyle(
                     color: Colors.white,
                     fontSize: 18,
@@ -115,280 +141,330 @@ class Order_submit_screen extends State<Ordersubmit_screen> {
           ],
         ),
       ),
-      body: SingleChildScrollView(
-        child:
-
-      Column(
-        children: [
-          Padding(
-            padding: EdgeInsets.only(top: 5.0, left: 10.0, right: 10.0),
+      body: Column(children: [
+        Expanded(
+          child: SingleChildScrollView(
+            scrollDirection: Axis.vertical,
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-
-                CommonUtils.buildCard(
-                  widget.cardName,
-                  widget.cardCode,
-                  widget.proprietorName,
-                  widget.gstRegnNo,
-                  widget.address,
-                  Colors.white,
-                  BorderRadius.circular(10.0),
-                ),
-                SizedBox(height: 16.0),
-              ],
-            ),
-          ),
-          Container(
-            child: cartItems != null
-                && cartItems!.isNotEmpty
-                ? ListView.builder(
-              shrinkWrap: true,
-              itemCount: cartItems!.length,
-              itemBuilder: (context, index) {
-                return buildCartItem(index);
-              },
-            )
-                : Center(
-              child: Text('No items in the cart'),
-            ),
-          ),
-
-          SizedBox(height: 10),
-          Container(
-            width: MediaQuery.of(context).size.width,
-            padding: EdgeInsets.only(top: 10.0, left: 10.0, right: 10.0),
-            child: IntrinsicHeight(
-              child:
-              Card(
-                color: Colors.white,
-                child: Container(
-                  width: MediaQuery.of(context).size.width,
-                  padding: EdgeInsets.all(10.0),
+                Padding(
+                  padding: EdgeInsets.only(top: 5.0, left: 10.0, right: 10.0),
                   child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Padding(
-                                padding:
-                                EdgeInsets.only(left: 15.0, top: 8.0),
-                                child: Text(
-                                  'Transport  Details',
-                                  style: TextStyle(
-                                    fontSize: 13.0,
-                                    color: Color(0xFF414141),
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                  textAlign: TextAlign.start,
-                                ),
-                              ),
-                              Padding(
-                                padding:
-                                EdgeInsets.only(right: 15.0, top: 8.0),
-                                child: GestureDetector(
-                                  child: SvgPicture.asset(
-                                    'assets/edit.svg',
-                                    width: 20.0,
-                                    height: 20.0,
-                                    color: Color(0xFFe78337),
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                          SizedBox(
-                            height: 10.0,
-                          ),
-                        ],
+                      CommonUtils.buildCard(
+                        widget.cardName,
+                        widget.cardCode,
+                        widget.proprietorName,
+                        widget.gstRegnNo,
+                        widget.address,
+                        Colors.white,
+                        BorderRadius.circular(10.0),
                       ),
-                      Container(
-                        decoration: BoxDecoration(
-                          border: Border.all(
-                            color:
-                            Colors.grey, // specify your border color here
-                            width: 1.0, // specify the border width
-                          ),
-                          borderRadius: BorderRadius.circular(
-                              8.0), // specify the border radius
+                      SizedBox(height: 16.0),
+                    ],
+                  ),
+                ),
+                // Container(
+                //   child: cartItems != null && cartItems!.isNotEmpty
+                //       ?
+                // SingleChildScrollView(
+                //   scrollDirection: Axis.vertical,
+                //   child:
+                FutureBuilder<List<String>>(
+                  future: fetchData(),
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return CircularProgressIndicator();
+                    } else if (snapshot.hasError) {
+                      return Text('Error: ${snapshot.error}');
+                    } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                      return Text('No data available');
+                    } else {
+                      // Use the length of cartItems as itemCount
+                      return ListView.builder(
+                        shrinkWrap: true,
+                        scrollDirection: Axis.vertical,
+                        itemCount: cartItems.length,
+                        itemBuilder: (context, index) {
+                          print(
+                              'Length of cartItems: ${cartItems.length}, Index: $index');
+                          if (index < cartItems.length) {
+                            return buildCartItem(index);
+                          } else {
+                            return Text('Invalid index: $index');
+                          }
+                        },
+                      );
+                    }
+                  },
+                  // ),
+                ),
+                // : Center(
+                //     child: Text('No items in the cart'),
+                //      ),
+                //   ),
+                SizedBox(height: 10),
+                Container(
+                  width: MediaQuery.of(context).size.width,
+                  padding: EdgeInsets.only(top: 10.0, left: 10.0, right: 10.0),
+                  child: IntrinsicHeight(
+                    child: Card(
+                      color: Colors.white,
+                      child: Container(
+                        width: MediaQuery.of(context).size.width,
+                        padding: EdgeInsets.all(10.0),
+                        child: Column(
+                          children: [
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Padding(
+                                      padding:
+                                          EdgeInsets.only(left: 15.0, top: 8.0),
+                                      child: Text(
+                                        'Transport  Details',
+                                        style: TextStyle(
+                                          fontSize: 13.0,
+                                          color: Color(0xFF414141),
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                        textAlign: TextAlign.start,
+                                      ),
+                                    ),
+                                    Padding(
+                                      padding: EdgeInsets.only(
+                                          right: 15.0, top: 8.0),
+                                      child: GestureDetector(
+                                        onTap: () {
+                                          Navigator.pushReplacement(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) =>
+                                                    transport_payment(
+                                                      cardName: widget.cardName,
+                                                      cardCode: widget.cardCode,
+                                                      address: widget.address,
+                                                      state: widget.state,
+                                                      phone: widget.phone,
+                                                      proprietorName:
+                                                          widget.proprietorName,
+                                                      gstRegnNo:
+                                                          widget.gstRegnNo,
+                                                      preferabletransport:
+                                                          widget.TransportName,
+                                                      bookingplace:
+                                                          widget.BookingPlace,
+                                                    )),
+                                          );
+                                        },
+                                        child: SvgPicture.asset(
+                                          'assets/edit.svg',
+                                          width: 20.0,
+                                          height: 20.0,
+                                          color: Color(0xFFe78337),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                SizedBox(
+                                  height: 10.0,
+                                ),
+                              ],
+                            ),
+                            Container(
+                              decoration: BoxDecoration(
+                                border: Border.all(
+                                  color: Colors
+                                      .grey, // specify your border color here
+                                  width: 1.0, // specify the border width
+                                ),
+                                borderRadius: BorderRadius.circular(
+                                    8.0), // specify the border radius
+                              ),
+                              width: MediaQuery.of(context).size.width,
+                              child: Column(
+                                children: [
+                                  Row(
+                                    children: [
+                                      Container(
+                                        width:
+                                            MediaQuery.of(context).size.width /
+                                                2.2,
+                                        padding: EdgeInsets.all(10.0),
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Padding(
+                                              padding: EdgeInsets.only(
+                                                top: 0.0,
+                                                left: 20.0,
+                                                right: 0.0,
+                                              ),
+                                              child: Text(
+                                                'Booking Place',
+                                                style: TextStyle(
+                                                  fontSize: 13.0,
+                                                  color: Color(0xFF414141),
+                                                  fontWeight: FontWeight.bold,
+                                                ),
+                                                textAlign: TextAlign.start,
+                                              ),
+                                            ),
+                                            SizedBox(
+                                              height: 4.0,
+                                            ),
+                                            Padding(
+                                              padding: EdgeInsets.only(
+                                                  top: 0.0,
+                                                  left: 20.0,
+                                                  right: 0.0),
+                                              child: Text(
+                                                '${widget.BookingPlace}',
+                                                style: TextStyle(
+                                                  fontSize: 13.0,
+                                                  color: Color(0xFFe78337),
+                                                  fontWeight: FontWeight.bold,
+                                                ),
+                                                textAlign: TextAlign.start,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                      Container(
+                                        width:
+                                            MediaQuery.of(context).size.width /
+                                                2.9,
+                                        padding: EdgeInsets.all(10.0),
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.start,
+                                          children: [
+                                            Padding(
+                                              padding: EdgeInsets.only(
+                                                  top: 0.0,
+                                                  left: 0.0,
+                                                  right: 0.0),
+                                              child: Text(
+                                                'Transport Name',
+                                                style: TextStyle(
+                                                  fontSize: 13.0,
+                                                  color: Color(0xFF414141),
+                                                  fontWeight: FontWeight.bold,
+                                                ),
+                                                textAlign: TextAlign.start,
+                                              ),
+                                            ),
+                                            SizedBox(
+                                              height: 4.0,
+                                            ),
+                                            Padding(
+                                              padding: EdgeInsets.only(
+                                                  top: 0.0,
+                                                  left: 0.0,
+                                                  right: 0.0),
+                                              child: Text(
+                                                '${widget.TransportName}',
+                                                style: TextStyle(
+                                                  fontSize: 13.0,
+                                                  color: Color(0xFFe78337),
+                                                  fontWeight: FontWeight.bold,
+                                                ),
+                                                textAlign: TextAlign.start,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      )
+                                    ],
+                                  ),
+                                ],
+                              ),
+                            ),
+                            SizedBox(
+                              height: 10.0,
+                            ),
+                          ],
                         ),
+                      ),
+                    ),
+                  ),
+                ),
+                Container(
+                    width: MediaQuery.of(context).size.width,
+                    padding:
+                        EdgeInsets.only(top: 10.0, left: 10.0, right: 10.0),
+                    child: IntrinsicHeight(
+                        child: Card(
+                      color: Colors.white,
+                      child: Container(
+                        padding: EdgeInsets.all(10.0),
                         width: MediaQuery.of(context).size.width,
                         child: Column(
                           children: [
                             Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisAlignment: MainAxisAlignment.start,
                               children: [
                                 Container(
-                                  width:
-                                  MediaQuery.of(context).size.width / 2.2,
-                                  padding: EdgeInsets.all(10.0),
-                                  child: Column(
-                                    crossAxisAlignment:
-                                    CrossAxisAlignment.start,
-                                    children: [
-                                      Padding(
-                                        padding: EdgeInsets.only(
-                                          top: 0.0,
-                                          left: 20.0,
-                                          right: 0.0,
-                                        ),
-                                        child: Text(
-                                          'Booking Place',
-                                          style: TextStyle(
-                                            fontSize: 13.0,
-                                            color: Color(0xFF414141),
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                          textAlign: TextAlign.start,
-                                        ),
-                                      ),
-                                      SizedBox(
-                                        height: 4.0,
-                                      ),
-                                      Padding(
-                                        padding: EdgeInsets.only(
-                                            top: 0.0, left: 20.0, right: 0.0),
-                                        child: Text(
-                                          'Nacharam',
-                                          style: TextStyle(
-                                            fontSize: 13.0,
-                                            color: Color(0xFFe78337),
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                          textAlign: TextAlign.start,
-                                        ),
-                                      ),
-                                    ],
+                                  padding: EdgeInsets.only(top: 10.0),
+                                  child: Text(
+                                    'Total',
+                                    style: TextStyle(
+                                      color: Colors.black,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 14.0,
+                                    ),
                                   ),
                                 ),
-                                Container(
-                                  width:
-                                  MediaQuery.of(context).size.width / 2.9,
-                                  padding: EdgeInsets.all(10.0),
-                                  child: Column(
-                                    crossAxisAlignment:
-                                    CrossAxisAlignment.start,
-                                    mainAxisAlignment:
-                                    MainAxisAlignment.start,
-                                    children: [
-                                      Padding(
-                                        padding: EdgeInsets.only(
-                                            top: 0.0, left: 0.0, right: 0.0),
-                                        child: Text(
-                                          'Transport Name',
-                                          style: TextStyle(
-                                            fontSize: 13.0,
-                                            color: Color(0xFF414141),
-                                            fontWeight: FontWeight.bold,
+                                Spacer(),
+                                Row(
+                                  crossAxisAlignment: CrossAxisAlignment.end,
+                                  mainAxisAlignment: MainAxisAlignment.end,
+                                  children: [
+                                    Container(
+                                      //   width: MediaQuery.of(context).size.width / 1.8,
+                                      padding: EdgeInsets.only(top: 10.0),
+                                      child: Row(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.end,
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.end,
+                                        children: [
+                                          Text(
+                                            '₹${12765.00}',
+                                            style: TextStyle(
+                                              color: Color(0xFFe78337),
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 16.0,
+                                            ),
                                           ),
-                                          textAlign: TextAlign.start,
-                                        ),
+                                        ],
                                       ),
-                                      SizedBox(
-                                        height: 4.0,
-                                      ),
-                                      Padding(
-                                        padding: EdgeInsets.only(
-                                            top: 0.0, left: 0.0, right: 0.0),
-                                        child: Text(
-                                          'Train  ',
-                                          style: TextStyle(
-                                            fontSize: 13.0,
-                                            color: Color(0xFFe78337),
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                          textAlign: TextAlign.start,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                )
+                                    )
+                                  ],
+                                ),
                               ],
                             ),
-
-
                           ],
                         ),
                       ),
-                      SizedBox(
-                        height: 10.0,
-                      ),
-
-                    ],
-                  ),
-                ),
-              ),
+                    )))
+              ],
             ),
           ),
-          Container(
-              width: MediaQuery.of(context).size.width,
-              padding: EdgeInsets.only(top: 10.0, left: 10.0, right: 10.0),
-              child: IntrinsicHeight(
-                  child: Card(
-                    color: Colors.white,
-                    child: Container(
-                      padding: EdgeInsets.all(10.0),
-                      width: MediaQuery.of(context).size.width,
-                      child: Column(
-                        children: [
-
-
-                          Row(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            children: [
-                              Container(
-                                padding: EdgeInsets.only(top: 10.0),
-                                child: Text(
-                                  'Total',
-                                  style: TextStyle(
-                                    color: Colors.black,
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 14.0,
-                                  ),
-                                ),
-                              ),
-                              Spacer(),
-                              Row(
-                                crossAxisAlignment: CrossAxisAlignment.end,
-                                mainAxisAlignment: MainAxisAlignment.end,
-                                children: [
-                                  Container(
-                                    //   width: MediaQuery.of(context).size.width / 1.8,
-                                    padding: EdgeInsets.only(top: 10.0),
-                                    child: Row(
-                                      crossAxisAlignment: CrossAxisAlignment.end,
-                                      mainAxisAlignment: MainAxisAlignment.end,
-                                      children: [
-                                        Text(
-                                          '₹${12765.00}',
-                                          style: TextStyle(
-                                            color: Color(0xFFe78337),
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 16.0,
-                                          ),
-
-
-
-                                        ),
-                                      ],
-                                    ),
-                                  )
-                                ],
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ),
-                  )))
-        ],
-      ),
-
-      ),
+        ),
+      ]),
       bottomNavigationBar: Container(
         height: 60,
         margin: const EdgeInsets.symmetric(vertical: 15, horizontal: 10),
@@ -402,7 +478,6 @@ class Order_submit_screen extends State<Ordersubmit_screen> {
                   // Add logic for the download button
 
                   print(' button clicked');
-
                 },
                 child: Container(
                   padding: const EdgeInsets.all(10),
@@ -411,12 +486,13 @@ class Order_submit_screen extends State<Ordersubmit_screen> {
                     color: Color(0xFFe78337),
                   ),
                   child: const Center(
-                    child:  Text(
+                    child: Text(
                       'Place Your Order',
                       style: TextStyle(
                         color: Colors.white,
                         fontSize: 18,
-                        fontWeight: FontWeight.w700, // Set the font weight to bold
+                        fontWeight:
+                            FontWeight.w700, // Set the font weight to bold
                         fontFamily: 'Roboto', // Set the font family to Roboto
                       ),
                     ),
@@ -424,42 +500,34 @@ class Order_submit_screen extends State<Ordersubmit_screen> {
                 ),
               ),
             ),
-
           ],
         ),
       ),
 
       //    ),
     );
-
-
-
-
   }
 
-
-  Future<void> loadData() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    setState(() {
-      cartItems = prefs.getStringList('cartItems') ?? [];
-
-      print('Cart Items: $cartItems');
-    });
-  }
   Widget buildCartItem(int index) {
     // Parse the cart item data
-    List<String> itemData = cartItems![index].split(',');
+    List<String> itemData = cartItems[index].split(',');
     String itemName = itemData[1];
+
     int quantity = int.parse(itemData[2]);
-print('ordersubmitscreenquntity$quantity');
-    List<String> weightOptions = ['10 KG', '20 KG', '40 KG', '50 KG'];
-    String selectedWeight = weightOptions[0]; // Default to the first option
+
+    print('ordersubmitscreenquntity$quantity');
+    // List<String> weightOptions = ['10 KG', '20 KG', '40 KG', '50 KG'];
+    // String? selectedWeight;
 
     quantities = List<int>.filled(itemData.length, quantity);
-    textEditingControllers = List.generate(itemData.length, (index) => TextEditingController());
+    if (textEditingControllers.length <= index) {
+      textEditingControllers.add(TextEditingController());
+    }
+    // textEditingControllers =
+    //     List.generate(itemData.length, (index) => TextEditingController());
 
     return Padding(
-      padding: const EdgeInsets.only(left: 16.0,right: 16.0),
+      padding: const EdgeInsets.only(left: 16.0, right: 16.0, bottom: 10.0),
       child: Card(
         elevation: 5.0,
         shape: RoundedRectangleBorder(
@@ -487,46 +555,47 @@ print('ordersubmitscreenquntity$quantity');
                 ),
               ),
               SizedBox(height: 8.0),
-
               Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                //  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Container(
-                    padding: EdgeInsets.symmetric(horizontal: 8.0),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(5.0),
-                      border: Border.all(color: Colors.orange),
-                    ),
-                    child: DropdownButton<String>(
-                      value: selectedWeight,
-                      onChanged: (value) {
-                        setState(() {
-                          selectedWeight = value!;
-                        });
-                      },
-                      items: weightOptions.map((option) {
-                        return DropdownMenuItem<String>(
-                          value: option,
-                          child: Text(
-                            option,
-                            style: TextStyle(color: Colors.orange),
-                          ),
-                        );
-                      }).toList(),
-                    ),
-                  ),
-                  SizedBox(width: 8.0),
+                  // Container(
+                  //   padding: EdgeInsets.symmetric(horizontal: 8.0),
+                  //   decoration: BoxDecoration(
+                  //     color: Colors.white,
+                  //     borderRadius: BorderRadius.circular(5.0),
+                  //     border: Border.all(color: Colors.orange),
+                  //   ),
+                  //   child: DropdownButton<String>(
+                  //     value: selectedWeight,
+                  //     onChanged: (value) {
+                  //       // setState(() {
+                  //       //   // Set value to null temporarily
+                  //       //   selectedWeight = null;
+                  //       // });
+                  //
+                  //       // Set the selected value
+                  //       setState(() {
+                  //         selectedWeight = value!;
+                  //       });
+                  //     },
+                  //     items: weightOptions.map((option) {
+                  //       return DropdownMenuItem<String>(
+                  //         value: option,
+                  //         child: Text(
+                  //           option,
+                  //           style: TextStyle(color: Colors.orange),
+                  //         ),
+                  //       );
+                  //     }).toList(),
+                  //   ),
+                  // ),
+                  // SizedBox(width: 8.0),
                   Container(
                     height: 36,
-                    width: MediaQuery.of(context)
-                        .size
-                        .width /
-                        2.5,
+                    width: MediaQuery.of(context).size.width / 2.5,
                     decoration: BoxDecoration(
                       color: Color(0xFFe78337),
-                      borderRadius:
-                      BorderRadius.circular(10.0),
+                      borderRadius: BorderRadius.circular(10.0),
                     ),
                     child: Row(
                       children: [
@@ -536,8 +605,9 @@ print('ordersubmitscreenquntity$quantity');
                             if (quantities[index] > 1) {
                               setState(() {
                                 quantities[index]--;
+                                textEditingControllers[index].text =
+                                    quantities[index].toString();
                               });
-                              textEditingControllers[index].text = quantities[index].toString();
                             }
                           },
                           iconSize: 25.0,
@@ -551,7 +621,8 @@ print('ordersubmitscreenquntity$quantity');
                                 padding: const EdgeInsets.all(2.0),
                                 child: Container(
                                   alignment: Alignment.center,
-                                  width: MediaQuery.of(context).size.width / 5.1,
+                                  width:
+                                      MediaQuery.of(context).size.width / 5.1,
                                   decoration: BoxDecoration(
                                     color: Colors.white,
                                   ),
@@ -564,7 +635,10 @@ print('ordersubmitscreenquntity$quantity');
                                     ],
                                     onChanged: (value) {
                                       setState(() {
-                                        quantities[index] = int.parse(value.isEmpty ? '$quantity' : value);
+                                        quantities[index] = int.parse(value
+                                                .isEmpty
+                                            ? '$quantity'
+                                            : value); // Default to 1 if empty
                                       });
                                     },
                                     decoration: InputDecoration(
@@ -573,7 +647,8 @@ print('ordersubmitscreenquntity$quantity');
                                       border: InputBorder.none,
                                       focusedBorder: InputBorder.none,
                                       enabledBorder: InputBorder.none,
-                                      contentPadding: EdgeInsets.only(bottom: 10.0),
+                                      contentPadding:
+                                          EdgeInsets.only(bottom: 10.0),
                                     ),
                                     textAlign: TextAlign.center,
                                     style: CommonUtils.Mediumtext_o_14,
@@ -583,34 +658,20 @@ print('ordersubmitscreenquntity$quantity');
                             ),
                           ),
                         ),
-                        // IconButton(
-                        //   icon: Icon(Icons.add, color: Colors.white),
-                        //   onPressed: () {
-                        //     setState(() {
-                        //       quantities[index]++;
-                        //     });
-                        //     textEditingControllers[index].text = quantities[index].toString();
-                        //   },
-                        //   alignment: Alignment.centerLeft,
-                        //   iconSize: 25.0,
-                        // ),
-
                         IconButton(
                           icon: Icon(Icons.add, color: Colors.white),
                           onPressed: () {
                             setState(() {
                               quantities[index]++;
-                              textEditingControllers[index].text = quantities[index].toString();
-
+                              textEditingControllers[index].text =
+                                  quantities[index].toString();
                             });
                           },
                           alignment: Alignment.centerLeft,
                           iconSize: 25.0,
                         ),
-
                       ],
                     ),
-
                   ),
                   // Row(
                   //   children: [
@@ -630,14 +691,12 @@ print('ordersubmitscreenquntity$quantity');
                   //   ],
                   // ),
 
-
-
                   IconButton(
                     icon: Icon(Icons.delete, color: Colors.red),
                     onPressed: () {
                       // Remove the item from cartItems
                       setState(() {
-                        cartItems!.removeAt(index);
+                        cartItems.removeAt(index);
                       });
 
                       // Save the updated cart data in SharedPreferences
@@ -652,15 +711,12 @@ print('ordersubmitscreenquntity$quantity');
                   ),
                 ],
               ),
-
             ],
           ),
         ),
       ),
     );
   }
-
-
 
   void saveCartData() async {
     // Get the SharedPreferences instance
@@ -680,7 +736,8 @@ print('ordersubmitscreenquntity$quantity');
   }
 
   void AddOrder() async {
-    final String apiUrl = 'http://182.18.157.215/Srikar_Biotech_Dev/API/api/Order/AddOrder';
+    final String apiUrl =
+        'http://182.18.157.215/Srikar_Biotech_Dev/API/api/Order/AddOrder';
 
     Map<String, dynamic> orderData = {
       "OrderItemXrefTypeList": [
@@ -719,14 +776,14 @@ print('ordersubmitscreenquntity$quantity');
       "OrderDate": "2024-01-24T10:39:00.9845541+05:30",
       "PartyCode": '${widget.cardCode}',
       "PartyName": '${widget.cardName}',
-      "PartyAddress":'${widget.address}',
+      "PartyAddress": '${widget.address}',
       "PartyState": '${widget.state}',
       "PartyPhoneNumber": '${widget.phone}',
       "PartyGSTNumber": '${widget.gstRegnNo}',
       "ProprietorName": '${widget.proprietorName}',
       "PartyOutStandingAmount": 1.1,
       "BookingPlace": '${widget.BookingPlace}',
-      "TransportName":'${widget.TransportName}',
+      "TransportName": '${widget.TransportName}',
       "FileName": "",
       "FileLocation": "",
       "FileExtension": "",
@@ -772,14 +829,4 @@ print('ordersubmitscreenquntity$quantity');
       print('Exception: $e');
     }
   }
-
-
-
 }
-
-
-
-
-
-
-

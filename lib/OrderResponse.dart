@@ -145,7 +145,7 @@ class OrderResult {
       sgst: json['sgst'],
       totalCost: json['totalCost'],
       noOfItems: json['noOfItems'],
-      remarks: json['remarks'],
+      remarks: json['remarks'] ?? "",
       isActive: json['isActive'],
       createdBy: json['createdBy'],
       createdDate: json['createdDate'],

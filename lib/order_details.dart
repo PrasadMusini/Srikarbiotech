@@ -85,6 +85,52 @@ class _orderdetailsPageState extends State<orderdetails> {
     return stringList;
   }
 
+  Color getStatusTypeBackgroundColor(String statusTypeId) {
+    switch (statusTypeId) {
+      case 'Pedning':
+        return Color(0xFFE58338).withOpacity(0.3);
+      case 'Shipped':
+        // Set background color for statusTypeId 8
+        return Colors.blue.withOpacity(0.3);
+      case 'Accept':
+        // Set background color for statusTypeId 9
+        return Colors.green.withOpacity(0.3);
+      // case 'Partially Shipped':
+      //   // Set background color for statusTypeId 9
+      //   return Colors.purple.withOpacity(0.1);
+      case 'Reject':
+        return Colors.red.withOpacity(0.3);
+        break;
+      // Add more cases as needed for other statusTypeId values
+
+      default:
+        // Default background color or handle other cases if needed
+        return Colors.white;
+    }
+  }
+
+  Color getStatusTypeTextColor(String statusTypeId) {
+    switch (statusTypeId) {
+      case 'Pedning':
+        return Color(0xFFe58338);
+      case 'Shipped':
+        // Set background color for statusTypeId 8
+        return Colors.blue;
+      case 'Accept':
+        // Set background color for statusTypeId 9
+        return Colors.green;
+      // case 'Partially Shipped':
+      //   // Set background color for statusTypeId 9
+      //   return Colors.purple;
+      case 'Reject':
+        return Colors.red;
+        break;
+
+      default:
+        return Colors.white;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     double screenHeight = MediaQuery.of(context).size.height;
@@ -287,6 +333,8 @@ class _orderdetailsPageState extends State<orderdetails> {
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               Column(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
                                     'Order ID',
@@ -304,8 +352,31 @@ class _orderdetailsPageState extends State<orderdetails> {
                               ),
 
                               //+  Spacer(),
-
-                              Text('${widget.statusname}')
+                              Container(
+                                height: 30,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(25),
+                                  color: getStatusTypeBackgroundColor(
+                                      widget.statusname),
+                                ),
+                                child: IntrinsicWidth(
+                                  stepWidth: 80.0,
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Text(
+                                        '${widget.statusname}',
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.w500,
+                                          color: getStatusTypeTextColor(
+                                              widget.statusname),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                              //     Text('${widget.statusname}')
                             ],
                           ),
                           SizedBox(
