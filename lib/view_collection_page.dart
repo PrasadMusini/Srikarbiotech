@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
@@ -5,12 +7,16 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:hexcolor/hexcolor.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
+import 'package:srikarbiotech/Common/CommonUtils.dart';
+
 import 'package:srikarbiotech/view_collection_checkout.dart';
 
 import 'HomeScreen.dart';
 import 'Model/card_collection.dart';
 import 'OrctResponse.dart';
 import 'Payment_model.dart';
+import 'ViewCollectionProvider.dart';
 
 class ViewCollectionPage extends StatefulWidget {
   const ViewCollectionPage({super.key});
@@ -20,12 +26,8 @@ class ViewCollectionPage extends StatefulWidget {
 }
 
 class _ViewCollectionPageState extends State<ViewCollectionPage> {
-  final GlobalKey<_ViewCollectionPageState> _mainScreenStateKey =
-      GlobalKey<_ViewCollectionPageState>();
   String url =
       'http://182.18.157.215/Srikar_Biotech_Dev/API/api/Collections/GetCollections/null';
-
-  late Future<List<ListResult>> apiData;
 
   final _orangeColor = HexColor('#e58338');
   final _borderforContainer = BoxDecoration(
@@ -37,31 +39,64 @@ class _ViewCollectionPageState extends State<ViewCollectionPage> {
   final _hintTextStyle = const TextStyle(
       fontSize: 14, color: Colors.black38, fontWeight: FontWeight.bold);
 
+  final _customTextStyle = const TextStyle(
+      fontSize: 14, color: Colors.black, fontWeight: FontWeight.bold);
+  final _searchBarOutPutInlineBorder = OutlineInputBorder(
+    borderRadius: BorderRadius.circular(10),
+    borderSide: const BorderSide(color: Colors.black38),
+  );
+  final _searchBarEnabledNdFocuedOutPutInlineBorder = OutlineInputBorder(
+    borderRadius: BorderRadius.circular(10),
+    borderSide: const BorderSide(color: Colors.black),
+  );
+
+  late Future<List<ListResult>> apiData;
+  List<ListResult> filteredData = [];
+  late ViewCollectionProvider viewProvider;
+
   @override
   void initState() {
-    apiData = getCollection();
-
     super.initState();
+    initializeData();
   }
 
-  void refreshData() {
-    setState(() {
-      apiData =
-          getCollection(); // Assuming `apiData` is your Future<List<ListResult>>
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    viewProvider = Provider.of<ViewCollectionProvider>(context);
+  }
+
+  void initializeData() {
+    apiData = getCollection();
+    apiData.then((data) {
+      setState(() {
+        filteredData.addAll(data);
+        viewProvider.storeIntoProvider(data);
+      });
+    }).catchError((error) {
+      // print('Error initializing data: $error');
+    });
+  }
+
+  void filterRecordsBasedOnPartyName(String input) {
+    apiData.then((data) {
+      setState(() {
+        viewProvider.storeIntoProvider(data
+            .where((item) =>
+            item.partyName.toLowerCase().contains(input.toLowerCase()))
+            .toList());
+      });
     });
   }
 
   Future<List<ListResult>> getCollection() async {
     final response = await http.get(Uri.parse(url));
-
-    // await Future.delayed(const Duration(seconds: 2));
-
     try {
       if (response.statusCode == 200) {
         Map<String, dynamic> json = jsonDecode(response.body);
         List<dynamic> listResult = json['response']['listResult'];
         List<ListResult> result =
-            listResult.map((element) => ListResult.fromJson(element)).toList();
+        listResult.map((element) => ListResult.fromJson(element)).toList();
         return result;
       } else {
         throw Exception('Error occurred');
@@ -73,167 +108,190 @@ class _ViewCollectionPageState extends State<ViewCollectionPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Color(0xFFe78337),
-        automaticallyImplyLeading: false,
-        // This line removes the default back arrow
-        title: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Row(
-              children: [
-                Padding(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 2, vertical: 2),
-                  child: GestureDetector(
-                    onTap: () {
-                      // Handle the click event for the back button
-                      Navigator.of(context).pop();
-                    },
-                    child: Icon(
-                      Icons.chevron_left,
-                      size: 30.0,
-                      color: Colors.white,
-                    ),
-                  ),
-                ),
-                SizedBox(width: 8.0),
-                Text(
-                  'View Collection',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 18,
-                  ),
-                ),
-              ],
-            ),
-            GestureDetector(
-              onTap: () {
-                // Handle the click event for the home icon
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(builder: (context) => HomeScreen()),
-                );
-              },
-              child: Icon(
-                Icons.home,
-                size: 30,
-                color: Colors.white,
-              ),
-            ),
-          ],
-        ),
-      ),
-      body: FutureBuilder(
-        future: apiData,
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator.adaptive());
-          } else if (snapshot.hasError) {
-            return Center(
-              child: Text('Error occurred: ${snapshot.error}'),
-            );
-          } else {
-            if (snapshot.hasData) {
-              List<ListResult> data = snapshot.data!;
-
-              return Padding(
-                // wrap FutureBuilder here with padding widget
-                padding: const EdgeInsets.all(12),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // search bar
-                    Container(
-                      margin: const EdgeInsets.only(bottom: 10),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Expanded(
-                            child: SizedBox(
-                              height: 45,
-                              child: TextField(
-                                decoration: InputDecoration(
-                                  hintText: 'Collection Search',
-                                  hintStyle: _hintTextStyle,
-                                  suffixIcon: const Icon(Icons.search),
-                                  border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(10),
-                                    borderSide:
-                                        const BorderSide(color: Colors.black),
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                          const SizedBox(
-                            width: 10,
-                          ),
-                          GestureDetector(
-                            onTap: () {
-                              // Handle the click action here
-                              print('Container clicked!');
-                              showModalBottomSheet(
-                                context: context,
-                                builder: (context) => FilterBottomSheet(
-                                    mainScreenStateKey: _mainScreenStateKey),
-                              );
-                              // Add your specific logic or navigation here
-                            },
-                            child: Container(
-                              height: 45,
-                              width: 45,
-                              decoration: _borderforContainer,
-                              child: Center(
-                                child: SvgPicture.asset(
-                                  'assets/apps-sort.svg',
-                                  color: _orangeColor,
-                                ),
-                              ),
-                            ),
-                          )
-                        ],
-                      ),
-                    ),
-
-                    // cards
-                    Expanded(
-                      //   width: MediaQuery.of(context).size.width,
-
-                      child: ListView.builder(
-                        itemCount: data.length,
-                        itemBuilder: ((context, index) {
-                          return MyCard(listResult: data[index], index: index);
-                        }),
-                      ),
-                    ),
-                  ],
-                ),
+    return Consumer<ViewCollectionProvider>(
+      builder: (context, viewCollectionProvider, _) => Scaffold(
+        appBar: _viewCollectionAppBar(),
+        body: FutureBuilder(
+          future: apiData,
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(child: CircularProgressIndicator.adaptive());
+            } else if (snapshot.hasError) {
+              return Center(
+                child: Text('Error occurred: ${snapshot.error}'),
               );
             } else {
-              return const Center(
-                child: Text('No data available'),
-              );
+              if (snapshot.hasData) {
+                // List<ListResult> data = snapshot.data!;
+                List<ListResult> data = viewCollectionProvider.providerData;
+                return Padding(
+                  padding: const EdgeInsets.all(12),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // search bar
+                      _searchBarAndFilter(),
+
+                      // list of cards
+                      if (viewCollectionProvider.providerData.isNotEmpty)
+                        Expanded(
+                          child: ListView.builder(
+                            itemCount: data.length,
+                            itemBuilder: ((context, index) {
+                              return MyCard(
+                                  listResult: data[index], index: index);
+                            }),
+                          ),
+                        )
+                      // no results
+                      else
+                        Expanded(
+                          child: SizedBox(
+                            width: double.infinity,
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.all(5.0),
+                                  child:
+                                  Text(
+                                    'No collection found!',
+                                    style: _customTextStyle,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          )
+                          ),
+                    ],
+                  ),
+                );
+              } else {
+                return const Center(
+                  child: Text('No data available'),
+                );
+              }
             }
-          }
-        },
+          },
+        ),
+      ),
+    );
+  }
+
+  PreferredSizeWidget _viewCollectionAppBar() {
+    return AppBar(
+      backgroundColor: const Color(0xFFe78337),
+      automaticallyImplyLeading: false,
+      // This line removes the default back arrow
+      title: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Row(
+            children: [
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 2, vertical: 2),
+                child: GestureDetector(
+                  onTap: () {
+                    // Handle the click event for the back button
+                    Navigator.of(context).pop();
+                  },
+                  child: const Icon(
+                    Icons.chevron_left,
+                    size: 30.0,
+                    color: Colors.white,
+                  ),
+                ),
+              ),
+              const SizedBox(width: 8.0),
+              const Text(
+                'View Collection',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 18,
+                ),
+              ),
+            ],
+          ),
+          GestureDetector(
+            onTap: () {
+              // Handle the click event for the home icon
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (context) =>  HomeScreen()),
+              );
+            },
+            child: const Icon(
+              Icons.home,
+              size: 30,
+              color: Colors.white,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _searchBarAndFilter() {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 10),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Expanded(
+            child: SizedBox(
+              height: 45,
+              child: TextField(
+                onChanged: (input) => filterRecordsBasedOnPartyName(input),
+                decoration: InputDecoration(
+                  hintText: 'Collection Search',
+                  hintStyle: _hintTextStyle,
+                  suffixIcon: const Icon(Icons.search),
+                  border: _searchBarOutPutInlineBorder,
+                  focusedBorder: _searchBarEnabledNdFocuedOutPutInlineBorder,
+                ),
+              ),
+            ),
+          ),
+          const SizedBox(
+            width: 10,
+          ),
+          GestureDetector(
+            onTap: () {
+              // Handle the click action here
+              showModalBottomSheet(
+                context: context,
+                builder: (context) => const FilterBottomSheet(),
+              );
+              // Add your specific logic or navigation here
+            },
+            child: Container(
+              height: 45,
+              width: 45,
+              decoration: _borderforContainer,
+              child: Center(
+                child: SvgPicture.asset(
+                  'assets/apps-sort.svg',
+                  color: _orangeColor,
+                ),
+              ),
+            ),
+          )
+        ],
       ),
     );
   }
 }
 
 class FilterBottomSheet extends StatefulWidget {
-  // const FilterBottomSheet({super.key});
-  final GlobalKey<_ViewCollectionPageState> mainScreenStateKey;
-
-  FilterBottomSheet({required this.mainScreenStateKey});
+  const FilterBottomSheet({super.key});
 
   @override
   State<FilterBottomSheet> createState() => _FilterBottomSheetState();
 }
 
+// X000
 class _FilterBottomSheetState extends State<FilterBottomSheet> {
   final _labelTextStyle = const TextStyle(
       color: Colors.black, fontSize: 14, fontWeight: FontWeight.bold);
@@ -241,25 +299,29 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
   int selectedCardCode = -1;
 
   // ... Other variables and methods
-  final _primaryOrange = Color(0xFFe58338);
+  final _primaryOrange = const Color(0xFFe58338);
   int selectedChipIndex = 1;
+  final GlobalKey<FormState> _filterFormKey = GlobalKey<FormState>();
 
   final _titleTextStyle = const TextStyle(
       color: Colors.black, fontSize: 16, fontWeight: FontWeight.bold);
 
-  final _clearTextStyle = TextStyle(
+  final _clearTextStyle = const TextStyle(
       color: Color(0xFFe58338),
       fontSize: 16,
       decoration: TextDecoration.underline,
       decorationColor: Color(0xFFe58338));
 
-  final _textStyle = TextStyle(
-      fontSize: 14, color: Color(0xFFe58338), fontWeight: FontWeight.bold);
-  final _orangeColor = Color(0xFFe58338);
   DateTime toDate = DateTime.now();
   DateTime fromDate = DateTime.now();
   String? selectedValue;
-  List dropDownItems = [];
+  List dropDownItems = [
+    'item 1',
+    'item 2',
+    'item 3',
+    'item 4',
+    'item 5',
+  ];
   List<dynamic> dropdownItems = [];
   PaymentMode? selectedPaymode;
   int? payid;
@@ -275,20 +337,18 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
   String? selectedPurpose, selectformattedfromdate, selectformattedtodate;
   Purpose? selectedPurposeObj; // Declare it globally
   String purposename = '';
-  int? savedCompanyId = 0;
-  String fdlvalue = '';
+  int? savedCompanyId = 1;
+
   @override
   void initState() {
     fetchData();
-
-    print(savedCompanyId);
     getpaymentmethods();
     fetchdropdownitems();
     super.initState();
   }
 
   Future<void> fetchdropdownitems() async {
-    final apiUrl =
+    const apiUrl =
         'http://182.18.157.215/Srikar_Biotech_Dev/API/api/Collections/GetPurposes/1';
 
     try {
@@ -325,9 +385,9 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
   }
 
   Future<void> _selectDate(
-    BuildContext context,
-    TextEditingController controller,
-  ) async {
+      BuildContext context,
+      TextEditingController controller,
+      ) async {
     DateTime currentDate = DateTime.now();
     DateTime initialDate;
 
@@ -356,33 +416,30 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
 
         // Save selected dates as DateTime objects
         selectedDate = picked;
-        print("todate selected: $selectedDate");
 
         // Print formatted date
-        print("fromatted todate: ${DateFormat('yyyy-MM-dd').format(picked)}");
         selectformattedtodate = DateFormat('yyyy-MM-dd').format(picked);
-        print("selectformattedtodate: $selectformattedtodate");
+        print("selectformatted_todate: $selectformattedtodate");
       }
     } catch (e) {
       print("Error selecting date: $e");
-      // Handle the error, e.g., show a message to the user or log it.
     }
   }
 
   Widget buildDateInput(
-    BuildContext context,
-    String labelText,
-    TextEditingController controller,
-    VoidCallback onTap,
-  ) {
+      BuildContext context,
+      String labelText,
+      TextEditingController controller,
+      VoidCallback onTap,
+      ) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Padding(
-          padding: EdgeInsets.only(top: 0.0, left: 5.0, right: 0.0),
+          padding: const EdgeInsets.only(top: 0.0, left: 5.0, right: 0.0),
           child: Text(
             labelText,
-            style: TextStyle(
+            style: const TextStyle(
               fontSize: 16.0,
               color: Color(0xFF5f5f5f),
               fontWeight: FontWeight.bold,
@@ -390,7 +447,8 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
             textAlign: TextAlign.start,
           ),
         ),
-        SizedBox(height: 4.0), // Add space between labelText and TextFormField
+        const SizedBox(
+            height: 4.0), // Add space between labelText and TextFormField
         GestureDetector(
           onTap: onTap,
           child: Container(
@@ -399,7 +457,7 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(12.0),
               border: Border.all(
-                color: Color(0xFFe78337),
+                color: const Color(0xFFe78337),
                 width: 1.0,
               ),
             ),
@@ -409,11 +467,11 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
                   child: Align(
                     alignment: Alignment.centerLeft,
                     child: Padding(
-                      padding: EdgeInsets.only(left: 10.0, top: 0.0),
+                      padding: const EdgeInsets.only(left: 10.0, top: 0.0),
                       child: TextFormField(
                         controller: controller,
                         enabled: false,
-                        style: TextStyle(
+                        style: const TextStyle(
                           fontSize: 14,
                           fontFamily: 'Roboto',
                           fontWeight: FontWeight.w600,
@@ -421,7 +479,7 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
                         ),
                         decoration: InputDecoration(
                           hintText: labelText,
-                          hintStyle: TextStyle(
+                          hintStyle: const TextStyle(
                             fontSize: 14,
                             fontFamily: 'Roboto',
                             fontWeight: FontWeight.w500,
@@ -435,7 +493,7 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
                 ),
                 InkWell(
                   onTap: onTap,
-                  child: Padding(
+                  child: const Padding(
                     padding: EdgeInsets.all(10.0),
                     child: Icon(
                       Icons.calendar_today,
@@ -452,9 +510,9 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
   }
 
   Future<void> _selectfromDate(
-    BuildContext context,
-    TextEditingController controller,
-  ) async {
+      BuildContext context,
+      TextEditingController controller,
+      ) async {
     DateTime currentDate = DateTime.now();
     DateTime initialDate;
 
@@ -483,33 +541,31 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
 
         // Save selected dates as DateTime objects
         selectedfromdateDate = picked;
-        print("fromdate selected: $selectedfromdateDate");
 
         // Print formatted date
-        print("fromattedfromdate: ${DateFormat('yyyy-MM-dd').format(picked)}");
+        // print("fromattedfromdate: ${DateFormat('yyyy-MM-dd').format(picked)}");
         selectformattedfromdate = DateFormat('yyyy-MM-dd').format(picked);
-        print("selectformattedfromdate: $selectformattedfromdate");
+        print("selectformatted_fromdate: $selectformattedfromdate");
       }
     } catch (e) {
       print("Error selecting date: $e");
-      // Handle the error, e.g., show a message to the user or log it.
     }
   }
 
   Widget buildDateInputfromdate(
-    BuildContext context,
-    String labelText,
-    TextEditingController controller,
-    VoidCallback onTap,
-  ) {
+      BuildContext context,
+      String labelText,
+      TextEditingController controller,
+      VoidCallback onTap,
+      ) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Padding(
-          padding: EdgeInsets.only(top: 0.0, left: 5.0, right: 0.0),
+          padding: const EdgeInsets.only(top: 0.0, left: 5.0, right: 0.0),
           child: Text(
             labelText,
-            style: TextStyle(
+            style: const TextStyle(
               fontSize: 16.0,
               color: Color(0xFF5f5f5f),
               fontWeight: FontWeight.bold,
@@ -517,7 +573,8 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
             textAlign: TextAlign.start,
           ),
         ),
-        SizedBox(height: 4.0), // Add space between labelText and TextFormField
+        const SizedBox(
+            height: 4.0), // Add space between labelText and TextFormField
         GestureDetector(
           onTap: onTap,
           child: Container(
@@ -526,7 +583,7 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(12.0),
               border: Border.all(
-                color: Color(0xFFe78337),
+                color: const Color(0xFFe78337),
                 width: 1.0,
               ),
             ),
@@ -536,11 +593,11 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
                   child: Align(
                     alignment: Alignment.centerLeft,
                     child: Padding(
-                      padding: EdgeInsets.only(left: 10.0, top: 0.0),
+                      padding: const EdgeInsets.only(left: 10.0, top: 0.0),
                       child: TextFormField(
                         controller: controller,
                         enabled: false,
-                        style: TextStyle(
+                        style: const TextStyle(
                           fontSize: 14,
                           fontFamily: 'Roboto',
                           fontWeight: FontWeight.w600,
@@ -548,7 +605,7 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
                         ),
                         decoration: InputDecoration(
                           hintText: labelText,
-                          hintStyle: TextStyle(
+                          hintStyle: const TextStyle(
                             fontSize: 14,
                             fontFamily: 'Roboto',
                             fontWeight: FontWeight.w500,
@@ -560,9 +617,9 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
                     ),
                   ),
                 ),
-                InkWell(
+                GestureDetector(
                   onTap: onTap,
-                  child: Padding(
+                  child: const Padding(
                     padding: EdgeInsets.all(10.0),
                     child: Icon(
                       Icons.calendar_today,
@@ -586,7 +643,6 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
       Map<String, dynamic> data = json.decode(response.body);
 
       if (data['isSuccess']) {
-        // Check if 'listResult' key exists and is not null
         if (data['response']['listResult'] != null) {
           setState(() {
             dropdownItems = List.from(data['response']['listResult']);
@@ -602,437 +658,435 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
   Widget build(BuildContext context) {
     return SingleChildScrollView(
         child: Padding(
-      padding: const EdgeInsets.all(20),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisSize: MainAxisSize.min,
-        children: <Widget>[
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: <Widget>[
-              Text(
-                'Filter By',
-                style: _titleTextStyle,
-              ),
-              // Text('Clear all filters', style: _labelTextStyle,),
-              Text(
-                'Clear all filters',
-                style: _clearTextStyle,
-              ),
-            ],
-          ),
-          Container(
-            margin: const EdgeInsets.only(top: 5, bottom: 12),
-            child: const Divider(
-              height: 5,
-            ),
-          ),
-          Column(
+          padding: const EdgeInsets.all(20),
+          child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Padding(
-                padding: const EdgeInsets.only(left: 5.0),
-                child: Text(
-                  'Party',
-                  style: _labelTextStyle,
-                ),
-              ),
-              Padding(
-                padding: EdgeInsets.only(left: 0, top: 5.0, right: 0),
-                child: Container(
-                  // width: double.infinity,
-                  height: 40.0,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(10),
-                    border: Border.all(
-                      color: Color(0xFFe58338),
-                    ),
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: <Widget>[
+                  Text(
+                    'Filter By',
+                    style: _titleTextStyle,
                   ),
-                  child: DropdownButtonHideUnderline(
-                    child: ButtonTheme(
-                      alignedDropdown: true,
-                      child: DropdownButton<int>(
-                          value: selectedCardCode,
-                          iconSize: 20,
-                          icon: null,
-                          isExpanded: true,
-                          underline: const SizedBox(),
-                          style: TextStyle(
-                            color: Color(0xFFe58338),
-                          ),
-                          onChanged: (value) {
-                            setState(() {
-                              selectedCardCode = value!;
-                              if (selectedCardCode != -1) {
-                                selectedValue =
-                                    dropdownItems[selectedCardCode]['cardCode'];
-                                selectedName =
-                                    dropdownItems[selectedCardCode]['cardName'];
-
-                                print("selectedValue:$selectedValue");
-                                print("selectedName:$selectedName");
-                              } else {
-                                print("==========");
-                                print(selectedValue);
-                                print(selectedName);
-                              }
-                              // isDropdownValid = selectedTypeCdId != -1;
-                            });
-                          },
-                          items: [
-                            DropdownMenuItem<int>(
-                              value: -1,
-                              child: Text('Select Party'), // Static text
-                            ),
-                            ...dropdownItems.asMap().entries.map((entry) {
-                              final index = entry.key;
-                              final item = entry.value;
-                              return DropdownMenuItem<int>(
-                                  value: index,
-                                  child: Text(
-                                    item['cardName'],
-                                    overflow: TextOverflow.visible,
-                                    // wrapText: true,
-                                  ));
-                            }).toList(),
-                          ]),
-                    ),
+                  // Text('Clear all filters', style: _labelTextStyle,),
+                  Text(
+                    'Clear all filters',
+                    style: _clearTextStyle,
                   ),
-                ),
-              ),
-              SizedBox(
-                height: 10.0,
-              ),
-              Padding(
-                padding: const EdgeInsets.only(left: 5.0),
-                child: Text(
-                  'Purpose',
-                  style: _labelTextStyle,
-                ),
-              ),
-              SizedBox(
-                height: 4.0,
+                ],
               ),
               Container(
-                  width: MediaQuery.of(context).size.width,
-                  height: 40.0,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(12.0),
-                    border: Border.all(
-                      color: Color(0xFFe78337),
-                      width: 1.0,
+                margin: const EdgeInsets.only(top: 5, bottom: 12),
+                child: const Divider(
+                  height: 5,
+                ),
+              ),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.only(left: 5.0),
+                    child: Text(
+                      'Party',
+                      style: _labelTextStyle,
                     ),
                   ),
-                  child: Padding(
-                    padding: EdgeInsets.all(8.0),
-                    child: purposeList.isEmpty
-                        ? CircularProgressIndicator
-                            .adaptive() // Show a loading indicator
-                        : DropdownButton<String>(
-                            hint: Text(
-                              'Select Purpose',
-                              style: TextStyle(
-                                fontSize: 14,
-                                fontFamily: 'Roboto',
-                                //    fontWeight: FontWeight.w600,
-                                color: Color(0xFFe78337),
+                  Padding(
+                    padding: const EdgeInsets.only(left: 0, top: 5.0, right: 0),
+                    child: Container(
+                      // width: double.infinity,
+                      height: 40.0,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10),
+                        border: Border.all(
+                          color: const Color(0xFFe58338),
+                        ),
+                      ),
+                      child: DropdownButtonHideUnderline(
+                        child: ButtonTheme(
+                          alignedDropdown: true,
+                          child: DropdownButton<int>(
+                              value: selectedCardCode,
+                              iconSize: 20,
+                              icon: null,
+                              isExpanded: true,
+                              underline: const SizedBox(),
+                              style: const TextStyle(
+                                color: Color(0xFFe58338),
                               ),
+                              onChanged: (value) {
+                                setState(() {
+                                  selectedCardCode = value!;
+                                  if (selectedCardCode != -1) {
+                                    selectedValue =
+                                    dropdownItems[selectedCardCode]['cardCode'];
+                                    selectedName =
+                                    dropdownItems[selectedCardCode]['cardName'];
+
+                                    print("selectedValue:$selectedValue");
+                                    print("selectedName:$selectedName");
+                                  } else {
+                                    print("==========");
+                                    print(selectedValue);
+                                    print(selectedName);
+                                  }
+                                  // isDropdownValid = selectedTypeCdId != -1;
+                                });
+                              },
+                              items: [
+                                const DropdownMenuItem<int>(
+                                  value: -1,
+                                  child: Text('Select Party'), // here
+                                ),
+                                ...dropdownItems.asMap().entries.map((entry) {
+                                  final index = entry.key;
+                                  final item = entry.value;
+                                  return DropdownMenuItem<int>(
+                                      value: index,
+                                      child: Text(
+                                        item['cardName'],
+                                        overflow: TextOverflow.visible,
+                                        // wrapText: true,
+                                      ));
+                                }).toList(),
+                              ]),
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 10.0,
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(left: 5.0),
+                    child: Text(
+                      'Purpose',
+                      style: _labelTextStyle,
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 4.0,
+                  ),
+                  Container(
+                      width: MediaQuery.of(context).size.width,
+                      height: 40.0,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(12.0),
+                        border: Border.all(
+                          color: const Color(0xFFe78337),
+                          width: 1.0,
+                        ),
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: purposeList.isEmpty
+                            ? const CircularProgressIndicator
+                            .adaptive() // Show a loading indicator
+                            : DropdownButton<String>(
+                          hint: const Text(
+                            'Select Purpose',
+                            style: TextStyle(
+                              fontSize: 14,
+                              fontFamily: 'Roboto',
+                              //    fontWeight: FontWeight.w600,
+                              color: Color(0xFFe78337),
                             ),
-                            value: selectedPurpose,
-                            onChanged: (String? newValue) {
-                              setState(() {
-                                selectedPurpose = newValue;
+                          ),
+                          value: selectedPurpose,
+                          onChanged: (String? newValue) {
+                            setState(() {
+                              selectedPurpose = newValue;
 
-                                // Find the selected Purpose object
-                                selectedPurposeObj = purposeList.firstWhere(
-                                  (purpose) => purpose.fldValue == newValue,
-                                  orElse: () => Purpose(
-                                      fldValue: '', descr: '', purposeName: ''),
-                                );
+                              // Find the selected Purpose object
+                              selectedPurposeObj = purposeList.firstWhere(
+                                    (purpose) => purpose.fldValue == newValue,
+                                orElse: () => Purpose(
+                                    fldValue: '', descr: '', purposeName: ''),
+                              );
+                              purposename = selectedPurposeObj!.fldValue;
+                              print(
+                                  'selectpurposeName: ${selectedPurposeObj?.fldValue}');
+                            });
+                          },
+                          items: purposeList.map((Purpose purpose) {
+                            return DropdownMenuItem<String>(
+                              value: purpose.fldValue,
+                              child: Text(
+                                purpose.purposeName,
+                                style: const TextStyle(
+                                  fontSize: 14,
+                                  fontFamily: 'Roboto',
+                                  fontWeight: FontWeight.w600,
+                                  color: Color(0xFFe78337),
+                                ),
+                              ),
+                            );
+                          }).toList(),
+                          icon: const Icon(Icons.arrow_drop_down),
+                          iconSize: 24,
+                          isExpanded: true,
+                          underline: const SizedBox(),
+                        ),
+                      ))
+                ],
+              ),
 
-                                // Print the selected values
-                                // print(
-                                //     'fldValue: ${selectedPurposeObj?.fldValue}');
-                                print('descr: ${selectedPurposeObj?.descr}');
-                                print(
-                                    'purposeName: ${selectedPurposeObj?.purposeName}');
-                                fdlvalue = selectedPurposeObj!.fldValue;
-                                print('fldValue: ${fdlvalue}');
-                                purposename = selectedPurposeObj!.purposeName;
-                                print('selectpurposeName: $purposename');
-                              });
-                            },
-                            items: purposeList.map((Purpose purpose) {
-                              return DropdownMenuItem<String>(
-                                value: purpose.fldValue,
-                                child: Text(
-                                  purpose.purposeName,
-                                  style: TextStyle(
-                                    fontSize: 14,
-                                    fontFamily: 'Roboto',
-                                    fontWeight: FontWeight.w600,
-                                    color: Color(0xFFe78337),
+              const SizedBox(
+                height: 10.0,
+              ),
+              SizedBox(
+                height: 40,
+                child: Expanded(
+                  child: apiResponse == null
+                      ? const Center(child: CircularProgressIndicator.adaptive())
+                      : ListView.builder(
+                    scrollDirection: Axis.horizontal,
+                    itemCount: apiResponse!.listResult.length,
+                    itemBuilder: (BuildContext context, int index) {
+                      bool isSelected = index == indexselected;
+                      PaymentMode currentPaymode = apiResponse!.listResult[
+                      index]; // Store the current paymode in a local variable
+
+                      switch (currentPaymode.desc) {
+                        case 'Cheque':
+                        // iconData = Icons.payment;
+                          break;
+                        case 'Online':
+                        //   iconData = Icons.access_alarm;
+                          break;
+                        case 'UPI':
+                        //   iconData = Icons.payment;
+                          break;
+                      // Add more cases as needed
+                        default:
+                        //   iconData = Icons.payment; // Default icon
+                          break;
+                      }
+
+                      return GestureDetector(
+                        onTap: () {
+                          setState(() {
+                            indexselected = index;
+                            selectedPaymode =
+                                currentPaymode; // Update the selectedPaymode outside the build method
+                          });
+                          payid = currentPaymode.typeCdId;
+                          Selected_PaymentMode = currentPaymode.desc;
+                          print('payid:$payid');
+                          print(
+                              'Selected Payment Mode: ${currentPaymode.desc}, TypeCdId: $payid');
+                          print(
+                              'Selected Payment Mode: $Selected_PaymentMode, TypeCdId: $payid');
+                        },
+                        child: Container(
+                          margin: const EdgeInsets.symmetric(horizontal: 4.0),
+                          decoration: BoxDecoration(
+                            color: isSelected
+                                ? const Color(0xFFe78337)
+                                : const Color(0xFFe78337).withOpacity(0.1),
+                            border: Border.all(
+                              color: isSelected
+                                  ? const Color(0xFFe78337)
+                                  : const Color(0xFFe78337),
+                              width: 1.0,
+                            ),
+                            borderRadius: BorderRadius.circular(8.0),
+                          ),
+                          child: IntrinsicWidth(
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Container(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 10.0),
+                                  child: Row(
+                                    children: [
+                                      // Icon(
+                                      //   iconData, // Use the dynamically determined icon
+                                      //   color: isSelected
+                                      //       ? Colors.white
+                                      //       : Colors.black,
+                                      // ),
+                                      // SizedBox(
+                                      //     width:
+                                      //         8.0), // Add some spacing between icon and text
+                                      Text(
+                                        currentPaymode.desc.toString(),
+                                        style: TextStyle(
+                                          color: isSelected
+                                              ? Colors.white
+                                              : Colors.black,
+                                        ),
+                                      ),
+                                    ],
                                   ),
                                 ),
-                              );
-                            }).toList(),
-                            icon: Icon(Icons.arrow_drop_down),
-                            iconSize: 24,
-                            isExpanded: true,
-                            underline: SizedBox(),
-                          ),
-                  ))
-            ],
-          ),
-
-          SizedBox(
-            height: 10.0,
-          ),
-          Container(
-            height: 40,
-            child: Expanded(
-              child: apiResponse == null
-                  ? Center(child: CircularProgressIndicator.adaptive())
-                  : ListView.builder(
-                      scrollDirection: Axis.horizontal,
-                      itemCount: apiResponse!.listResult.length,
-                      itemBuilder: (BuildContext context, int index) {
-                        bool isSelected = index == indexselected;
-                        PaymentMode currentPaymode =
-                            apiResponse!.listResult[index];
-
-                        IconData iconData;
-                        switch (currentPaymode.desc) {
-                          case 'Cheque':
-                            // iconData = Icons.payment;
-                            break;
-                          case 'Online':
-                            //   iconData = Icons.access_alarm;
-                            break;
-                          case 'UPI':
-                            //   iconData = Icons.payment;
-                            break;
-                          // Add more cases as needed
-                          default:
-                            //   iconData = Icons.payment; // Default icon
-                            break;
-                        }
-
-                        return GestureDetector(
-                          onTap: () {
-                            setState(() {
-                              indexselected = index;
-                              selectedPaymode =
-                                  currentPaymode; // Update the selectedPaymode outside the build method
-                            });
-                            payid = currentPaymode.typeCdId;
-                            Selected_PaymentMode = currentPaymode.desc;
-                            print('payid:$payid');
-                            print(
-                                'Selected Payment Mode: ${currentPaymode.desc}, TypeCdId: $payid');
-                            print(
-                                'Selected Payment Mode: ${Selected_PaymentMode}, TypeCdId: $payid');
-                          },
-                          child: Container(
-                            margin: EdgeInsets.symmetric(horizontal: 4.0),
-                            decoration: BoxDecoration(
-                              color: isSelected
-                                  ? Color(0xFFe78337)
-                                  : Color(0xFFe78337).withOpacity(0.1),
-                              border: Border.all(
-                                color: isSelected
-                                    ? Color(0xFFe78337)
-                                    : Color(0xFFe78337),
-                                width: 1.0,
-                              ),
-                              borderRadius: BorderRadius.circular(8.0),
-                            ),
-                            child: IntrinsicWidth(
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Container(
-                                    padding:
-                                        EdgeInsets.symmetric(horizontal: 10.0),
-                                    child: Row(
-                                      children: [
-                                        // Icon(
-                                        //   iconData, // Use the dynamically determined icon
-                                        //   color: isSelected
-                                        //       ? Colors.white
-                                        //       : Colors.black,
-                                        // ),
-                                        // SizedBox(
-                                        //     width:
-                                        //         8.0), // Add some spacing between icon and text
-                                        Text(
-                                          '${currentPaymode.desc.toString()}',
-                                          style: TextStyle(
-                                            color: isSelected
-                                                ? Colors.white
-                                                : Colors.black,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ],
-                              ),
+                              ],
                             ),
                           ),
-                        );
-                      },
-                    ),
-            ),
-          ),
-
-          SizedBox(
-            height: 10.0,
-          ),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              buildDateInputfromdate(
-                context,
-                'From Date',
-                fromdateController,
-                () => _selectfromDate(context, fromdateController),
-              ),
-            ],
-          ), // From date
-          SizedBox(
-            height: 10.0,
-          ),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              buildDateInput(
-                context,
-                'To Date',
-                todateController,
-                () => _selectDate(context, todateController),
-              ),
-            ],
-          ),
-
-          // To Date
-
-          SizedBox(
-            height: 10.0,
-          ),
-          Row(
-            children: [
-              Expanded(
-                child: ElevatedButton(
-                  onPressed: () {},
-                  style: ElevatedButton.styleFrom(
-                    textStyle: const TextStyle(
-                      color: Colors.red,
-                    ),
-                    side: const BorderSide(
-                      color: Colors.red,
-                    ),
-                    backgroundColor: Colors.white,
-                    shape: const RoundedRectangleBorder(
-                      borderRadius: BorderRadius.all(
-                        Radius.circular(10),
-                      ),
-                    ),
-                  ),
-                  child: const Text(
-                    'Cancel',
-                    style: TextStyle(
-                      color: Colors.red,
-                    ),
+                        ),
+                      );
+                    },
                   ),
                 ),
+              ),
+
+              const SizedBox(
+                height: 10.0,
+              ), // From date
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  buildDateInput(
+                    context,
+                    'To Date',
+                    todateController,
+                        () => _selectDate(context, todateController),
+                  ),
+                ],
               ),
               const SizedBox(
-                width: 20,
+                height: 10.0,
               ),
-              Expanded(
-                child: ElevatedButton(
-                  onPressed: () {
-                    getappliedflitters();
-                  },
-                  style: ElevatedButton.styleFrom(
-                    textStyle: const TextStyle(
-                      color: Colors.white,
-                    ),
-                    backgroundColor: _primaryOrange,
-                    shape: const RoundedRectangleBorder(
-                      borderRadius: BorderRadius.all(
-                        Radius.circular(10),
+              // To Date
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  buildDateInputfromdate(
+                    context,
+                    'From Date',
+                    fromdateController,
+                        () => _selectfromDate(context, fromdateController),
+                  ),
+                ],
+              ),
+              const SizedBox(
+                height: 10.0,
+              ),
+              Row(
+                children: [
+                  Expanded(
+                    child: ElevatedButton(
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                      style: ElevatedButton.styleFrom(
+                        textStyle: const TextStyle(
+                          color: Colors.red,
+                        ),
+                        side: const BorderSide(
+                          color: Colors.red,
+                        ),
+                        backgroundColor: Colors.white,
+                        shape: const RoundedRectangleBorder(
+                          borderRadius: BorderRadius.all(
+                            Radius.circular(10),
+                          ),
+                        ),
+                      ),
+                      child: const Text(
+                        'Cancel',
+                        style: TextStyle(
+                          color: Colors.red,
+                        ),
                       ),
                     ),
                   ),
-                  child: const Text(
-                    'Apply',
-                    style: TextStyle(
-                      color: Colors.white,
+                  const SizedBox(
+                    width: 20,
+                  ),
+                  Expanded(
+                    child: ElevatedButton(
+                      onPressed: () {
+                        getappliedflitters(context);
+                      },
+                      style: ElevatedButton.styleFrom(
+                        textStyle: const TextStyle(
+                          color: Colors.white,
+                        ),
+                        backgroundColor: _primaryOrange,
+                        shape: const RoundedRectangleBorder(
+                          borderRadius: BorderRadius.all(
+                            Radius.circular(10),
+                          ),
+                        ),
+                      ),
+                      child: const Text(
+                        'Apply',
+                        style: TextStyle(
+                          color: Colors.white,
+                        ),
+                      ),
                     ),
                   ),
-                ),
+                ],
               ),
             ],
           ),
-        ],
-      ),
-    ));
+        ));
   }
 
-  Future<void> getappliedflitters() async {
-    // savedCompanyId = await getIntFromPreferences('companyIdKey');
-    print('getCompanyId:$savedCompanyId');
+  late ViewCollectionProvider viewProvider;
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+
+    viewProvider = Provider.of<ViewCollectionProvider>(context);
+  }
+
+// x000
+  Future<void> getappliedflitters(BuildContext context) async {
     try {
       final url = Uri.parse(
           'http://182.18.157.215/Srikar_Biotech_Dev/API/api/Collections/GetCollectionsbyMobileSearch');
-      print('applyfilter: $url');
-      final request = {
-        "PurposeName": fdlvalue,
+      final requestBodyObj = {
+        "PurposeName": purposename,
         "StatusId": payid,
         "PartyCode": selectedValue,
         "FormDate": selectformattedfromdate,
         "ToDate": selectformattedtodate,
-        "CompanyId": 1
+        "CompanyId": savedCompanyId
       };
-      // final headers = {
-      //   'Authorization': '$accessToken',
-      // };
-      // Map<String, String> _header = {
-      //   'Authorization': '$accessToken',
-      // };
-      // String at = accessToken;
-      // print('Request Headers: $_header');
-      print('Request Body: ${json.encode(request)}');
 
       final response = await http.post(
         url,
-        body: json.encode(request),
+        body: json.encode(requestBodyObj),
         headers: {
           'Content-Type': 'application/json',
         },
       );
-      //  print('access: $at');
-      // if (response.body == "Server errorNullable object must have a value.") {
-      //   Commonutils.showCustomToastMessageLong(
-      //       'Leave Applied', context, 0, 3);
-      // }
-      print('Applyresponse: ${response.body}');
 
       if (response.statusCode == 200) {
-        print('response is success');
-        widget.mainScreenStateKey.currentState?.refreshData();
+        Map<String, dynamic> jsonResponse = jsonDecode(response.body);
+
+        if (jsonResponse['isSuccess']) {
+          List<dynamic>? data = jsonResponse['response']['listResult'];
+
+          if (data != null) {
+            List<ListResult> result =
+            data.map((item) => ListResult.fromJson(item)).toList();
+            viewProvider.storeIntoProvider(result);
+          } else {
+            print('listResult is null');
+          }
+        } else {
+          print('Request failed: ${jsonResponse['endUserMessage']}');
+          List<ListResult> emptyList = [];
+          viewProvider.storeIntoProvider(emptyList);
+          CommonUtils.showCustomToastMessageLong(
+              'No collection found!', context, 2, 2);
+        }
       } else {
-        print('response is not success');
-        // Commonutils.showCustomToastMessageLong(
-        //     '${response.body}', context, 0, 3);
-        print(
-            'Failed to send the request. Status code: ${response.statusCode}');
+        print('Failed to fetch data: ${response.statusCode}');
       }
     } catch (e) {
       print('Error: $e');
+      CommonUtils.showCustomToastMessageLong(
+          'Something went wrong', context, 2, 2);
     }
+    Navigator.of(context).pop();
   }
 }
 
@@ -1053,16 +1107,17 @@ class MyCard extends StatefulWidget {
 class _MyCardState extends State<MyCard> {
   final _boxBorder = BoxDecoration(
     borderRadius: BorderRadius.circular(10),
+    color: Colors.white,
   );
 
   final _iconBoxBorder = BoxDecoration(
     borderRadius: BorderRadius.circular(10),
-    color: Colors.white30,
+    color: Colors.white10,
   );
 
   final _textStyle = const TextStyle(
       fontFamily: 'Roboto',
-      fontSize: 12,
+      fontSize: 13,
       color: Colors.black,
       fontWeight: FontWeight.bold);
 
@@ -1077,7 +1132,6 @@ class _MyCardState extends State<MyCard> {
     String dateString = widget.listResult.date;
     DateTime date = DateTime.parse(dateString);
     String formattedDate = DateFormat('dd MMM, yyyy').format(date);
-
     return GestureDetector(
       onTap: () {
         // Navigator.of(context)
@@ -1101,12 +1155,14 @@ class _MyCardState extends State<MyCard> {
         color: Colors.transparent,
         child: Card(
           elevation: 5,
-          color: Colors.white,
           child: Container(
-            padding: const EdgeInsets.all(12),
+            padding:
+            // const EdgeInsets.only(left: 12, right: 5, top: 12, bottom: 12),
+            const EdgeInsets.all(12),
             //   width: double.infinity,
             width: MediaQuery.of(context).size.width,
             decoration: BoxDecoration(
+              color: Colors.white,
               borderRadius: BorderRadius.circular(10),
             ),
             child: Column(
@@ -1122,8 +1178,7 @@ class _MyCardState extends State<MyCard> {
                     children: [
                       // starting icon of card
                       Card(
-                        elevation: 2,
-                        color: Colors.white70,
+                        elevation: 3,
                         child: Container(
                           height: 65,
                           width: 60,
@@ -1137,7 +1192,7 @@ class _MyCardState extends State<MyCard> {
                       ),
 
                       // beside info
-                      Container(
+                      SizedBox(
                         //height: 90,
                         // width: ,
                         width: MediaQuery.of(context).size.width / 1.6,
@@ -1148,41 +1203,39 @@ class _MyCardState extends State<MyCard> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
+                              // here
                               Text(
                                 widget.listResult.partyName,
-                                style: _textStyle,
+                                style: CommonUtils.Mediumtext_14_cb,
                                 softWrap: true,
                                 maxLines: 2,
                                 overflow: TextOverflow.ellipsis,
                               ),
-                              SizedBox(
+                              const SizedBox(
                                 height: 5.0,
                               ),
                               Row(
                                 mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
+                                MainAxisAlignment.spaceBetween,
                                 children: [
-                                  Container(
-                                    child: Row(
-                                      children: [
-                                        Text(
-                                          'Purpose: ',
-                                          style: _textStyle,
-                                        ),
-                                        Text(
-                                          widget.listResult.purposeName,
-                                          style: _orangeTextStyle,
-                                        ),
-                                      ],
-                                    ),
+                                  Row(
+                                    children: [
+                                      Text(
+                                        'Purpose: ',
+                                        style: _textStyle,
+                                      ),
+                                      Text(
+                                        widget.listResult.purposeName,
+                                        style: _orangeTextStyle,
+                                      ),
+                                    ],
                                   ),
                                 ],
                               ),
-                              SizedBox(
+                              const SizedBox(
                                 height: 5.0,
                               ),
-                              Container(
-                                  child: Row(
+                              Row(
                                 children: [
                                   Text(
                                     'Payment Mode: ',
@@ -1193,7 +1246,7 @@ class _MyCardState extends State<MyCard> {
                                     style: _orangeTextStyle,
                                   ),
                                 ],
-                              ))
+                              )
                             ],
                           ),
                         ),
@@ -1201,7 +1254,7 @@ class _MyCardState extends State<MyCard> {
                     ],
                   ),
                 ),
-                SizedBox(
+                const SizedBox(
                   height: 5.0,
                 ),
                 //bottom date and amount in card
@@ -1224,9 +1277,11 @@ class _MyCardState extends State<MyCard> {
                     //     ],
                     //   ),
                     // ),
+
+                    // 202
                     Container(
-                      height: 30,
                       width: 65,
+                      padding: const EdgeInsets.symmetric(vertical: 3),
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(10),
                         color: getStatusTypeBackgroundColor(
@@ -1238,6 +1293,7 @@ class _MyCardState extends State<MyCard> {
                           Text(
                             widget.listResult.statusName,
                             style: TextStyle(
+                              fontSize: 11,
                               color: getStatusTypeTextColor(
                                   widget.listResult.statusTypeId),
                               // Add other text styles as needed
@@ -1247,48 +1303,45 @@ class _MyCardState extends State<MyCard> {
                       ),
                     ),
 
-                    SizedBox(
+                    const SizedBox(
                       width: 10.0,
                     ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      children: [
-                        Container(
-                            child: Row(
-                          children: [
-                            Text(
-                              'Date: ',
-                              style: _textStyle,
-                            ),
-                            Text(
-                              formattedDate,
-                              style: _orangeTextStyle,
-                            ),
-                          ],
-                        )),
-                        SizedBox(
-                          width: 10.0,
-                        ),
-                        //Spacer(),
-                        Container(
-                          child: Row(
+                    Expanded(
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Row(
                             children: [
+                              // Text(
+                              //   'Date: ',
+                              //   style: _textStyle,
+                              // ),
                               Text(
-                                'Amount: ',
-                                style: _textStyle,
+                                formattedDate,
+                                style: _orangeTextStyle,
+                              ),
+                            ],
+                          ),
+                          // const SizedBox(
+                          //   width: 10.0,
+                          // ),
+                          //Spacer(),
+                          Row(
+                            children: [
+                              Icon(
+                                Icons.currency_rupee,
+                                size: 12,
+                                color: HexColor('#e58338'),
                               ),
                               Text(
                                 '${widget.listResult.amount}',
                                 style: _orangeTextStyle,
                               ),
                             ],
-                          ),
-                        )
-                      ],
+                          )
+                        ],
+                      ),
                     ),
-                    // SizedBox(
-                    //   width: 10.0,
-                    // ),
                   ],
                 )
               ],
@@ -1304,15 +1357,15 @@ class _MyCardState extends State<MyCard> {
       case 7:
         return Colors.green.withOpacity(0.1);
       case 8:
-        // Set background color for statusTypeId 8
-        return Color(0xFFE58338).withOpacity(0.1);
+      // Set background color for statusTypeId 8
+        return const Color(0xFFE58338).withOpacity(0.1);
       case 9:
-        // Set background color for statusTypeId 9
+      // Set background color for statusTypeId 9
         return Colors.red.withOpacity(0.1);
-      // Add more cases as needed for other statusTypeId values
+    // Add more cases as needed for other statusTypeId values
 
       default:
-        // Default background color or handle other cases if needed
+      // Default background color or handle other cases if needed
         return Colors.white;
     }
   }
@@ -1322,15 +1375,15 @@ class _MyCardState extends State<MyCard> {
       case 7:
         return Colors.green;
       case 8:
-        // Set text color for statusTypeId 8
-        return Color(0xFFE58338);
+      // Set text color for statusTypeId 8
+        return const Color(0xFFE58338);
       case 9:
-        // Set text color for statusTypeId 9
+      // Set text color for statusTypeId 9
         return Colors.red;
-      // Add more cases as needed for other statusTypeId values
+    // Add more cases as needed for other statusTypeId values
 
       default:
-        // Default text color or handle other cases if needed
+      // Default text color or handle other cases if needed
         return Colors.black;
     }
   }
@@ -1342,11 +1395,11 @@ class _MyCardState extends State<MyCard> {
     switch (statusTypeId) {
       case 7:
         assetPath = 'assets/hourglass-start.svg';
-        iconColor = Color.fromARGB(255, 0, 146, 5);
+        iconColor = const Color.fromARGB(255, 0, 146, 5);
         break;
       case 8:
         assetPath = 'assets/sb_money-bill-wave.svg';
-        iconColor = Color(0xFFE58338); // Color for statusTypeId 8
+        iconColor = const Color(0xFFE58338); // Color for statusTypeId 8
 
         // Set color filter or other customization as needed
         break;
@@ -1355,11 +1408,11 @@ class _MyCardState extends State<MyCard> {
         iconColor = Colors.red;
         // Set color filter or other customization as needed
         break;
-      // Add more cases as needed for other statusTypeId values
+    // Add more cases as needed for other statusTypeId values
 
       default:
         assetPath = 'assets/sb_home.svg';
-      // Set default image or handle other cases if needed
+    // Set default image or handle other cases if needed
     }
 
     return SvgPicture.asset(

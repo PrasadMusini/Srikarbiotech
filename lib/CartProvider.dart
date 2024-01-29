@@ -1,104 +1,81 @@
-// import 'package:flutter/cupertino.dart';
-// import 'package:shared_preferences/shared_preferences.dart';
-//
-// import 'Cart.dart';
-// import 'DBHelper.dart';
-//
-// class CartProvider with ChangeNotifier {
-//   DBHelper dbHelper = DBHelper();
-//   int _counter = 0;
-//   int _quantity = 1;
-//   int get counter => _counter;
-//   int get quantity => _quantity;
-//
-//   double _totalPrice = 0.0;
-//   double get totalPrice => _totalPrice;
-//
-//   List<Cart> cart = [];
-//
-//   Future<List<Cart>> getData() async {
-//     cart = await dbHelper.getCartList();
-//     notifyListeners();
-//     return cart;
-//   }
-//
-//   void _setPrefsItems() async {
-//     SharedPreferences prefs = await SharedPreferences.getInstance();
-//     prefs.setInt('cart_items', _counter);
-//     prefs.setInt('item_quantity', _quantity);
-//     prefs.setDouble('total_price', _totalPrice);
-//     notifyListeners();
-//   }
-//
-//   void _getPrefsItems() async {
-//     SharedPreferences prefs = await SharedPreferences.getInstance();
-//     _counter = prefs.getInt('cart_items') ?? 0;
-//     _quantity = prefs.getInt('item_quantity') ?? 1;
-//     _totalPrice = prefs.getDouble('total_price') ?? 0;
-//   }
-//
-//   void addCounter() {
-//     _counter++;
-//     _setPrefsItems();
-//     notifyListeners();
-//   }
-//
-//   void removeCounter() {
-//     _counter--;
-//     _setPrefsItems();
-//     notifyListeners();
-//   }
-//
-//   int getCounter() {
-//     _getPrefsItems();
-//     return _counter;
-//   }
-//
-//   void addQuantity(int id) {
-//     final index = cart.indexWhere((element) => element.id == id);
-//     cart[index].quantity!.value = cart[index].quantity!.value + 1;
-//     _setPrefsItems();
-//     notifyListeners();
-//   }
-//
-//   void deleteQuantity(int id) {
-//     final index = cart.indexWhere((element) => element.id == id);
-//     final currentQuantity = cart[index].quantity!.value;
-//     if (currentQuantity <= 1) {
-//       currentQuantity == 1;
-//     } else {
-//       cart[index].quantity!.value = currentQuantity - 1;
-//     }
-//     _setPrefsItems();
-//     notifyListeners();
-//   }
-//
-//   void removeItem(int id) {
-//     final index = cart.indexWhere((element) => element.id == id);
-//     cart.removeAt(index);
-//     _setPrefsItems();
-//     notifyListeners();
-//   }
-//
-//   int getQuantity(int quantity) {
-//     _getPrefsItems();
-//     return _quantity;
-//   }
-//
-//   void addTotalPrice(double productPrice) {
-//     _totalPrice = _totalPrice + productPrice;
-//     _setPrefsItems();
-//     notifyListeners();
-//   }
-//
-//   void removeTotalPrice(double productPrice) {
-//     _totalPrice = _totalPrice - productPrice;
-//     _setPrefsItems();
-//     notifyListeners();
-//   }
-//
-//   double getTotalPrice() {
-//     _getPrefsItems();
-//     return _totalPrice;
-//   }
-// }
+import 'dart:convert';
+
+import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+import 'Model/OrderItemXrefType.dart';
+
+class CartProvider extends ChangeNotifier {
+  List<OrderItemXrefType> cartItems = [];
+  static const String cartKey = 'cart';
+  List<String>? cartItemsJson = [];
+  // Method to add items to the cart
+  Future<void> addToCart(OrderItemXrefType item) async {
+    cartItems.add(item);
+    notifyListeners();
+
+    // Save the cartItems to SharedPreferences
+    await saveCartItemsToSharedPreferences(cartItems);
+  }
+  Future<void> saveToSharedPreferences(OrderItemXrefType orderItem) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    List<String> cartItemsJson = prefs.getStringList('cartItems') ?? [];
+
+    // Convert OrderItemXrefType to JSON
+    String orderItemJson = jsonEncode(orderItem.toJson());
+
+    // Add the JSON representation to the list
+    cartItemsJson.add(orderItemJson);
+
+    // Save the updated list to SharedPreferences
+    prefs.setStringList('cartItems', cartItemsJson);
+  }
+  // Method to save cart items to SharedPreferences
+  Future<void> saveCartItemsToSharedPreferences(
+      List<OrderItemXrefType> cartItems) async {
+
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    // Retrieve existing cart items from SharedPreferences
+    cartItemsJson = prefs.getStringList('cart_items') ?? [];
+
+    // Convert the selected products to a JSON string
+    List<String> selectedProductStrings =
+    cartItems.map((product) => jsonEncode(product.toJson())).toList();
+
+    // Add the selected products to the existing cart items
+    cartItemsJson!.addAll(selectedProductStrings);
+
+    // Save the updated cart items back to SharedPreferences
+    prefs.setStringList('cart_items', cartItemsJson!);
+
+    // Log the cart items
+    print('Cart Items: $cartItemsJson');
+    // cartitemslength = '${cartItemsJson.length}';
+    print('Cart Items Length: ${cartItemsJson!.length}');
+
+  }
+
+  // Method to retrieve cart items from SharedPreferences
+  Future<List<OrderItemXrefType>> getCartItemsFromSharedPreferences() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    List<String> cartItemsJson = prefs.getStringList('cartItems') ?? [];
+    List<OrderItemXrefType> cartItems = [];
+
+    for (String json in cartItemsJson) {
+      // Parse JSON string to Map<String, dynamic>
+      Map<String, dynamic> jsonMap = jsonDecode(json);
+
+      // Convert Map<String, dynamic> to OrderItemXrefType
+      OrderItemXrefType orderItem = OrderItemXrefType.fromJson(jsonMap); // Implement a fromJson method in your OrderItemXrefType class
+      cartItems.add(orderItem);
+    }
+
+    return cartItems;
+  }
+
+  // For example, a method to get the current items in the cart
+  List<OrderItemXrefType> getCartItems() {
+    return cartItems;
+  }
+}

@@ -10,6 +10,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:intl/intl.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:share/share.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:srikarbiotech/Common/CommonUtils.dart';
 import 'package:http/http.dart' as http;
 
@@ -38,14 +39,15 @@ class Ledger_screen extends State<Ledgerscreen> {
   // CalendarFormat calendarFormat = CalendarFormat.month;
   DateTime selectedFromDate = DateTime.now();
   DateTime selectedToDate = DateTime.now();
-
+  int CompneyId = 0;
   @override
-  initState() {
+  initState()  {
     super.initState();
     SystemChrome.setPreferredOrientations([
       DeviceOrientation.portraitDown,
       DeviceOrientation.portraitUp,
     ]);
+getshareddata();
     checkStoragePermission();
     print('cardName: ${widget.cardName}');
     print('cardCode: ${widget.cardCode}');
@@ -98,12 +100,18 @@ class Ledger_screen extends State<Ledgerscreen> {
                   MaterialPageRoute(builder: (context) => HomeScreen()),
                 );
               },
-              child: Icon(
-                Icons.home,
-                size: 30,
-                color: Colors.white,
+              child: Container(
+              //  color: Colors.white, // Set the background color to white
+                child: Image.asset(
+                  CompneyId == 1
+                      ? 'assets/srikar-bio.png'
+                      : 'assets/srikar-seed.png',
+                  width: 60.0,
+                  height: 40.0,
+                ),
               ),
             ),
+
           ],
         ),
       ),
@@ -519,7 +527,9 @@ class Ledger_screen extends State<Ledgerscreen> {
 
 
           } else {
-            print('API Error: ${jsonResponse['endUserMessage']}');
+            print('API Error: ${jsonResponse['endUserMessage']}'); CommonUtils.showCustomToastMessageLong(
+                '${jsonResponse['endUserMessage']}', context, 1, 4);
+
           }
         } else {
           print('Error: ${response.reasonPhrase}');
@@ -586,16 +596,6 @@ class Ledger_screen extends State<Ledgerscreen> {
 
           if (jsonResponse['isSuccess']) {
             // Convert base64 string to bytes
-            if (jsonResponse['response'] == null) {
-              // Handle null response
-              CommonUtils.showCustomToastMessageLong(
-                  'PDF is not available.', context, 1, 4);
-              print('Response is null.');
-            } else {
-              // Handle non-null response
-              print(jsonResponse);
-              // Your further processing logic here
-            }
             List<int> pdfBytes = base64.decode(jsonResponse['response']);
             //   var status = await Permission.storage.request();
             final status = await Permission.storage.request();
@@ -629,6 +629,8 @@ class Ledger_screen extends State<Ledgerscreen> {
 
           } else {
             print('API Error: ${jsonResponse['endUserMessage']}');
+            CommonUtils.showCustomToastMessageLong(
+                '${jsonResponse['endUserMessage']}', context, 1, 4);
           }
         } else {
           print('Error: ${response.reasonPhrase}');
@@ -684,6 +686,17 @@ class Ledger_screen extends State<Ledgerscreen> {
     // You might want to show a dialog or message to inform the user
     }
     }
+  }
+
+  Future<void> getshareddata() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+
+// Retrieve userId and slpCode
+    setState(() {
+
+      CompneyId = prefs.getInt("compneyid")!;
+      print('Retrieved CompneyId: $CompneyId');
+    });
   }
 
 

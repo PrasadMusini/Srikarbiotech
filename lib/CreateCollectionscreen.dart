@@ -85,6 +85,7 @@ class Createcollection_screen extends State<CreateCollectionscreen> {
   String selectedItmsGrpCod = '';
   String selectedItmsGrpNam = '';
   bool isLoading = false;
+  int CompneyId = 0;
   @override
   initState() {
     super.initState();
@@ -98,13 +99,13 @@ class Createcollection_screen extends State<CreateCollectionscreen> {
     print('address: ${widget.address}');
     print('gstRegnNo: ${widget.gstRegnNo}');
     print('proprietorName: ${widget.proprietorName}');
-
+getshareddata();
     CommonUtils.checkInternetConnectivity().then((isConnected) {
       if (isConnected) {
         getpaymentmethods();
         selectedIndex = 0;
         fetchdropdownitems();
-        getslpcode();
+
         fetchdropdownitemscategory();
 
         print('The Internet Is Connected');
@@ -1298,7 +1299,7 @@ class Createcollection_screen extends State<CreateCollectionscreen> {
       "FileLocation": "",
       "FileExtension": fileExtension,
       "Remarks": "",
-      "CompanyId": 2,
+      "CompanyId": CompneyId,
       "StatusTypeId": 7,
       "IsActive": true,
       "CreatedBy": '$userId',
@@ -1544,23 +1545,6 @@ class Createcollection_screen extends State<CreateCollectionscreen> {
     }
   }
 
-  Future<void> getslpcode() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-
-// Retrieve userId and slpCode
-    userId = prefs.getString("userId");
-    slpCode = prefs.getString("slpCode");
-
-// Check if they are not null before using them
-    if (userId != null && slpCode != null) {
-      // Use userId and slpCode in your code
-      print('Retrieved userId: $userId');
-      print('Retrieved slpCode: $slpCode');
-    } else {
-      // Handle the case where userId or slpCode is null
-      print('User not logged in or missing required data.');
-    }
-  }
 
   Future<void> getpaymentmethods() async {
     final response = await http.get(Uri.parse(
@@ -1700,4 +1684,28 @@ class Createcollection_screen extends State<CreateCollectionscreen> {
       print('Error: $e');
     }
   }
+  Future<void> getshareddata() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+
+// Retrieve userId and slpCode
+
+    setState(() {
+      userId = prefs.getString("userId");
+      slpCode = prefs.getString("slpCode");
+      CompneyId = prefs.getInt("compneyid")!;
+
+      print('Retrieved CompneyId: $CompneyId');
+    });
+// Check if they are not null before using them
+    if (userId != null && slpCode != null ) {
+      // Use userId and slpCode in your code
+      print('Retrieved userId: $userId');
+      print('Retrieved slpCode: $slpCode');
+
+    } else {
+      // Handle the case where userId or slpCode is null
+      print('User not logged in or missing required data.');
+    }
+  }
+
 }

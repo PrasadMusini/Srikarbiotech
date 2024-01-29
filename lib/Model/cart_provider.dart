@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
+import 'package:flutter/foundation.dart';
 import '../CartItem.dart';
 
 // import 'package:shopping_cart_app/database/db_helper.dart';

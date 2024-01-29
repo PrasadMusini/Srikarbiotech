@@ -3,9 +3,11 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:srikarbiotech/ViewOrders.dart';
 import 'package:srikarbiotech/view_collection_page.dart';
 
+import 'Common/CommonUtils.dart';
 import 'Selectpartyscreen.dart';
 import 'ViewReturnorder.dart';
 
@@ -16,7 +18,9 @@ class HomeScreen extends StatefulWidget {
 
 class _home_Screen extends State<HomeScreen> {
   int currentIndex = 0;
-
+int CompneyId = 0;
+  String? userId = "";
+  String? slpCode = "";
   @override
   initState() {
     super.initState();
@@ -25,16 +29,15 @@ class _home_Screen extends State<HomeScreen> {
       DeviceOrientation.portraitUp,
     ]);
 
-    // CommonUtils.checkInternetConnectivity().then((isConnected) {
-    //   if (isConnected) {
-    //     print('Connected to the internet');
-    //     fetchImages();
-    //     _getData();
-    //   } else {
-    //     CommonUtils.showCustomToastMessageLong('No Internet Connection', context, 1, 4);
-    //     print('Not connected to the internet');  // Not connected to the internet
-    //   }
-    // });
+    CommonUtils.checkInternetConnectivity().then((isConnected) {
+      if (isConnected) {
+        print('Connected to the internet');
+        getshareddata();
+      } else {
+        CommonUtils.showCustomToastMessageLong('No Internet Connection', context, 1, 4);
+        print('Not connected to the internet');  // Not connected to the internet
+      }
+    });
   }
 
   @override
@@ -47,21 +50,25 @@ class _home_Screen extends State<HomeScreen> {
         //  centerTitle: true,
         automaticallyImplyLeading:
             false, // Set this to false to remove back arrow
-        title: Row(
+        title:
+        Row(
           mainAxisAlignment: MainAxisAlignment.start,
           mainAxisSize: MainAxisSize.min,
           children: [
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 2, vertical: 2),
             ),
-            SvgPicture.asset(
-              'assets/srikar_biotech_logo.svg',
+            Image.asset(
+              CompneyId == 1
+                  ? 'assets/srikar-bio.png'
+                  : 'assets/srikar-seed.png',
               width: 60.0,
               height: 40.0,
-              //color: Color(0xFFe78337),
             ),
             Text(
-              'Srikar Bio Tech',
+              CompneyId == 1
+                  ? 'Srikar Bio Tech'
+                  : 'Srikar Seeds ',
               style: TextStyle(
                   color: Color(0xFF414141), fontWeight: FontWeight.w600),
             ),
@@ -90,7 +97,32 @@ class _home_Screen extends State<HomeScreen> {
       body: imageslider(),
     );
   }
-}
+
+  Future<void> getshareddata() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+
+// Retrieve userId and slpCode
+
+
+    setState(() {
+    userId = prefs.getString("userId");
+       slpCode = prefs.getString("slpCode");
+      CompneyId = prefs.getInt("compneyid")!;
+    print('Retrieved CompneyId: $CompneyId');
+    });
+// Check if they are not null before using them
+    if (userId != null && slpCode != null ) {
+      // Use userId and slpCode in your code
+      print('Retrieved userId: $userId');
+      print('Retrieved slpCode: $slpCode');
+
+    } else {
+      // Handle the case where userId or slpCode is null
+      print('User not logged in or missing required data.');
+    }
+  }
+  }
+
 
 class BannerImages {
   final String FilePath;

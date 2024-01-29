@@ -20,7 +20,7 @@ class billing_screen extends StatefulWidget {
 
 class _billing_screenState extends State<billing_screen> {
   TextEditingController nacharamController = TextEditingController();
-  List<SelectedProducts> savedCartItems = [];
+  // List<SelectedProducts> savedCartItems = [];
   List<String>? cartItems = [];
   @override
   void initState() {
@@ -102,13 +102,13 @@ class _billing_screenState extends State<billing_screen> {
     // ...
 
     // Update the state to trigger a rebuild and reflect the changes
-    setState(() {
-      // Remove the item at the specified index from the savedCartItems list
-      savedCartItems.removeAt(index);
-
-      // Save the updated list to SharedPreferences
-      CartHelper.saveFertCartitems(savedCartItems);
-    });
+    // setState(() {
+    //   // Remove the item at the specified index from the savedCartItems list
+    //   savedCartItems.removeAt(index);
+    //
+    //   // Save the updated list to SharedPreferences
+    //   CartHelper.saveFertCartitems(savedCartItems);
+    // });
   }
 
   // Future<void> deleteItem(BuildContext context, int index) async {

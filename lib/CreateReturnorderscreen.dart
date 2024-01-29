@@ -781,12 +781,12 @@ class _ProductListState extends State<CreateReturnorderscreen > {
     );
   }
 
-  bool _isValidCart(List<SelectedProducts> cartItems) {
-    // Check if the cart items have valid data (replace with your own validation logic)
-    return cartItems.isNotEmpty &&
-        cartItems.any((product) =>
-        product.productName.isNotEmpty && product.productPrice > 0);
-  }
+  // bool _isValidCart(List<SelectedProducts> cartItems) {
+  //   // Check if the cart items have valid data (replace with your own validation logic)
+  //   return cartItems.isNotEmpty &&
+  //       cartItems.any((product) =>
+  //       product.productName.isNotEmpty && product.productPrice > 0);
+  // }
 
 
   Widget buildweight(int index, String mode, Function onTap,

@@ -11,8 +11,10 @@ import 'package:badges/src/badge.dart' as badge;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:srikarbiotech/transport_payment.dart';
 
+import '../CartProvider.dart';
 import '../Common/CommonUtils.dart';
 import '../Model/GetItemGroups.dart';
+import '../Model/OrderItemXrefType.dart';
 
 class Createorderscreen extends StatefulWidget {
   final String cardName;
@@ -35,6 +37,23 @@ class Createorderscreen extends StatefulWidget {
   @override
   State<Createorderscreen> createState() => _ProductListState();
 }
+// class OrderItemXrefType {
+//   final String itemName;
+//   final int price;
+//   final int orderQty;
+//
+//   OrderItemXrefType({
+//     required this.itemName,
+//     required this.price,
+//     required this.orderQty,
+//   });
+//   Map<String, dynamic> toJson() => {
+//     'itemName': itemName,
+//     'price': price,
+//     'orderQty': orderQty,
+//   };
+//
+// }
 
 class _ProductListState extends State<Createorderscreen> {
   // DBHelper dbHelper = DBHelper();
@@ -47,6 +66,7 @@ class _ProductListState extends State<Createorderscreen> {
   List<ItemGroup> filtereditemgroup = [];
   TextEditingController searchController = TextEditingController();
   bool isButtonClicked = false;
+  int globalCartLength = 0;
   // List<int> selectedIndices = [];
   String Groupname = "";
   String ItemCode = "";
@@ -56,12 +76,42 @@ class _ProductListState extends State<Createorderscreen> {
   String getgropcode = "";
   ApiResponse? apiResponse;
   String parts = "";
-  List<String>? cartItems = [];
+
+  List<String>? cartItemsJson = [];
+  List<OrderItemXrefType> savedDataList = [];
+  int cartitemslength = 0;
+
+
+// Function to save cart items to SharedPreferences
+  Future<void> saveCartItems(List<OrderItemXrefType> selectedProducts) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    // Retrieve existing cart items from SharedPreferences
+   cartItemsJson = prefs.getStringList('cart_items') ?? [];
+
+    // Convert the selected products to a JSON string
+    List<String> selectedProductStrings =
+    selectedProducts.map((product) => jsonEncode(product.toJson())).toList();
+
+    // Add the selected products to the existing cart items
+    cartItemsJson!.addAll(selectedProductStrings);
+
+    // Save the updated cart items back to SharedPreferences
+    prefs.setStringList('cart_items', cartItemsJson!);
+
+    // Log the cart items
+    print('Cart Items: $cartItemsJson');
+   // cartitemslength = '${cartItemsJson.length}';
+    print('Cart Items Length: ${cartItemsJson!.length}');
+
+
+  }
+
 // Declare ApiResponse globally
   @override
   void initState() {
     super.initState();
-    print('Total items in the cart: ${cartItems!.length}');
+    print('Total items in the cart: ${cartItemsJson!.length}');
     // fetchProducts();
     //  fetchProducts();
     fetchProducts().then((response) {
@@ -72,6 +122,7 @@ class _ProductListState extends State<Createorderscreen> {
         fetchproductlist('102');
       });
     });
+
   }
 
   Future<ApiResponse> fetchProducts() async {
@@ -130,8 +181,9 @@ class _ProductListState extends State<Createorderscreen> {
                 .map((response) => ProductResponse.fromJson(response))
                 .toList();
             filteredproducts = List.from(totalproducts);
-            quantities = List<int>.filled(filteredproducts.length, 1);
-            isSelectedList = List<bool>.filled(filteredproducts.length, false);
+
+            quantities = List.generate(filteredproducts.length, (index) => 0);
+            isSelectedList = List.generate(filteredproducts.length, (index) => false);
             textEditingControllers = List.generate(
                 filteredproducts.length, (index) => TextEditingController());
             print('productresponse ${filteredproducts.length}');
@@ -189,7 +241,7 @@ class _ProductListState extends State<Createorderscreen> {
                     color: Colors.red, // Customize the badge color
                   ),
                   child: Text(
-                    '${cartItems!.length}',
+                    '${globalCartLength}',
                     style: TextStyle(
                       color: Colors.white,
                       fontWeight: FontWeight.bold,
@@ -358,410 +410,449 @@ class _ProductListState extends State<Createorderscreen> {
                             ),
                           ),
                         ))
-                  : ListView.builder(
-                      itemCount: filteredproducts.length,
-                      itemBuilder: (context, index) {
-                        if (index < 0 || index >= filteredproducts.length) {
-                          return Container(
-                            child: Text('Error: Index out of bounds'),
-                          );
-                        }
+                  :
+              Consumer<CartProvider>(
+                builder: (context, cartProvider, _) {
+                  List<OrderItemXrefType> cartItems = cartProvider.getCartItems();
+                  // Set the global cart length
 
-                        final productresp = filteredproducts[index];
+                  return
+                  ListView.builder(
+                  itemCount: filteredproducts.length,
+    itemBuilder: (context, index) {
+    if (index < 0 || index >= filteredproducts.length) {
+    return Container(
+    child: Text('Error: Index out of bounds'),
+    );
+    }
 
-                        return GestureDetector(
-                            onTap: () {
-                              print('Tapped on ID: ${productresp.itemCode}');
-                            },
-                            child: Container(
-                                child: Card(
-                              color: Colors.white,
-                              elevation: 5.0,
-                              child: Padding(
-                                padding: const EdgeInsets.all(15.0),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  children: [
-                                    RichText(
-                                      overflow: TextOverflow.ellipsis,
-                                      maxLines: 1,
-                                      text: TextSpan(
-                                        text:
-                                            '${productresp.itemName.toString()}\n',
-                                        style: TextStyle(
-                                          color: Color(0xFF424242),
-                                          fontSize: 16,
-                                          fontFamily: "Roboto",
-                                          fontWeight: FontWeight.w700,
-                                        ),
-                                      ),
-                                    ),
-                                    SizedBox(
-                                      height: 8.0,
-                                    ),
-                                    Row(
-                                      // crossAxisAlignment: CrossAxisAlignment.start,
-                                      // mainAxisAlignment: MainAxisAlignment.start,
-                                      children: [
-                                        Container(
-                                          child: Text(
-                                            '${productresp.itmsGrpNam.toString()}',
-                                            style: TextStyle(
-                                              color: Color(0xFF848484),
-                                              fontFamily: "Roboto",
-                                              fontWeight: FontWeight.w600,
-                                              fontSize: 12.0,
-                                            ),
-                                          ),
-                                        ),
-                                        Spacer(),
-                                        Row(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.end,
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.end,
-                                          children: [
-                                            Container(
-                                              child: Row(
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.end,
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment.end,
-                                                children: [
-                                                  RichText(
-                                                    text: TextSpan(
-                                                      style: TextStyle(
-                                                        fontSize: 12,
-                                                        fontFamily: "Roboto",
-                                                        fontWeight:
-                                                            FontWeight.w600,
-                                                      ),
-                                                      children: [
-                                                        TextSpan(
-                                                          text:
-                                                              '${productresp.ugpName.toString().split('=')[0]} ',
-                                                          style: TextStyle(
-                                                            color: Color(
-                                                                0xFF000000), // Orange color before "="
-                                                          ),
-                                                        ),
-                                                        TextSpan(
-                                                          text: '=',
-                                                          style: TextStyle(
-                                                            fontSize: 12,
-                                                            fontFamily:
-                                                                "Roboto",
-                                                            fontWeight:
-                                                                FontWeight.w600,
-                                                            color: Color(
-                                                                0xFF000000), // Black color for "="
-                                                          ),
-                                                        ),
-                                                        TextSpan(
-                                                          text:
-                                                              ' ${productresp.ugpName.toString().split('=')[1]}',
-                                                          style: TextStyle(
-                                                            fontSize: 12,
-                                                            fontFamily:
-                                                                "Roboto",
-                                                            fontWeight:
-                                                                FontWeight.w600,
-                                                            color: Color(
-                                                                0xFFe78337), // Orange color after "="
-                                                          ),
-                                                        ),
-                                                      ],
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                            )
-                                          ],
-                                        ),
-                                      ],
-                                    ),
-                                    SizedBox(
-                                      height: 5.0,
-                                    ),
-                                    RichText(
-                                      maxLines: 1,
-                                      text: TextSpan(
-                                        text:
-                                            '₹${productresp.cstGrpCode.toString()}  ',
-                                        style: TextStyle(
-                                          color: Color(0xFFe78337),
-                                          fontFamily: "Roboto",
-                                          fontWeight: FontWeight.w600,
-                                          fontSize: 16.0,
-                                        ),
-                                        children: [
-                                          TextSpan(
-                                            text: '/ ',
-                                            style: TextStyle(
-                                              color: Color(0xFFa6a6a6),
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: 13.0,
-                                              // decoration: TextDecoration.lineThrough,
-                                            ),
-                                          ),
-                                          TextSpan(
-                                            text: '${productresp.uMuom}',
-                                            style: TextStyle(
-                                              color: Color(0xFFa6a6a6),
-                                              fontFamily: "Roboto",
-                                              fontWeight: FontWeight.w600,
-                                              fontSize: 12.0,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                    SizedBox(
-                                      height: 5.0,
-                                    ),
-                                    Row(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.start,
-                                      children: [
-                                        Padding(
-                                          padding: const EdgeInsets.only(
-                                              right: 0, left: 0, bottom: 0),
-                                          child: Row(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.start,
-                                            children: [
-                                              Container(
-                                                height: 36,
-                                                width: MediaQuery.of(context)
-                                                        .size
-                                                        .width /
-                                                    2.5,
-                                                decoration: BoxDecoration(
-                                                  color: Color(0xFFe78337),
-                                                  borderRadius:
-                                                      BorderRadius.circular(
-                                                          10.0),
-                                                ),
-                                                child: Row(
-                                                  children: [
-                                                    IconButton(
-                                                      icon: Icon(Icons.remove,
-                                                          color: Colors.white),
-                                                      onPressed: () {
-                                                        if (quantities[index] >
-                                                            1) {
-                                                          setState(() {
-                                                            quantities[index]--;
-                                                          });
-                                                          textEditingControllers[
-                                                                      index]
-                                                                  .text =
-                                                              quantities[index]
-                                                                  .toString();
-                                                        }
-                                                      },
-                                                      iconSize: 25.0,
-                                                    ),
-                                                    Expanded(
-                                                      child: Align(
-                                                        alignment:
-                                                            Alignment.center,
-                                                        child: Container(
-                                                          height: 35,
-                                                          child: Padding(
-                                                            padding:
-                                                                const EdgeInsets
-                                                                    .all(2.0),
-                                                            child: Container(
-                                                              alignment:
-                                                                  Alignment
-                                                                      .center,
-                                                              width: MediaQuery.of(
-                                                                          context)
-                                                                      .size
-                                                                      .width /
-                                                                  5.1,
-                                                              decoration:
-                                                                  BoxDecoration(
-                                                                color: Colors
-                                                                    .white,
-                                                              ),
-                                                              child: TextField(
-                                                                controller:
-                                                                    textEditingControllers[
-                                                                        index],
-                                                                keyboardType:
-                                                                    TextInputType
-                                                                        .number,
-                                                                inputFormatters: <TextInputFormatter>[
-                                                                  FilteringTextInputFormatter
-                                                                      .digitsOnly,
-                                                                  LengthLimitingTextInputFormatter(
-                                                                      5),
-                                                                ],
-                                                                onChanged:
-                                                                    (value) {
-                                                                  setState(() {
-                                                                    quantities[
-                                                                        index] = int.parse(value
-                                                                            .isEmpty
-                                                                        ? '1'
-                                                                        : value);
-                                                                  });
-                                                                },
-                                                                decoration:
-                                                                    InputDecoration(
-                                                                  hintText: '1',
-                                                                  hintStyle:
-                                                                      CommonUtils
-                                                                          .Mediumtext_o_14,
-                                                                  border:
-                                                                      InputBorder
-                                                                          .none,
-                                                                  focusedBorder:
-                                                                      InputBorder
-                                                                          .none,
-                                                                  enabledBorder:
-                                                                      InputBorder
-                                                                          .none,
-                                                                  contentPadding:
-                                                                      EdgeInsets.only(
-                                                                          bottom:
-                                                                              10.0),
-                                                                ),
-                                                                textAlign:
-                                                                    TextAlign
-                                                                        .center,
-                                                                style: CommonUtils
-                                                                    .Mediumtext_o_14,
-                                                              ),
-                                                            ),
-                                                          ),
-                                                        ),
-                                                      ),
-                                                    ),
-                                                    IconButton(
-                                                      icon: Icon(Icons.add,
-                                                          color: Colors.white),
-                                                      onPressed: () {
-                                                        setState(() {
-                                                          quantities[index]++;
-                                                        });
-                                                        textEditingControllers[
-                                                                    index]
-                                                                .text =
-                                                            quantities[index]
-                                                                .toString();
-                                                      },
-                                                      alignment:
-                                                          Alignment.centerLeft,
-                                                      iconSize: 25.0,
-                                                    ),
-                                                  ],
-                                                ),
-                                              ),
-                                              SizedBox(
-                                                width: 8.0,
-                                              ),
-                                              Padding(
-                                                padding:
-                                                    const EdgeInsets.symmetric(
-                                                        horizontal: 4.0),
-                                                child: GestureDetector(
-                                                  onTap: () {
-                                                    setState(() {
-                                                      isSelectedList[index] =
-                                                          !isSelectedList[
-                                                              index];
-                                                    });
-                                                    if (quantities[index] > 0) {
-                                                      saveData(index);
-                                                    }
-                                                  },
-                                                  child: Container(
-                                                    height: 36,
-                                                    decoration: BoxDecoration(
-                                                      color: isSelectedList[
-                                                              index]
-                                                          ? Color(0xFFe78337)
-                                                          : Color(0xFFF8dac2),
-                                                      border: Border.all(
-                                                        color:
-                                                            Color(0xFFe78337),
-                                                        width: 1.0,
-                                                      ),
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              8.0),
-                                                    ),
-                                                    child: Padding(
-                                                      padding: const EdgeInsets
-                                                          .symmetric(
-                                                          horizontal: 4.0),
-                                                      child: Row(
-                                                        children: [
-                                                          Icon(
-                                                            Icons
-                                                                .add_shopping_cart,
-                                                            size: 18.0,
-                                                            color: isSelectedList[
-                                                                    index]
-                                                                ? Color(
-                                                                    0xFFfff6eb)
-                                                                : Color(
-                                                                    0xFFe78337),
-                                                          ),
-                                                          SizedBox(
-                                                              width:
-                                                                  4.0), // Adjust the spacing between icon and text
-                                                          Text(
-                                                            isSelectedList[
-                                                                    index]
-                                                                ? 'Added'
-                                                                : 'Add',
-                                                            style: TextStyle(
-                                                              color: isSelectedList[
-                                                                      index]
-                                                                  ? Color(
-                                                                      0xFFfff6eb)
-                                                                  : Color(
-                                                                      0xFFe78337),
-                                                              fontSize: 14,
-                                                              fontFamily:
-                                                                  "Roboto",
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .w600,
-                                                            ),
-                                                          ),
-                                                          SizedBox(width: 4.0),
-                                                        ],
-                                                      ),
-                                                    ),
-                                                  ),
-                                                ),
-                                              )
-                                            ],
-                                          ),
-                                        )
-                                      ],
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            )));
-                        // rest of your code...
-                      },
-                    ),
-            ),
-          )
-        ],
-      ),
+    final productresp = filteredproducts[index];
+
+    return GestureDetector(
+    onTap: () {
+    print('Tapped on ID: ${productresp.itemCode}');
+    },
+    child: Container(
+    child: Card(
+    color: Colors.white,
+    elevation: 5.0,
+    child: Padding(
+    padding: const EdgeInsets.all(15.0),
+    child: Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    mainAxisAlignment: MainAxisAlignment.start,
+    children: [
+    RichText(
+    overflow: TextOverflow.ellipsis,
+    maxLines: 1,
+    text: TextSpan(
+    text:
+    '${productresp.itemName.toString()}\n',
+    style: TextStyle(
+    color: Color(0xFF424242),
+    fontSize: 16,
+    fontFamily: "Roboto",
+    fontWeight: FontWeight.w700,
+    ),
+    ),
+    ),
+    SizedBox(
+    height: 8.0,
+    ),
+    Row(
+    // crossAxisAlignment: CrossAxisAlignment.start,
+    // mainAxisAlignment: MainAxisAlignment.start,
+    children: [
+    Container(
+    child: Text(
+    '${productresp.itmsGrpNam.toString()}',
+    style: TextStyle(
+    color: Color(0xFF848484),
+    fontFamily: "Roboto",
+    fontWeight: FontWeight.w600,
+    fontSize: 12.0,
+    ),
+    ),
+    ),
+    Spacer(),
+    Row(
+    crossAxisAlignment:
+    CrossAxisAlignment.end,
+    mainAxisAlignment:
+    MainAxisAlignment.end,
+    children: [
+    Container(
+    child: Row(
+    crossAxisAlignment:
+    CrossAxisAlignment.end,
+    mainAxisAlignment:
+    MainAxisAlignment.end,
+    children: [
+    RichText(
+    text: TextSpan(
+    style: TextStyle(
+    fontSize: 12,
+    fontFamily: "Roboto",
+    fontWeight:
+    FontWeight.w600,
+    ),
+    children: [
+    TextSpan(
+    text:
+    '${productresp.ugpName.toString().split('=')[0]} ',
+    style: TextStyle(
+    color: Color(
+    0xFF000000), // Orange color before "="
+    ),
+    ),
+    TextSpan(
+    text: '=',
+    style: TextStyle(
+    fontSize: 12,
+    fontFamily:
+    "Roboto",
+    fontWeight:
+    FontWeight.w600,
+    color: Color(
+    0xFF000000), // Black color for "="
+    ),
+    ),
+    TextSpan(
+    text:
+    ' ${productresp.ugpName.toString().split('=')[1]}',
+    style: TextStyle(
+    fontSize: 12,
+    fontFamily:
+    "Roboto",
+    fontWeight:
+    FontWeight.w600,
+    color: Color(
+    0xFFe78337), // Orange color after "="
+    ),
+    ),
+    ],
+    ),
+    ),
+    ],
+    ),
+    )
+    ],
+    ),
+    ],
+    ),
+    SizedBox(
+    height: 5.0,
+    ),
+    RichText(
+    maxLines: 1,
+    text: TextSpan(
+    text:
+    '₹${productresp.cstGrpCode.toString()}  ',
+    style: TextStyle(
+    color: Color(0xFFe78337),
+    fontFamily: "Roboto",
+    fontWeight: FontWeight.w600,
+    fontSize: 16.0,
+    ),
+    children: [
+    TextSpan(
+    text: '/ ',
+    style: TextStyle(
+    color: Color(0xFFa6a6a6),
+    fontWeight: FontWeight.bold,
+    fontSize: 13.0,
+    // decoration: TextDecoration.lineThrough,
+    ),
+    ),
+    TextSpan(
+    text: '${productresp.uMuom}',
+    style: TextStyle(
+    color: Color(0xFFa6a6a6),
+    fontFamily: "Roboto",
+    fontWeight: FontWeight.w600,
+    fontSize: 12.0,
+    ),
+    ),
+    ],
+    ),
+    ),
+    SizedBox(
+    height: 5.0,
+    ),
+    Row(
+    crossAxisAlignment:
+    CrossAxisAlignment.start,
+    mainAxisAlignment:
+    MainAxisAlignment.start,
+    children: [
+    Padding(
+    padding: const EdgeInsets.only(
+    right: 0, left: 0, bottom: 0),
+    child: Row(
+    crossAxisAlignment:
+    CrossAxisAlignment.start,
+    mainAxisAlignment:
+    MainAxisAlignment.start,
+    children: [
+    Container(
+    height: 36,
+    width: MediaQuery.of(context)
+        .size
+        .width /
+    2.5,
+    decoration: BoxDecoration(
+    color: Color(0xFFe78337),
+    borderRadius:
+    BorderRadius.circular(
+    10.0),
+    ),
+    child: Row(
+    children: [
+    IconButton(
+    icon: Icon(Icons.remove,
+    color: Colors.white),
+    onPressed: () {
+    if (quantities[index] >
+    1) {
+    setState(() {
+    quantities[index]--;
+    });
+    textEditingControllers[
+    index]
+        .text =
+    quantities[index]
+        .toString();
+    }
+    },
+    iconSize: 25.0,
+    ),
+    Expanded(
+    child: Align(
+    alignment:
+    Alignment.center,
+    child: Container(
+    height: 35,
+    child: Padding(
+    padding:
+    const EdgeInsets
+        .all(2.0),
+    child: Container(
+    alignment:
+    Alignment
+        .center,
+    width: MediaQuery.of(
+    context)
+        .size
+        .width /
+    5.1,
+    decoration:
+    BoxDecoration(
+    color: Colors
+        .white,
+    ),
+    child: TextField(
+    controller:
+    textEditingControllers[
+    index],
+    keyboardType:
+    TextInputType
+        .number,
+    inputFormatters: <TextInputFormatter>[
+    FilteringTextInputFormatter
+        .digitsOnly,
+    LengthLimitingTextInputFormatter(
+    5),
+    ],
+    onChanged:
+    (value) {
+    setState(() {
+    quantities[
+    index] = int.parse(value
+        .isEmpty
+    ? '1'
+        : value);
+    });
+    },
+    decoration:
+    InputDecoration(
+    hintText: '1',
+    hintStyle:
+    CommonUtils
+        .Mediumtext_o_14,
+    border:
+    InputBorder
+        .none,
+    focusedBorder:
+    InputBorder
+        .none,
+    enabledBorder:
+    InputBorder
+        .none,
+    contentPadding:
+    EdgeInsets.only(
+    bottom:
+    10.0),
+    ),
+    textAlign:
+    TextAlign
+        .center,
+    style: CommonUtils
+        .Mediumtext_o_14,
+    ),
+    ),
+    ),
+    ),
+    ),
+    ),
+    IconButton(
+    icon: Icon(Icons.add,
+    color: Colors.white),
+    onPressed: () {
+    setState(() {
+    quantities[index]++;
+    });
+    textEditingControllers[
+    index]
+        .text =
+    quantities[index]
+        .toString();
+    },
+    alignment:
+    Alignment.centerLeft,
+    iconSize: 25.0,
+    ),
+    ],
+    ),
+    ),
+    SizedBox(
+    width: 8.0,
+    ),
+    Padding(
+    padding:
+    const EdgeInsets.symmetric(
+    horizontal: 4.0),
+    child:
+    GestureDetector(
+    onTap: () async {
+    setState(() {
+    isSelectedList[index] = !isSelectedList[index];
+
+    });
+
+    if (isSelectedList[index]) {
+    print(
+    'Adding ${quantities[index]} of ${filteredproducts[index].itemName} to the cart');
+
+    // Create an OrderItemXrefType object with necessary details
+    OrderItemXrefType orderItem = OrderItemXrefType(
+      id: 1, // Sample value, adjust as needed
+      orderId: 1001, // Sample value, adjust as needed
+      itemGrpCod: productresp.itmsGrpCod, // Sample value, adjust as needed
+      itemGrpName: productresp.itmsGrpNam, // Sample value, adjust as needed
+      itemCode:productresp.itemCode, // Sample value, adjust as needed
+      itemName: productresp.itemName,
+      noOfPcs: '10', // Sample value, adjust as needed
+      orderQty: quantities[index],
+      price: 5000, // Adjust the price based on your requirement
+      igst: 18.0, // Sample value, adjust as needed
+      cgst: 9.0, // Sample value, adjust as needed
+      sgst: 9.0, // Sample value, adjust as needed
+    );
+
+    cartProvider.addToCart(orderItem);
+    setState(() {
+      isSelectedList[index] = true;
+    });
+    // Get the added item
+    print('Added item: ${orderItem.itemName}');
+
+    // Get the total number of items in the cart
+    List<OrderItemXrefType> cartItems = cartProvider.getCartItems();
+    print('Added items length: ${cartItems.length}');
+    globalCartLength = cartItems.length;
+
+    }
+
+    },
+    child: Container(
+    height: 36,
+    decoration: BoxDecoration(
+    color: isSelectedList[
+    index]
+    ? Color(0xFFe78337)
+        : Color(0xFFF8dac2),
+    border: Border.all(
+    color:
+    Color(0xFFe78337),
+    width: 1.0,
+    ),
+    borderRadius:
+    BorderRadius.circular(
+    8.0),
+    ),
+    child: Padding(
+    padding: const EdgeInsets
+        .symmetric(
+    horizontal: 4.0),
+    child: Row(
+    children: [
+    Icon(
+    Icons
+        .add_shopping_cart,
+    size: 18.0,
+    color: isSelectedList[
+    index]
+    ? Color(
+    0xFFfff6eb)
+        : Color(
+    0xFFe78337),
+    ),
+    SizedBox(
+    width:
+    4.0), // Adjust the spacing between icon and text
+    Text(
+    isSelectedList[
+    index]
+    ? 'Added'
+        : 'Add',
+    style: TextStyle(
+    color: isSelectedList[
+    index]
+    ? Color(
+    0xFFfff6eb)
+        : Color(
+    0xFFe78337),
+    fontSize: 14,
+    fontFamily:
+    "Roboto",
+    fontWeight:
+    FontWeight
+        .w600,
+    ),
+    ),
+    SizedBox(width: 4.0),
+    ],
+    ),
+    ),
+    ),
+    ),
+    )
+    ],
+    ),
+    )
+    ],
+    ),
+    ],
+    ),
+    ),
+    )));
+    // rest of your code...
+    },
+    ); }
+    ) ,
+    )
+          )],
+    ),
       bottomNavigationBar: Container(
         height: 60,
         margin: const EdgeInsets.symmetric(vertical: 15, horizontal: 10),
@@ -855,27 +946,29 @@ class _ProductListState extends State<Createorderscreen> {
 
   void saveData(int index) async {
     // Get the SharedPreferences instance
+    List<OrderItemXrefType> savedDataList = [];
     SharedPreferences prefs = await SharedPreferences.getInstance();
 
-    // Get existing cart data from SharedPreferences
-    cartItems = prefs.getStringList('cartItems') ?? [];
+    final productresp = filteredproducts[index];
 
-    // Add the current product data to the cart
-    String productData =
-        '${filteredproducts[index].itemCode},${filteredproducts[index].itemName},${quantities[index]}';
-    cartItems!.add(productData);
+    Map<String, dynamic> savedData = {
+      "Id": 1,
+      "OrderId": 123,
+      "ItemGrpCod": productresp.itmsGrpCod,
+      "ItemGrpName": productresp.itmsGrpNam,
+      "ItemCode": productresp.itemCode,
+      "ItemName": productresp.itemName,
+      "NoOfPcs": quantities,
+      "OrderQty": quantities,
+      "Price": 450,
+      "IGST":5,
+      "CGST": 3,
+      "SGST": 2,
+    };
 
-    // Save the updated cart data in SharedPreferences
-    prefs.setStringList('cartItems', cartItems!);
-
-    // Print the items saved in the cart
-    print('Items saved in the cart:');
-    for (String item in cartItems!) {
-      print(item);
-    }
-
-    // Print the count of items in the cart
-    print('Total items in the cart: ${cartItems!.length}');
+    setState(() {
+      savedDataList.add(savedData as OrderItemXrefType);
+    });
   }
 
   Future<void> clearSharedPreferences() async {
@@ -894,6 +987,9 @@ class _ProductListState extends State<Createorderscreen> {
       print('filteredproducts : ${filteredproducts!.length}');
     });
   }
+
+
+
 }
 
 // Static product details

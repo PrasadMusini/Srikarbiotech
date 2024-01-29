@@ -29,7 +29,9 @@ class Selectparty_screen extends State<Selectpartyscreen> {
   List<Dealer> dealers = [];
   late String screenFrom;
   int selectedCardIndex = -1; // Variable to track selected card index
-
+  int CompneyId = 0;
+  String? userId = "";
+  String? slpCode = "";
   List<Dealer> filteredDealers = [];
   TextEditingController searchController = TextEditingController();
   // SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -37,8 +39,9 @@ class Selectparty_screen extends State<Selectpartyscreen> {
   @override
   void initState() {
     super.initState();
-    fetchData();
-getslpcode();
+    getshareddata();
+
+//getslpcode();
 
     print("screenFrom: ${widget.from}");
 
@@ -49,8 +52,10 @@ getslpcode();
   }
 
   Future<void> fetchData() async {
+    final apiUrl = baseUrl+GetAllDealersBySlpCode+ '$CompneyId' +"/" +'$slpCode';
+    print("apiUrl: ${apiUrl}");
     final response = await http.get(
-      Uri.parse(baseUrl+GetAllDealersBySlpCode),
+      Uri.parse(apiUrl),
     );
 
     if (response.statusCode == 200) {
@@ -391,6 +396,31 @@ getslpcode();
       print('User not logged in or missing required data.');
     }
   }
+  Future<void> getshareddata() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+
+// Retrieve userId and slpCode
+
+
+    setState(() {
+      userId = prefs.getString("userId");
+      slpCode = prefs.getString("slpCode");
+      CompneyId = prefs.getInt("compneyid")!;
+      fetchData();
+      print('Retrieved CompneyId: $CompneyId');
+    });
+// Check if they are not null before using them
+    if (userId != null && slpCode != null ) {
+      // Use userId and slpCode in your code
+      print('Retrieved userId: $userId');
+      print('Retrieved slpCode: $slpCode');
+
+    } else {
+      // Handle the case where userId or slpCode is null
+      print('User not logged in or missing required data.');
+    }
+  }
+
 
 }
 

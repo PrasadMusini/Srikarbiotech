@@ -15,10 +15,8 @@ class LoginScreen extends StatefulWidget {
   // Assuming you have a class named Company
   final String companyName;
   final int companyId;
-  LoginScreen({
-    required this.companyName,
-    required this.companyId,
-  });
+  LoginScreen({required this.companyName,
+    required this.companyId,});
   @override
   State<LoginScreen> createState() => _MyHomePageState();
 }
@@ -43,7 +41,6 @@ class _MyHomePageState extends State<LoginScreen> {
     emailController.text = "Superadmin";
     passwordController.text = "Abcd@123";
   }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -73,8 +70,9 @@ class _MyHomePageState extends State<LoginScreen> {
                 // Other styling properties as needed
               ),
             ),
-          ),
 
+          ),
+        
           Align(
             alignment: FractionalOffset.bottomCenter,
             child: Padding(
@@ -96,25 +94,35 @@ class _MyHomePageState extends State<LoginScreen> {
                         child: Padding(
                           padding: const EdgeInsets.only(
                               top: 10.0, left: 12.0, right: 12.0),
-                          child:
-                              Text('LogIn', style: CommonUtils.header_Styles18),
+                          child: Text(
+                            'LogIn',
+                            style: CommonUtils.header_Styles18
+                          ),
                         ),
                       ),
                       SizedBox(height: 10.0),
-                      Text('Hi, Welcome to Srikar Bio Tech',
-                          style: CommonUtils.header_Styles16),
-                      SizedBox(height: 10.0),
-                      Text('Enter your credentials to continue',
-                          style: CommonUtils.Mediumtext_14),
+                      Text(
+                        compneyid == 1
+                            ? 'Hi, Welcome to Srikar Bio Tech'
+                            : 'Hi, Welcome to Srikar Seeds ',
+                        style: CommonUtils.header_Styles16,
+                      ),                SizedBox(height: 10.0),
+                      Text(
+                        'Enter your credentials to continue',
+    style: CommonUtils.Mediumtext_14
+
+                      ),
                       Padding(
                         padding:
                             EdgeInsets.only(top: 30.0, left: 30.0, right: 30.0),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text('Email/Username', // Add your desired text here
-                                style: CommonUtils.Mediumtext_12),
-                            SizedBox(height: 4.0),
+                            Text(
+                              'Email/Username', // Add your desired text here
+                              style: CommonUtils.Mediumtext_12
+                            ),
+                           SizedBox(height: 4.0),
                             GestureDetector(
                               onTap: () {
                                 // Handle the click event for the second text view
@@ -154,8 +162,7 @@ class _MyHomePageState extends State<LoginScreen> {
                                               left: 10.0, top: 0.0),
                                           child: TextFormField(
                                             controller: emailController,
-                                            keyboardType:
-                                                TextInputType.emailAddress,
+                                            keyboardType: TextInputType.emailAddress,
                                             validator: (value) {
                                               if (value!.isEmpty) {
                                                 return 'Please enter your Email/Username';
@@ -164,10 +171,8 @@ class _MyHomePageState extends State<LoginScreen> {
                                             },
                                             style: CommonUtils.Mediumtext_o_14,
                                             decoration: InputDecoration(
-                                              hintText:
-                                                  'Enter Email or Username',
-                                              hintStyle:
-                                                  CommonUtils.hintstyle_14,
+                                              hintText: 'Enter Email or Username',
+                                              hintStyle: CommonUtils.hintstyle_14,
                                               border: InputBorder.none,
                                             ),
                                           ),
@@ -196,13 +201,15 @@ class _MyHomePageState extends State<LoginScreen> {
                       // ),
                       Padding(
                         padding:
-                            EdgeInsets.only(top: 14.0, left: 30.0, right: 30.0),
+                            EdgeInsets.only(top: 15.0, left: 30.0, right: 30.0),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text('Password', // Add your desired text here
-                                style: CommonUtils.Mediumtext_12),
-                            SizedBox(height: 4.0),
+                            Text(
+                              'Password', // Add your desired text here
+                             style: CommonUtils.Mediumtext_12
+                            ),
+                              SizedBox(height: 4.0),
                             GestureDetector(
                               onTap: () {
                                 // Handle the click event for the second text view
@@ -252,12 +259,7 @@ class _MyHomePageState extends State<LoginScreen> {
                                             style: CommonUtils.Mediumtext_o_14,
                                             decoration: InputDecoration(
                                               hintText: 'Enter Password',
-                                              hintStyle: TextStyle(
-                                                fontSize: 14,
-                                                fontFamily: 'Roboto',
-                                                fontWeight: FontWeight.w600,
-                                                color: Color(0xFFe78337),
-                                              ),
+                                              hintStyle: CommonUtils.hintstyle_14,
                                               border: InputBorder.none,
                                             ),
                                           ),
@@ -303,8 +305,10 @@ class _MyHomePageState extends State<LoginScreen> {
                                       mainAxisAlignment:
                                           MainAxisAlignment.center,
                                       children: [
-                                        Text('LogIn',
-                                            style: CommonUtils.Buttonstyle),
+                                        Text(
+                                          'LogIn',
+                                          style: CommonUtils.Buttonstyle
+                                        ),
                                         Image.asset(
                                           'assets/right_arrow.png',
                                           width: 20,
@@ -327,8 +331,10 @@ class _MyHomePageState extends State<LoginScreen> {
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                                Text('Forgot Password?',
-                                    style: CommonUtils.Mediumtext_14),
+                                Text(
+                                  'Forgot Password?',
+                                  style: CommonUtils.Mediumtext_14
+                                ),
                                 SizedBox(width: 8.0),
                                 GestureDetector(
                                   onTap: () {
@@ -336,8 +342,10 @@ class _MyHomePageState extends State<LoginScreen> {
                                     print('Click here! clicked');
                                     // Add your custom logic or navigation code here
                                   },
-                                  child: Text('Click here!',
-                                      style: CommonUtils.Mediumtext_o_14),
+                                  child: Text(
+                                    'Click here!',
+                                    style:CommonUtils.Mediumtext_o_14
+                                  ),
                                 )
                               ],
                             ),
@@ -355,14 +363,15 @@ class _MyHomePageState extends State<LoginScreen> {
     );
   }
 
+
   void _login() async {
-    final apiUrl = baseUrl + post_Login;
-    //  final apiUrl = 'http://182.18.157.215/Srikar_Biotech_Dev/API/api/Account/Login';
-    //   final payload = {
-    //     "Username": "Superadmin",
-    //     "Password": "Abcd@123",
-    //     "CompanyId": 2
-    //   };
+    final apiUrl = baseUrl+post_Login;
+  //  final apiUrl = 'http://182.18.157.215/Srikar_Biotech_Dev/API/api/Account/Login';
+  //   final payload = {
+  //     "Username": "Superadmin",
+  //     "Password": "Abcd@123",
+  //     "CompanyId": 2
+  //   };
 
     final payload = {
       "Username": emailController.text,
@@ -370,11 +379,14 @@ class _MyHomePageState extends State<LoginScreen> {
       "CompanyId": compneyid
     };
 
-    // if (emailController.text.isEmpty || passwordController.text.isEmpty) {
-    //   CommonUtils.showCustomToastMessageLong('Please fill in all fields', context, 1, 4);
-    //   return;
-    // }
-
+    if (passwordController.text.isEmpty) {
+      CommonUtils.showCustomToastMessageLong('Please Enter Username', context, 1, 4);
+      return;
+    }
+    if (passwordController.text.isEmpty) {
+      CommonUtils.showCustomToastMessageLong('Please Enter Password', context, 1, 4);
+      return;
+    }
     final response = await http.post(Uri.parse(apiUrl),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode(payload));
@@ -385,13 +397,15 @@ class _MyHomePageState extends State<LoginScreen> {
       if (jsonResponse['isSuccess'] == true) {
         print('Login successful');
 
-        userId = jsonResponse['response']['userId'];
-        slpCode = jsonResponse['response']['slpCode'];
+        userId =  jsonResponse['response']['userId'];
+        slpCode =  jsonResponse['response']['slpCode'];
         print('userId===>$userId');
         print('slpCode===>$slpCode');
         SharedPreferences prefs = await SharedPreferences.getInstance();
         await prefs.setString("userId", userId ?? "");
         await prefs.setString("slpCode", slpCode ?? "");
+        await prefs.setInt("compneyid", compneyid);
+
 
         Navigator.pushReplacement(
           context,
@@ -412,11 +426,11 @@ class _MyHomePageState extends State<LoginScreen> {
         // }
       } else {
         print('Login failed. Please check your credentials.');
-        CommonUtils.showCustomToastMessageLong(
-            'Login failed. Please check your credentials.', context, 1, 4);
+        CommonUtils.showCustomToastMessageLong('Login failed. Please check your credentials.', context, 1, 4);
       }
     } else {
       print('Login failed. Please check your credentials.');
     }
   }
+
 }

@@ -80,7 +80,7 @@ class _ProductListState extends State<Createorderscreen> {
     fetchProducts().then((response) {
       setState(() {
         isLoading = true; // or false
-        clearSharedPreferences();
+      //  clearSharedPreferences();
         apiResponse = response;
         fetchproductlist('102');
       });
@@ -592,12 +592,7 @@ class _ProductListState extends State<Createorderscreen> {
     );
   }
 
-  bool _isValidCart(List<SelectedProducts> cartItems) {
-    // Check if the cart items have valid data (replace with your own validation logic)
-    return cartItems.isNotEmpty &&
-        cartItems.any((product) =>
-            product.productName.isNotEmpty && product.productPrice > 0);
-  }
+
 
   Widget buildweight(int index, String mode, Function onTap,
       {bool isSelected = false}) {

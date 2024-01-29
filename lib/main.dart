@@ -6,14 +6,29 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:provider/provider.dart';
 
+import 'CartProvider.dart';
 import 'Common/Constants.dart';
 import 'Common/SharedPreferencesHelper.dart';
 import 'Companiesselection.dart';
 import 'HomeScreen.dart';
 import 'LoginScreen.dart';
 
-void main() => runApp(MyApp());
+import 'ViewCollectionProvider.dart';
+
+void main() {
+  runApp(
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (context) => CartProvider()),
+        ChangeNotifierProvider(create: (context) => ViewCollectionProvider()),
+        // Add other providers if needed
+      ],
+      child: MyApp(),
+    ),
+  );
+}
 
 class MyApp extends StatefulWidget {
   @override
@@ -28,14 +43,38 @@ class _MyAppState extends State<MyApp> {
     super.initState();
     checkStoragePermission();
   }
-
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-    debugShowCheckedModeBanner: false,
-      home: MyHomePage(),
+      home: MultiProvider(
+        providers: [
+          ChangeNotifierProvider(create: (context) => CartProvider()),
+          ChangeNotifierProvider(create: (context) => ViewCollectionProvider()),
+        ],
+        child: MyHomePage(),
+      ),
     );
+    //
+    // return MultiProvider(
+    //   providers: [
+    //     ChangeNotifierProvider(create: (context) => ViewCollectionProvider()),
+    //     ChangeNotifierProvider(create: (context) => CartProvider()),
+    //     // Add other providers as needed
+    //   ],
+    //   child: MaterialApp(
+    //     debugShowCheckedModeBanner: false,
+    //     home: MyHomePage(),
+    //   ),
+    // );
   }
+
+  // @override
+  // Widget build(BuildContext context) {
+  //   return MaterialApp(
+  //   debugShowCheckedModeBanner: false,
+  //     home: MyHomePage(),
+  //   );
+  // }
 
   Future<void> checkStoragePermission() async {
     Map<Permission, PermissionStatus> statuses = await [

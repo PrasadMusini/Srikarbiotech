@@ -8,6 +8,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:intl/intl.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:provider/provider.dart';
 import 'package:share/share.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:srikarbiotech/Common/CommonUtils.dart';
@@ -15,8 +16,10 @@ import 'package:http/http.dart' as http;
 import 'package:srikarbiotech/sb_status.dart';
 import 'package:srikarbiotech/transport_payment.dart';
 
+import 'CartProvider.dart';
 import 'HomeScreen.dart';
 import 'Model/CartHelper.dart';
+import 'Model/OrderItemXrefType.dart';
 import 'orderStatusScreen.dart';
 
 class Ordersubmit_screen extends StatefulWidget {
@@ -29,26 +32,28 @@ class Ordersubmit_screen extends StatefulWidget {
   final String phone;
   final String BookingPlace;
   final String TransportName;
+
   Ordersubmit_screen(
       {required this.cardName,
-      required this.cardCode,
-      required this.address,
-      required this.state,
-      required this.phone,
-      required this.proprietorName,
-      required this.gstRegnNo,
-      required this.BookingPlace,
-      required this.TransportName});
+        required this.cardCode,
+        required this.address,
+        required this.state,
+        required this.phone,
+        required this.proprietorName,
+        required this.gstRegnNo,
+        required this.BookingPlace,
+        required this.TransportName});
   @override
   Order_submit_screen createState() => Order_submit_screen();
 }
 
 class Order_submit_screen extends State<Ordersubmit_screen> {
-  List<String> cartItems = [];
-
+ // List<String> cartItems = [];
+  List<OrderItemXrefType> cartItems = [];
   List<String> cartlistItems = [];
   List<TextEditingController> textEditingControllers = [];
   List<int> quantities = [];
+   int globalCartLength = 0;
   @override
   initState() {
     super.initState();
@@ -56,29 +61,16 @@ class Order_submit_screen extends State<Ordersubmit_screen> {
       DeviceOrientation.portraitDown,
       DeviceOrientation.portraitUp,
     ]);
-    fetchData();
-    loadData();
+
+    print('Cart Items globalCartLength: $globalCartLength');
     print('cardName: ${widget.cardName}');
     print('cardCode: ${widget.cardCode}');
     print('address: ${widget.address}');
+
+
   }
 
-  Future<List<String>> fetchData() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    cartItems = prefs.getStringList('cartItems') ?? [];
-    print('CartItems: $cartItems');
 
-    return cartItems;
-  }
-
-  Future<void> loadData() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    setState(() {
-      cartlistItems = prefs.getStringList('cartItems') ?? [];
-
-      print('cartlistItems: $cartlistItems');
-    });
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -94,7 +86,7 @@ class Order_submit_screen extends State<Ordersubmit_screen> {
               children: [
                 Padding(
                   padding:
-                      const EdgeInsets.symmetric(horizontal: 2, vertical: 2),
+                  const EdgeInsets.symmetric(horizontal: 2, vertical: 2),
                   child: GestureDetector(
                     onTap: () {
                       // Handle the click event for the back button
@@ -115,12 +107,24 @@ class Order_submit_screen extends State<Ordersubmit_screen> {
                     fontSize: 18,
                   ),
                 ),
-                Text(
-                  '(' + '${cartlistItems.length}' + ')',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 18,
-                  ),
+                FutureBuilder(
+                  future: Future.value(), // Replace with your actual asynchronous operation
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.done) {
+                      // Access the cart data from the provider
+                      cartItems = Provider.of<CartProvider>(context).getCartItems();
+                      // Update the globalCartLength
+                      globalCartLength = cartItems.length;
+                    }
+                    // Always return a widget in the builder
+                    return Text(
+                      '($globalCartLength)',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 18,
+                      ),
+                    );
+                  },
                 ),
               ],
             ),
@@ -141,271 +145,426 @@ class Order_submit_screen extends State<Ordersubmit_screen> {
           ],
         ),
       ),
-      body: Column(children: [
-        Expanded(
-          child: SingleChildScrollView(
-            scrollDirection: Axis.vertical,
-            child: Column(
-              children: [
-                Padding(
-                  padding: EdgeInsets.only(top: 5.0, left: 10.0, right: 10.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      CommonUtils.buildCard(
-                        widget.cardName,
-                        widget.cardCode,
-                        widget.proprietorName,
-                        widget.gstRegnNo,
-                        widget.address,
-                        Colors.white,
-                        BorderRadius.circular(10.0),
-                      ),
-                      SizedBox(height: 16.0),
-                    ],
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            Padding(
+              padding: EdgeInsets.only(top: 5.0, left: 10.0, right: 10.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  CommonUtils.buildCard(
+                    widget.cardName,
+                    widget.cardCode,
+                    widget.proprietorName,
+                    widget.gstRegnNo,
+                    widget.address,
+                    Colors.white,
+                    BorderRadius.circular(10.0),
                   ),
-                ),
-                // Container(
-                //   child: cartItems != null && cartItems!.isNotEmpty
-                //       ?
-                // SingleChildScrollView(
-                //   scrollDirection: Axis.vertical,
-                //   child:
-                FutureBuilder<List<String>>(
-                  future: fetchData(),
-                  builder: (context, snapshot) {
-                    if (snapshot.connectionState == ConnectionState.waiting) {
-                      return CircularProgressIndicator();
-                    } else if (snapshot.hasError) {
-                      return Text('Error: ${snapshot.error}');
-                    } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                      return Text('No data available');
-                    } else {
-                      // Use the length of cartItems as itemCount
-                      return ListView.builder(
-                        shrinkWrap: true,
-                        scrollDirection: Axis.vertical,
-                        itemCount: cartItems.length,
-                        itemBuilder: (context, index) {
-                          print(
-                              'Length of cartItems: ${cartItems.length}, Index: $index');
-                          if (index < cartItems.length) {
-                            return buildCartItem(index);
-                          } else {
-                            return Text('Invalid index: $index');
-                          }
-                        },
-                      );
-                    }
-                  },
-                  // ),
-                ),
-                // : Center(
-                //     child: Text('No items in the cart'),
-                //      ),
-                //   ),
-                SizedBox(height: 10),
-                Container(
-                  width: MediaQuery.of(context).size.width,
-                  padding: EdgeInsets.only(top: 10.0, left: 10.0, right: 10.0),
-                  child: IntrinsicHeight(
+                  SizedBox(height: 16.0),
+                ],
+              ),
+            ),
+
+
+        FutureBuilder(
+          future: Future.value(), // Replace with an actual asynchronous operation if needed
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              // If the Future is still running, show a loading indicator
+              return CircularProgressIndicator();
+            } else if (snapshot.connectionState == ConnectionState.done) {
+              // If the Future is completed, access the cart data from the provider
+             cartItems = Provider.of<CartProvider>(context).getCartItems();
+
+             // Print the length of the cart items
+             globalCartLength = cartItems.length;
+             print('Cart Items globalCartLength: $globalCartLength');
+              return ListView.builder(
+                shrinkWrap: true,
+                physics: PageScrollPhysics(),
+                scrollDirection: Axis.vertical,
+                itemCount: cartItems.length,
+                itemBuilder: (context, index) {
+                  OrderItemXrefType cartItem = cartItems[index];
+
+                  return Padding(
+                    padding: const EdgeInsets.only(left: 16.0, right: 16.0, bottom: 10.0),
                     child: Card(
-                      color: Colors.white,
-                      child: Container(
-                        width: MediaQuery.of(context).size.width,
-                        padding: EdgeInsets.all(10.0),
+                      elevation: 5.0,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8.0),
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
                         child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              children: [
-                                Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Padding(
-                                      padding:
-                                          EdgeInsets.only(left: 15.0, top: 8.0),
-                                      child: Text(
-                                        'Transport  Details',
-                                        style: TextStyle(
-                                          fontSize: 13.0,
-                                          color: Color(0xFF414141),
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                        textAlign: TextAlign.start,
-                                      ),
-                                    ),
-                                    Padding(
-                                      padding: EdgeInsets.only(
-                                          right: 15.0, top: 8.0),
-                                      child: GestureDetector(
-                                        onTap: () {
-                                          Navigator.pushReplacement(
-                                            context,
-                                            MaterialPageRoute(
-                                                builder: (context) =>
-                                                    transport_payment(
-                                                      cardName: widget.cardName,
-                                                      cardCode: widget.cardCode,
-                                                      address: widget.address,
-                                                      state: widget.state,
-                                                      phone: widget.phone,
-                                                      proprietorName:
-                                                          widget.proprietorName,
-                                                      gstRegnNo:
-                                                          widget.gstRegnNo,
-                                                      preferabletransport:
-                                                          widget.TransportName,
-                                                      bookingplace:
-                                                          widget.BookingPlace,
-                                                    )),
-                                          );
-                                        },
-                                        child: SvgPicture.asset(
-                                          'assets/edit.svg',
-                                          width: 20.0,
-                                          height: 20.0,
-                                          color: Color(0xFFe78337),
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                SizedBox(
-                                  height: 10.0,
-                                ),
-                              ],
-                            ),
-                            Container(
-                              decoration: BoxDecoration(
-                                border: Border.all(
-                                  color: Colors
-                                      .grey, // specify your border color here
-                                  width: 1.0, // specify the border width
-                                ),
-                                borderRadius: BorderRadius.circular(
-                                    8.0), // specify the border radius
+                            Text(
+                              '${cartItem.itemName}',
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 16.0,
                               ),
-                              width: MediaQuery.of(context).size.width,
-                              child: Column(
+                            ),
+                            SizedBox(height: 8.0),
+                            Text(
+                              '₹${cartItem.price}',
+                              style: TextStyle(
+                                color: Colors.orange,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 16.0,
+                              ),
+                            ),
+                            SizedBox(height: 8.0),
+                            Container(
+                              height: 36,
+                              width: MediaQuery.of(context)
+                                  .size
+                                  .width /
+                                  2.5,
+                              decoration: BoxDecoration(
+                                color: Color(0xFFe78337),
+                                borderRadius:
+                                BorderRadius.circular(
+                                    10.0),
+                              ),
+                              child: Row(
                                 children: [
-                                  Row(
-                                    children: [
-                                      Container(
-                                        width:
-                                            MediaQuery.of(context).size.width /
-                                                2.2,
-                                        padding: EdgeInsets.all(10.0),
-                                        child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Padding(
-                                              padding: EdgeInsets.only(
-                                                top: 0.0,
-                                                left: 20.0,
-                                                right: 0.0,
-                                              ),
-                                              child: Text(
-                                                'Booking Place',
-                                                style: TextStyle(
-                                                  fontSize: 13.0,
-                                                  color: Color(0xFF414141),
-                                                  fontWeight: FontWeight.bold,
-                                                ),
-                                                textAlign: TextAlign.start,
-                                              ),
+                                  IconButton(
+                                    icon: Icon(Icons.remove,
+                                        color: Colors.white),
+                                    onPressed: () {
+                                      if (quantities[index] >
+                                          1) {
+                                        setState(() {
+                                          quantities[index]--;
+                                        });
+                                        textEditingControllers[
+                                        index]
+                                            .text =
+                                            quantities[index]
+                                                .toString();
+                                      }
+                                    },
+                                    iconSize: 25.0,
+                                  ),
+                                  Expanded(
+                                    child: Align(
+                                      alignment:
+                                      Alignment.center,
+                                      child: Container(
+                                        height: 35,
+                                        child: Padding(
+                                          padding:
+                                          const EdgeInsets
+                                              .all(2.0),
+                                          child: Container(
+                                            alignment:
+                                            Alignment
+                                                .center,
+                                            width: MediaQuery.of(
+                                                context)
+                                                .size
+                                                .width /
+                                                5.1,
+                                            decoration:
+                                            BoxDecoration(
+                                              color: Colors
+                                                  .white,
                                             ),
-                                            SizedBox(
-                                              height: 4.0,
-                                            ),
-                                            Padding(
-                                              padding: EdgeInsets.only(
-                                                  top: 0.0,
-                                                  left: 20.0,
-                                                  right: 0.0),
-                                              child: Text(
-                                                '${widget.BookingPlace}',
-                                                style: TextStyle(
-                                                  fontSize: 13.0,
-                                                  color: Color(0xFFe78337),
-                                                  fontWeight: FontWeight.bold,
-                                                ),
-                                                textAlign: TextAlign.start,
+                                            child: TextField(
+
+                                              keyboardType:
+                                              TextInputType
+                                                  .number,
+                                              inputFormatters: <TextInputFormatter>[
+                                                FilteringTextInputFormatter
+                                                    .digitsOnly,
+                                                LengthLimitingTextInputFormatter(
+                                                    5),
+                                              ],
+                                              onChanged:
+                                                  (value) {
+                                                setState(() {
+                                                  quantities[
+                                                  index] = int.parse(value
+                                                      .isEmpty
+                                                      ? '1'
+                                                      : value);
+                                                });
+                                              },
+                                              decoration:
+                                              InputDecoration(
+                                                hintText: '${cartItem.orderQty}',
+                                                hintStyle:
+                                                CommonUtils
+                                                    .Mediumtext_o_14,
+                                                border:
+                                                InputBorder
+                                                    .none,
+                                                focusedBorder:
+                                                InputBorder
+                                                    .none,
+                                                enabledBorder:
+                                                InputBorder
+                                                    .none,
+                                                contentPadding:
+                                                EdgeInsets.only(
+                                                    bottom:
+                                                    10.0),
                                               ),
+                                              textAlign:
+                                              TextAlign
+                                                  .center,
+                                              style: CommonUtils
+                                                  .Mediumtext_o_14,
                                             ),
-                                          ],
+                                          ),
                                         ),
                                       ),
-                                      Container(
-                                        width:
-                                            MediaQuery.of(context).size.width /
-                                                2.9,
-                                        padding: EdgeInsets.all(10.0),
-                                        child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.start,
-                                          children: [
-                                            Padding(
-                                              padding: EdgeInsets.only(
-                                                  top: 0.0,
-                                                  left: 0.0,
-                                                  right: 0.0),
-                                              child: Text(
-                                                'Transport Name',
-                                                style: TextStyle(
-                                                  fontSize: 13.0,
-                                                  color: Color(0xFF414141),
-                                                  fontWeight: FontWeight.bold,
-                                                ),
-                                                textAlign: TextAlign.start,
-                                              ),
-                                            ),
-                                            SizedBox(
-                                              height: 4.0,
-                                            ),
-                                            Padding(
-                                              padding: EdgeInsets.only(
-                                                  top: 0.0,
-                                                  left: 0.0,
-                                                  right: 0.0),
-                                              child: Text(
-                                                '${widget.TransportName}',
-                                                style: TextStyle(
-                                                  fontSize: 13.0,
-                                                  color: Color(0xFFe78337),
-                                                  fontWeight: FontWeight.bold,
-                                                ),
-                                                textAlign: TextAlign.start,
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      )
-                                    ],
+                                    ),
+                                  ),
+                                  IconButton(
+                                    icon: Icon(Icons.add,
+                                        color: Colors.white),
+                                    onPressed: () {
+                                      setState(() {
+                                        quantities[index]++;
+                                      });
+                                      textEditingControllers[
+                                      index]
+                                          .text =
+                                          quantities[index]
+                                              .toString();
+                                    },
+                                    alignment:
+                                    Alignment.centerLeft,
+                                    iconSize: 25.0,
                                   ),
                                 ],
                               ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  );
+                },
+              );
+            } else {
+              // Handle other connection states (such as ConnectionState.active or ConnectionState.none)
+              return Text('Error: Unable to fetch cart data');
+            }
+          },
+        ),
+
+        // Container(
+            //   child: cartItems != null && cartItems!.isNotEmpty
+            //       ?
+            // SingleChildScrollView(
+            //   scrollDirection: Axis.vertical,
+            //   child:
+            // Flexible(
+            //   fit: FlexFit.loose,
+            //child:
+
+            // : Center(
+            //     child: Text('No items in the cart'),
+            //      ),
+            //   ),
+            SizedBox(height: 10),
+            Container(
+              width: MediaQuery.of(context).size.width,
+              padding: EdgeInsets.only(top: 10.0, left: 10.0, right: 10.0),
+              child: IntrinsicHeight(
+                child: Card(
+                  color: Colors.white,
+                  child: Container(
+                    width: MediaQuery.of(context).size.width,
+                    padding: EdgeInsets.all(10.0),
+                    child: Column(
+                      children: [
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Padding(
+                                  padding:
+                                  EdgeInsets.only(left: 15.0, top: 8.0),
+                                  child: Text(
+                                    'Transport  Details',
+                                    style: TextStyle(
+                                      fontSize: 13.0,
+                                      color: Color(0xFF414141),
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                    textAlign: TextAlign.start,
+                                  ),
+                                ),
+                                Padding(
+                                  padding:
+                                  EdgeInsets.only(right: 15.0, top: 8.0),
+                                  child: GestureDetector(
+                                    onTap: () {
+                                      Navigator.pushReplacement(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) =>
+                                                transport_payment(
+                                                  cardName: widget.cardName,
+                                                  cardCode: widget.cardCode,
+                                                  address: widget.address,
+                                                  state: widget.state,
+                                                  phone: widget.phone,
+                                                  proprietorName:
+                                                  widget.proprietorName,
+                                                  gstRegnNo: widget.gstRegnNo,
+                                                  preferabletransport:
+                                                  widget.TransportName,
+                                                  bookingplace:
+                                                  widget.BookingPlace,
+                                                )),
+                                      );
+                                    },
+                                    child: SvgPicture.asset(
+                                      'assets/edit.svg',
+                                      width: 20.0,
+                                      height: 20.0,
+                                      color: Color(0xFFe78337),
+                                    ),
+                                  ),
+                                ),
+                              ],
                             ),
                             SizedBox(
                               height: 10.0,
                             ),
                           ],
                         ),
-                      ),
+                        Container(
+                          decoration: BoxDecoration(
+                            border: Border.all(
+                              color:
+                              Colors.grey, // specify your border color here
+                              width: 1.0, // specify the border width
+                            ),
+                            borderRadius: BorderRadius.circular(
+                                8.0), // specify the border radius
+                          ),
+                          width: MediaQuery.of(context).size.width,
+                          child: Column(
+                            children: [
+                              Row(
+                                children: [
+                                  Container(
+                                    width:
+                                    MediaQuery.of(context).size.width / 2.2,
+                                    padding: EdgeInsets.all(10.0),
+                                    child: Column(
+                                      crossAxisAlignment:
+                                      CrossAxisAlignment.start,
+                                      children: [
+                                        Padding(
+                                          padding: EdgeInsets.only(
+                                            top: 0.0,
+                                            left: 20.0,
+                                            right: 0.0,
+                                          ),
+                                          child: Text(
+                                            'Booking Place',
+                                            style: TextStyle(
+                                              fontSize: 13.0,
+                                              color: Color(0xFF414141),
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                            textAlign: TextAlign.start,
+                                          ),
+                                        ),
+                                        SizedBox(
+                                          height: 4.0,
+                                        ),
+                                        Padding(
+                                          padding: EdgeInsets.only(
+                                              top: 0.0, left: 20.0, right: 0.0),
+                                          child: Text(
+                                            '${widget.BookingPlace}',
+                                            style: TextStyle(
+                                              fontSize: 13.0,
+                                              color: Color(0xFFe78337),
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                            textAlign: TextAlign.start,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  Container(
+                                    width:
+                                    MediaQuery.of(context).size.width / 2.9,
+                                    padding: EdgeInsets.all(10.0),
+                                    child: Column(
+                                      crossAxisAlignment:
+                                      CrossAxisAlignment.start,
+                                      mainAxisAlignment:
+                                      MainAxisAlignment.start,
+                                      children: [
+                                        Padding(
+                                          padding: EdgeInsets.only(
+                                              top: 0.0, left: 0.0, right: 0.0),
+                                          child: Text(
+                                            'Transport Name',
+                                            style: TextStyle(
+                                              fontSize: 13.0,
+                                              color: Color(0xFF414141),
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                            textAlign: TextAlign.start,
+                                          ),
+                                        ),
+                                        SizedBox(
+                                          height: 4.0,
+                                        ),
+                                        Padding(
+                                          padding: EdgeInsets.only(
+                                              top: 0.0, left: 0.0, right: 0.0),
+                                          child: Text(
+                                            '${widget.TransportName}',
+                                            style: TextStyle(
+                                              fontSize: 13.0,
+                                              color: Color(0xFFe78337),
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                            textAlign: TextAlign.start,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  )
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
+                        SizedBox(
+                          height: 10.0,
+                        ),
+                      ],
                     ),
                   ),
                 ),
-                Container(
-                    width: MediaQuery.of(context).size.width,
-                    padding:
-                        EdgeInsets.only(top: 10.0, left: 10.0, right: 10.0),
-                    child: IntrinsicHeight(
-                        child: Card(
+              ),
+            ),
+            Container(
+                width: MediaQuery.of(context).size.width,
+                padding: EdgeInsets.only(top: 10.0, left: 10.0, right: 10.0),
+                child: IntrinsicHeight(
+                    child: Card(
                       color: Colors.white,
                       child: Container(
                         padding: EdgeInsets.all(10.0),
@@ -436,10 +595,8 @@ class Order_submit_screen extends State<Ordersubmit_screen> {
                                       //   width: MediaQuery.of(context).size.width / 1.8,
                                       padding: EdgeInsets.only(top: 10.0),
                                       child: Row(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.end,
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.end,
+                                        crossAxisAlignment: CrossAxisAlignment.end,
+                                        mainAxisAlignment: MainAxisAlignment.end,
                                         children: [
                                           Text(
                                             '₹${12765.00}',
@@ -460,11 +617,10 @@ class Order_submit_screen extends State<Ordersubmit_screen> {
                         ),
                       ),
                     )))
-              ],
-            ),
-          ),
+          ],
         ),
-      ]),
+      ),
+
       bottomNavigationBar: Container(
         height: 60,
         margin: const EdgeInsets.symmetric(vertical: 15, horizontal: 10),
@@ -492,7 +648,7 @@ class Order_submit_screen extends State<Ordersubmit_screen> {
                         color: Colors.white,
                         fontSize: 18,
                         fontWeight:
-                            FontWeight.w700, // Set the font weight to bold
+                        FontWeight.w700, // Set the font weight to bold
                         fontFamily: 'Roboto', // Set the font family to Roboto
                       ),
                     ),
@@ -508,268 +664,50 @@ class Order_submit_screen extends State<Ordersubmit_screen> {
     );
   }
 
-  Widget buildCartItem(int index) {
-    // Parse the cart item data
-    List<String> itemData = cartItems[index].split(',');
-    String itemName = itemData[1];
 
-    int quantity = int.parse(itemData[2]);
-
-    print('ordersubmitscreenquntity$quantity');
-    // List<String> weightOptions = ['10 KG', '20 KG', '40 KG', '50 KG'];
-    // String? selectedWeight;
-
-    quantities = List<int>.filled(itemData.length, quantity);
-    if (textEditingControllers.length <= index) {
-      textEditingControllers.add(TextEditingController());
-    }
-    // textEditingControllers =
-    //     List.generate(itemData.length, (index) => TextEditingController());
-
-    return Padding(
-      padding: const EdgeInsets.only(left: 16.0, right: 16.0, bottom: 10.0),
-      child: Card(
-        elevation: 5.0,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(8.0),
-        ),
-        child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                itemName,
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 16.0,
-                ),
-              ),
-              SizedBox(height: 8.0),
-              Text(
-                '₹${430} ',
-                style: TextStyle(
-                  color: Colors.orange,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 16.0,
-                ),
-              ),
-              SizedBox(height: 8.0),
-              Row(
-                //  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  // Container(
-                  //   padding: EdgeInsets.symmetric(horizontal: 8.0),
-                  //   decoration: BoxDecoration(
-                  //     color: Colors.white,
-                  //     borderRadius: BorderRadius.circular(5.0),
-                  //     border: Border.all(color: Colors.orange),
-                  //   ),
-                  //   child: DropdownButton<String>(
-                  //     value: selectedWeight,
-                  //     onChanged: (value) {
-                  //       // setState(() {
-                  //       //   // Set value to null temporarily
-                  //       //   selectedWeight = null;
-                  //       // });
-                  //
-                  //       // Set the selected value
-                  //       setState(() {
-                  //         selectedWeight = value!;
-                  //       });
-                  //     },
-                  //     items: weightOptions.map((option) {
-                  //       return DropdownMenuItem<String>(
-                  //         value: option,
-                  //         child: Text(
-                  //           option,
-                  //           style: TextStyle(color: Colors.orange),
-                  //         ),
-                  //       );
-                  //     }).toList(),
-                  //   ),
-                  // ),
-                  // SizedBox(width: 8.0),
-                  Container(
-                    height: 36,
-                    width: MediaQuery.of(context).size.width / 2.5,
-                    decoration: BoxDecoration(
-                      color: Color(0xFFe78337),
-                      borderRadius: BorderRadius.circular(10.0),
-                    ),
-                    child: Row(
-                      children: [
-                        IconButton(
-                          icon: Icon(Icons.remove, color: Colors.white),
-                          onPressed: () {
-                            if (quantities[index] > 1) {
-                              setState(() {
-                                quantities[index]--;
-                                textEditingControllers[index].text =
-                                    quantities[index].toString();
-                              });
-                            }
-                          },
-                          iconSize: 25.0,
-                        ),
-                        Expanded(
-                          child: Align(
-                            alignment: Alignment.center,
-                            child: Container(
-                              height: 35,
-                              child: Padding(
-                                padding: const EdgeInsets.all(2.0),
-                                child: Container(
-                                  alignment: Alignment.center,
-                                  width:
-                                      MediaQuery.of(context).size.width / 5.1,
-                                  decoration: BoxDecoration(
-                                    color: Colors.white,
-                                  ),
-                                  child: TextField(
-                                    controller: textEditingControllers[index],
-                                    keyboardType: TextInputType.number,
-                                    inputFormatters: <TextInputFormatter>[
-                                      FilteringTextInputFormatter.digitsOnly,
-                                      LengthLimitingTextInputFormatter(5),
-                                    ],
-                                    onChanged: (value) {
-                                      setState(() {
-                                        quantities[index] = int.parse(value
-                                                .isEmpty
-                                            ? '$quantity'
-                                            : value); // Default to 1 if empty
-                                      });
-                                    },
-                                    decoration: InputDecoration(
-                                      hintText: '1',
-                                      hintStyle: CommonUtils.Mediumtext_o_14,
-                                      border: InputBorder.none,
-                                      focusedBorder: InputBorder.none,
-                                      enabledBorder: InputBorder.none,
-                                      contentPadding:
-                                          EdgeInsets.only(bottom: 10.0),
-                                    ),
-                                    textAlign: TextAlign.center,
-                                    style: CommonUtils.Mediumtext_o_14,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                        IconButton(
-                          icon: Icon(Icons.add, color: Colors.white),
-                          onPressed: () {
-                            setState(() {
-                              quantities[index]++;
-                              textEditingControllers[index].text =
-                                  quantities[index].toString();
-                            });
-                          },
-                          alignment: Alignment.centerLeft,
-                          iconSize: 25.0,
-                        ),
-                      ],
-                    ),
-                  ),
-                  // Row(
-                  //   children: [
-                  //     Text(
-                  //       'Quantity: ',
-                  //       style: TextStyle(
-                  //         fontWeight: FontWeight.bold,
-                  //         fontSize: 14.0,
-                  //       ),
-                  //     ),
-                  //     Text(
-                  //       '$quantity',
-                  //       style: TextStyle(
-                  //         fontSize: 14.0,
-                  //       ),
-                  //     ),
-                  //   ],
-                  // ),
-
-                  IconButton(
-                    icon: Icon(Icons.delete, color: Colors.red),
-                    onPressed: () {
-                      // Remove the item from cartItems
-                      setState(() {
-                        cartItems.removeAt(index);
-                      });
-
-                      // Save the updated cart data in SharedPreferences
-                      saveCartData();
-
-                      // Update the UI
-                      setState(() {});
-
-                      // You can add any additional logic or display a message if needed
-                      print('Item deleted from cart.');
-                    },
-                  ),
-                ],
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  void saveCartData() async {
-    // Get the SharedPreferences instance
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-
-    // Save the updated cart data in SharedPreferences
-    prefs.setStringList('cartItems', cartItems!);
-
-    // Print the items saved in the cart
-    print('Items saved in the cart:');
-    for (String item in cartItems!) {
-      print(item);
-    }
-
-    // Print the count of items in the cart
-    print('Total items in the cart: ${cartItems!.length}');
-  }
+  //
+  // void saveCartData() async {
+  //   // Get the SharedPreferences instance
+  //   SharedPreferences prefs = await SharedPreferences.getInstance();
+  //
+  //   // Save the updated cart data in SharedPreferences
+  //   prefs.setStringList('cartItems', cartItems!);
+  //
+  //   // Print the items saved in the cart
+  //   print('Items saved in the cart:');
+  //   for (String item in cartItems!) {
+  //     print(item);
+  //   }
+  //
+  //   // Print the count of items in the cart
+  //   print('Total items in the cart: ${cartItems!.length}');
+  // }
 
   void AddOrder() async {
-    final String apiUrl =
-        'http://182.18.157.215/Srikar_Biotech_Dev/API/api/Order/AddOrder';
+    final String apiUrl = 'http://182.18.157.215/Srikar_Biotech_Dev/API/api/Order/AddOrder';
+    List<Map<String, dynamic>> orderItemList = cartItems.map((cartItem) {
 
+      return {
+        "Id": 1,
+        "OrderId": 2,
+        "ItemGrpCod":  cartItem.itemGrpCod,
+        "ItemGrpName": cartItem.itemGrpName,
+        "ItemCode": cartItem.itemCode,
+        "ItemName": cartItem.itemName,
+        "NoOfPcs": 10 ,
+        "OrderQty":  cartItem.orderQty,
+        "Price": "5000",
+        "IGST": 1.1,
+        "CGST": 1.1,
+        "SGST": 1.1
+        // Map other cart item properties to corresponding fields
+        // ...
+      };
+    }).toList();
     Map<String, dynamic> orderData = {
-      "OrderItemXrefTypeList": [
-        {
-          "Id": 1,
-          "OrderId": 2,
-          "ItemGrpCod": "sample string 3",
-          "ItemGrpName": "sample string 4",
-          "ItemCode": "sample string 5",
-          "ItemName": "sample string 6",
-          "NoOfPcs": "sample string 7",
-          "OrderQty": 8,
-          "Price": 9.1,
-          "IGST": 1.1,
-          "CGST": 1.1,
-          "SGST": 1.1
-        },
-        {
-          "Id": 1,
-          "OrderId": 2,
-          "ItemGrpCod": "sample string 3",
-          "ItemGrpName": "sample string 4",
-          "ItemCode": "sample string 5",
-          "ItemName": "sample string 6",
-          "NoOfPcs": "sample string 7",
-          "OrderQty": 8,
-          "Price": 9.1,
-          "IGST": 1.1,
-          "CGST": 1.1,
-          "SGST": 1.1
-        }
-      ],
+
+
+      "OrderItemXrefTypeList": orderItemList,
       "Id": 1,
       "CompanyId": 2,
       "OrderNumber": "123",
@@ -796,10 +734,12 @@ class Order_submit_screen extends State<Ordersubmit_screen> {
       "Remarks": "test",
       "IsActive": true,
       "CreatedBy": "e39536e2-89d3-4cc7-ae79-3dd5291ff156",
-      "CreatedDate": "2024-01-24T10:39:00.9865556+05:30",
+      "CreatedDate": "2024-01-29",
       "UpdatedBy": "e39536e2-89d3-4cc7-ae79-3dd5291ff156",
-      "UpdatedDate": "2024-01-24T10:39:00.9865556+05:30"
+      "UpdatedDate": "2024-01-29"
     };
+    print(orderData);
+    print(jsonEncode(orderData));
 
     try {
       final response = await http.post(
@@ -828,5 +768,35 @@ class Order_submit_screen extends State<Ordersubmit_screen> {
       // Handle exceptions
       print('Exception: $e');
     }
+  }
+
+  // Function to retrieve cart items from SharedPreferences
+  Future<List<OrderItemXrefType>> getCartItems() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    // Retrieve existing cart items from SharedPreferences
+    List<String>? cartItemsJson = prefs.getStringList('cart_items') ?? [];
+
+    // Convert JSON strings back to OrderItemXrefType objects
+    List<OrderItemXrefType> cartItems = cartItemsJson
+        .map((jsonString) => OrderItemXrefType.fromJson(jsonDecode(jsonString)))
+        .toList();
+
+    return cartItems;
+  }
+
+
+  Future<void> fetchCartItems() async {
+    List<OrderItemXrefType> items = await getCartItems();
+
+    // Print the retrieved cart items
+    print('Retrieved Cart Items:');
+    items.forEach((item) {
+      print('Item Name: ${item.itemName}, Price: ${item.price}, Quantity: ${item.orderQty}');
+    });
+
+    setState(() {
+      cartItems = items;
+    });
   }
 }
