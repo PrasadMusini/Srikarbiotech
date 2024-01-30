@@ -17,6 +17,7 @@ import 'package:srikarbiotech/sb_status.dart';
 import 'package:srikarbiotech/transport_payment.dart';
 
 import 'CartProvider.dart';
+import 'Common/SharedPrefsData.dart';
 import 'HomeScreen.dart';
 import 'Model/CartHelper.dart';
 import 'Model/OrderItemXrefType.dart';
@@ -48,12 +49,17 @@ class Ordersubmit_screen extends StatefulWidget {
 }
 
 class Order_submit_screen extends State<Ordersubmit_screen> {
- // List<String> cartItems = [];
+  // List<String> cartItems = [];
   List<OrderItemXrefType> cartItems = [];
   List<String> cartlistItems = [];
   List<TextEditingController> textEditingControllers = [];
   List<int> quantities = [];
-   int globalCartLength = 0;
+  int globalCartLength = 0;
+  TextEditingController quantityController = TextEditingController();
+
+  int CompneyId = 0;
+  String? userId = "";
+  String? slpCode = "";
   @override
   initState() {
     super.initState();
@@ -61,16 +67,13 @@ class Order_submit_screen extends State<Ordersubmit_screen> {
       DeviceOrientation.portraitDown,
       DeviceOrientation.portraitUp,
     ]);
+    getshareddata();
 
     print('Cart Items globalCartLength: $globalCartLength');
     print('cardName: ${widget.cardName}');
     print('cardCode: ${widget.cardCode}');
     print('address: ${widget.address}');
-
-
   }
-
-
 
   @override
   Widget build(BuildContext context) {
@@ -108,11 +111,13 @@ class Order_submit_screen extends State<Ordersubmit_screen> {
                   ),
                 ),
                 FutureBuilder(
-                  future: Future.value(), // Replace with your actual asynchronous operation
+                  future: Future
+                      .value(), // Replace with your actual asynchronous operation
                   builder: (context, snapshot) {
                     if (snapshot.connectionState == ConnectionState.done) {
                       // Access the cart data from the provider
-                      cartItems = Provider.of<CartProvider>(context).getCartItems();
+                      cartItems =
+                          Provider.of<CartProvider>(context).getCartItems();
                       // Update the globalCartLength
                       globalCartLength = cartItems.length;
                     }
@@ -166,8 +171,6 @@ class Order_submit_screen extends State<Ordersubmit_screen> {
                 ],
               ),
             ),
-
-
         FutureBuilder(
           future: Future.value(), // Replace with an actual asynchronous operation if needed
           builder: (context, snapshot) {
@@ -176,181 +179,25 @@ class Order_submit_screen extends State<Ordersubmit_screen> {
               return CircularProgressIndicator();
             } else if (snapshot.connectionState == ConnectionState.done) {
               // If the Future is completed, access the cart data from the provider
-             cartItems = Provider.of<CartProvider>(context).getCartItems();
+              cartItems = Provider.of<CartProvider>(context).getCartItems();
 
-             // Print the length of the cart items
-             globalCartLength = cartItems.length;
-             print('Cart Items globalCartLength: $globalCartLength');
+              // Print the length of the cart items
+              globalCartLength = cartItems.length;
+              print('Cart Items globalCartLength: $globalCartLength');
+
               return ListView.builder(
+                key: UniqueKey(), // Add a unique key to ListView.builder
                 shrinkWrap: true,
                 physics: PageScrollPhysics(),
                 scrollDirection: Axis.vertical,
                 itemCount: cartItems.length,
                 itemBuilder: (context, index) {
                   OrderItemXrefType cartItem = cartItems[index];
-
-                  return Padding(
-                    padding: const EdgeInsets.only(left: 16.0, right: 16.0, bottom: 10.0),
-                    child: Card(
-                      elevation: 5.0,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8.0),
-                      ),
-                      child: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              '${cartItem.itemName}',
-                              style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 16.0,
-                              ),
-                            ),
-                            SizedBox(height: 8.0),
-                            Text(
-                              '₹${cartItem.price}',
-                              style: TextStyle(
-                                color: Colors.orange,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 16.0,
-                              ),
-                            ),
-                            SizedBox(height: 8.0),
-                            Container(
-                              height: 36,
-                              width: MediaQuery.of(context)
-                                  .size
-                                  .width /
-                                  2.5,
-                              decoration: BoxDecoration(
-                                color: Color(0xFFe78337),
-                                borderRadius:
-                                BorderRadius.circular(
-                                    10.0),
-                              ),
-                              child: Row(
-                                children: [
-                                  IconButton(
-                                    icon: Icon(Icons.remove,
-                                        color: Colors.white),
-                                    onPressed: () {
-                                      if (quantities[index] >
-                                          1) {
-                                        setState(() {
-                                          quantities[index]--;
-                                        });
-                                        textEditingControllers[
-                                        index]
-                                            .text =
-                                            quantities[index]
-                                                .toString();
-                                      }
-                                    },
-                                    iconSize: 25.0,
-                                  ),
-                                  Expanded(
-                                    child: Align(
-                                      alignment:
-                                      Alignment.center,
-                                      child: Container(
-                                        height: 35,
-                                        child: Padding(
-                                          padding:
-                                          const EdgeInsets
-                                              .all(2.0),
-                                          child: Container(
-                                            alignment:
-                                            Alignment
-                                                .center,
-                                            width: MediaQuery.of(
-                                                context)
-                                                .size
-                                                .width /
-                                                5.1,
-                                            decoration:
-                                            BoxDecoration(
-                                              color: Colors
-                                                  .white,
-                                            ),
-                                            child: TextField(
-
-                                              keyboardType:
-                                              TextInputType
-                                                  .number,
-                                              inputFormatters: <TextInputFormatter>[
-                                                FilteringTextInputFormatter
-                                                    .digitsOnly,
-                                                LengthLimitingTextInputFormatter(
-                                                    5),
-                                              ],
-                                              onChanged:
-                                                  (value) {
-                                                setState(() {
-                                                  quantities[
-                                                  index] = int.parse(value
-                                                      .isEmpty
-                                                      ? '1'
-                                                      : value);
-                                                });
-                                              },
-                                              decoration:
-                                              InputDecoration(
-                                                hintText: '${cartItem.orderQty}',
-                                                hintStyle:
-                                                CommonUtils
-                                                    .Mediumtext_o_14,
-                                                border:
-                                                InputBorder
-                                                    .none,
-                                                focusedBorder:
-                                                InputBorder
-                                                    .none,
-                                                enabledBorder:
-                                                InputBorder
-                                                    .none,
-                                                contentPadding:
-                                                EdgeInsets.only(
-                                                    bottom:
-                                                    10.0),
-                                              ),
-                                              textAlign:
-                                              TextAlign
-                                                  .center,
-                                              style: CommonUtils
-                                                  .Mediumtext_o_14,
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                  IconButton(
-                                    icon: Icon(Icons.add,
-                                        color: Colors.white),
-                                    onPressed: () {
-                                      setState(() {
-                                        quantities[index]++;
-                                      });
-                                      textEditingControllers[
-                                      index]
-                                          .text =
-                                          quantities[index]
-                                              .toString();
-                                    },
-                                    alignment:
-                                    Alignment.centerLeft,
-                                    iconSize: 25.0,
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  );
+                  if (cartItems.length != textEditingControllers.length) {
+                    textEditingControllers = List.generate(cartItems.length,
+                            (index) => TextEditingController());
+                  }
+                  return CartItemWidget(cartItem: cartItem, controller: textEditingControllers[index]);
                 },
               );
             } else {
@@ -360,7 +207,8 @@ class Order_submit_screen extends State<Ordersubmit_screen> {
           },
         ),
 
-        // Container(
+
+            // Container(
             //   child: cartItems != null && cartItems!.isNotEmpty
             //       ?
             // SingleChildScrollView(
@@ -664,7 +512,6 @@ class Order_submit_screen extends State<Ordersubmit_screen> {
     );
   }
 
-
   //
   // void saveCartData() async {
   //   // Get the SharedPreferences instance
@@ -709,8 +556,8 @@ class Order_submit_screen extends State<Ordersubmit_screen> {
 
       "OrderItemXrefTypeList": orderItemList,
       "Id": 1,
-      "CompanyId": 2,
-      "OrderNumber": "123",
+      "CompanyId": CompneyId,
+      "OrderNumber": "",
       "OrderDate": "2024-01-24T10:39:00.9845541+05:30",
       "PartyCode": '${widget.cardCode}',
       "PartyName": '${widget.cardName}',
@@ -733,12 +580,11 @@ class Order_submit_screen extends State<Ordersubmit_screen> {
       "TotalCost": 1.1,
       "Remarks": "test",
       "IsActive": true,
-      "CreatedBy": "e39536e2-89d3-4cc7-ae79-3dd5291ff156",
+      "CreatedBy": userId,
       "CreatedDate": "2024-01-29",
-      "UpdatedBy": "e39536e2-89d3-4cc7-ae79-3dd5291ff156",
+      "UpdatedBy": userId,
       "UpdatedDate": "2024-01-29"
     };
-    print(orderData);
     print(jsonEncode(orderData));
 
     try {
@@ -754,12 +600,19 @@ class Order_submit_screen extends State<Ordersubmit_screen> {
         // Successful request
         final responseData = jsonDecode(response.body);
         print(responseData);
+
+        // 1. Retrieve the orderNumber from the API response
+        String orderNumber = responseData['response']['orderNumber'];
+
+        // 2. Display orderNumber in orderStatusScreen
+
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => orderStatusScreen()),
+          MaterialPageRoute(
+            builder: (context) => orderStatusScreen(responseData: responseData),
+          ),
         );
 
-        // Handle the response accordingly
       } else {
         // Handle errors
         print('Error: ${response.reasonPhrase}');
@@ -768,6 +621,18 @@ class Order_submit_screen extends State<Ordersubmit_screen> {
       // Handle exceptions
       print('Exception: $e');
     }
+  }
+
+  void printRemainingCartItems() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    List<String>? cartItems = prefs.getStringList('cartItems');
+    int remainingCartItems = cartItems?.length ?? 0;
+    print('RemainingCartItems: $remainingCartItems');
+  }
+
+  void clearCartItems() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.remove('cartItems');
   }
 
   // Function to retrieve cart items from SharedPreferences
@@ -785,18 +650,124 @@ class Order_submit_screen extends State<Ordersubmit_screen> {
     return cartItems;
   }
 
-
   Future<void> fetchCartItems() async {
     List<OrderItemXrefType> items = await getCartItems();
 
     // Print the retrieved cart items
     print('Retrieved Cart Items:');
     items.forEach((item) {
-      print('Item Name: ${item.itemName}, Price: ${item.price}, Quantity: ${item.orderQty}');
+      print(
+          'Item Name: ${item.itemName}, Price: ${item.price}, Quantity: ${item.orderQty}');
     });
 
     setState(() {
       cartItems = items;
     });
+  }
+
+  Future<void> getshareddata() async {
+
+    userId = await SharedPrefsData.getStringFromSharedPrefs("userId");
+    slpCode = await SharedPrefsData.getStringFromSharedPrefs("slpCode");
+    CompneyId = await SharedPrefsData.getIntFromSharedPrefs("companyId");
+    print('User ID: $userId');
+    print('SLP Code: $slpCode');
+    print('Company ID: $CompneyId');
+
+
+  }
+}
+
+class CartItemWidget extends StatefulWidget {
+  final OrderItemXrefType cartItem;
+  final TextEditingController controller;
+
+  CartItemWidget({required this.cartItem, required this.controller});
+
+  @override
+  _CartItemWidgetState createState() => _CartItemWidgetState();
+}
+
+class _CartItemWidgetState extends State<CartItemWidget> {
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(left: 16.0, right: 16.0, bottom: 10.0),
+      child: Card(
+        elevation: 5.0,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(8.0),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                '${widget.cartItem.itemName}',
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 16.0,
+                ),
+              ),
+              SizedBox(height: 8.0),
+              Text(
+                '₹${widget.cartItem.price}',
+                style: TextStyle(
+                  color: Colors.orange,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 16.0,
+                ),
+              ),
+              SizedBox(height: 8.0),
+              ValueListenableBuilder<int>(
+                valueListenable: ValueNotifier<int>(widget.cartItem.orderQty),
+                builder: (context, val, child) {
+                  return PlusMinusButtons(
+                    addQuantity: () {
+                      setState(() {
+                        widget.cartItem.orderQty++;
+                        widget.controller.text = widget.cartItem.orderQty.toString();
+                      });
+                    },
+                    deleteQuantity: () {
+                      setState(() {
+                        if (widget.cartItem.orderQty > 1) {
+                          widget.cartItem.orderQty--;
+                          widget.controller.text = widget.cartItem.orderQty.toString();
+                        }
+                      });
+                    },
+                    text: val.toString(),
+                  );
+                },
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+class PlusMinusButtons extends StatelessWidget {
+  final VoidCallback deleteQuantity;
+  final VoidCallback addQuantity;
+  final String text;
+  const PlusMinusButtons(
+      {Key? key,
+        required this.addQuantity,
+        required this.deleteQuantity,
+        required this.text})
+      : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        IconButton(onPressed: deleteQuantity, icon: const Icon(Icons.remove)),
+        Text(text),
+        IconButton(onPressed: addQuantity, icon: const Icon(Icons.add)),
+      ],
+    );
   }
 }

@@ -40,7 +40,7 @@ class OrderItemXrefType {
   String? itemCode;
   String? itemName;
   String? noOfPcs;
-  int? orderQty;
+  int orderQty;
   double? price;
   double? igst;
   double? cgst;
@@ -52,9 +52,9 @@ class OrderItemXrefType {
     required this.itemGrpCod,
     this.itemGrpName,
     this.itemCode,
-    this.itemName,
-    this.noOfPcs,
-    this.orderQty,
+    required  this.itemName,
+    required this.noOfPcs,
+    required this.orderQty,
     this.price,
     this.igst,
     this.cgst,

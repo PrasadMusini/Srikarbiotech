@@ -16,6 +16,7 @@ import 'package:srikarbiotech/Payment_model.dart';
 import 'package:srikarbiotech/categroy_model.dart';
 import 'package:srikarbiotech/sb_status.dart';
 import 'Common/CommonUtils.dart';
+import 'Common/SharedPrefsData.dart';
 import 'HomeScreen.dart';
 import 'OrctResponse.dart';
 
@@ -160,12 +161,16 @@ getshareddata();
                   MaterialPageRoute(builder: (context) => HomeScreen()),
                 );
               },
-              child: Icon(
-                Icons.home,
-                size: 30,
-                color: Colors.white,
+              child: Image.asset(
+                CompneyId == 1
+                    ? 'assets/srikar-home-icon.png'
+                    : 'assets/srikar-seed.png',
+                width: 30,
+                height: 30,
+
               ),
             ),
+
           ],
         ),
       ),
@@ -1635,7 +1640,7 @@ getshareddata();
 
   Future<void> fetchdropdownitems() async {
     final apiUrl =
-        'http://182.18.157.215/Srikar_Biotech_Dev/API/api/Collections/GetPurposes/1';
+        'http://182.18.157.215/Srikar_Biotech_Dev/API/api/Collections/GetPurposes/'+'$CompneyId';
 
     try {
       final response = await http.get(Uri.parse(apiUrl));
@@ -1658,7 +1663,7 @@ getshareddata();
 
   Future<void> fetchdropdownitemscategory() async {
     final apiUrl =
-        'http://182.18.157.215/Srikar_Biotech_Dev/API/api/Item/GetItemGroups/1/null';
+        'http://182.18.157.215/Srikar_Biotech_Dev/API/api/Item/GetItemGroups/'+'$CompneyId'+'/null';
 
     try {
       final response = await http.get(Uri.parse(apiUrl));
@@ -1685,27 +1690,17 @@ getshareddata();
     }
   }
   Future<void> getshareddata() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
 
-// Retrieve userId and slpCode
-
-    setState(() {
-      userId = prefs.getString("userId");
-      slpCode = prefs.getString("slpCode");
-      CompneyId = prefs.getInt("compneyid")!;
+      userId= await SharedPrefsData.getStringFromSharedPrefs("userId");
+      slpCode= await SharedPrefsData.getStringFromSharedPrefs("slpCode");
+      CompneyId= await SharedPrefsData.getIntFromSharedPrefs("companyId");
+      print('User ID: $userId');
+      print('SLP Code: $slpCode');
+      print('Company ID: $CompneyId');
 
       print('Retrieved CompneyId: $CompneyId');
-    });
-// Check if they are not null before using them
-    if (userId != null && slpCode != null ) {
-      // Use userId and slpCode in your code
-      print('Retrieved userId: $userId');
-      print('Retrieved slpCode: $slpCode');
 
-    } else {
-      // Handle the case where userId or slpCode is null
-      print('User not logged in or missing required data.');
-    }
+
   }
 
 }

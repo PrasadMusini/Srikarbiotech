@@ -12,6 +12,7 @@ import 'package:srikarbiotech/Common/CommonUtils.dart';
 
 import 'package:srikarbiotech/view_collection_checkout.dart';
 
+import 'Common/SharedPrefsData.dart';
 import 'HomeScreen.dart';
 import 'Model/card_collection.dart';
 import 'OrctResponse.dart';
@@ -53,10 +54,11 @@ class _ViewCollectionPageState extends State<ViewCollectionPage> {
   late Future<List<ListResult>> apiData;
   List<ListResult> filteredData = [];
   late ViewCollectionProvider viewProvider;
-
+  int CompneyId = 0;
   @override
   void initState() {
     super.initState();
+    getshareddata();
     initializeData();
   }
 
@@ -218,15 +220,19 @@ class _ViewCollectionPageState extends State<ViewCollectionPage> {
               // Handle the click event for the home icon
               Navigator.pushReplacement(
                 context,
-                MaterialPageRoute(builder: (context) =>  HomeScreen()),
+                MaterialPageRoute(builder: (context) => HomeScreen()),
               );
             },
-            child: const Icon(
-              Icons.home,
-              size: 30,
-              color: Colors.white,
+            child: Image.asset(
+              CompneyId == 1
+                  ? 'assets/srikar-home-icon.png'
+                  : 'assets/srikar-seed.png',
+              width: 60,
+              height: 40,
+
             ),
           ),
+
         ],
       ),
     );
@@ -282,6 +288,16 @@ class _ViewCollectionPageState extends State<ViewCollectionPage> {
       ),
     );
   }
+
+  Future<void> getshareddata() async {
+
+    CompneyId = await SharedPrefsData.getIntFromSharedPrefs("companyId");
+
+    print('Company ID: $CompneyId');
+
+
+  }
+
 }
 
 class FilterBottomSheet extends StatefulWidget {

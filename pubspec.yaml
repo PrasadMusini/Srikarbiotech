@@ -53,6 +53,7 @@ dependencies:
   dotted_border: ^2.0.0
   collection: ^1.15.0
   device_info: ^2.0.0
+  share_extend: ^2.0.0
 
 
 dev_dependencies:
@@ -121,6 +122,7 @@ flutter:
     - assets/site-alt.svg
     - assets/indian-rupee-sign.svg
     - assets/srikar-bio.png
+    - assets/srikar-home-icon.png
 
   #   - images/a_dot_ham.jpeg
 

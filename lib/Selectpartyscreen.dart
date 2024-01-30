@@ -6,13 +6,16 @@ import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:srikarbiotech/Common/CommonUtils.dart';
-import 'package:srikarbiotech/Services/Createorderscreen.dart';
+
 
 import 'package:srikarbiotech/Services/api_config.dart';
 import 'dart:convert';
 
+import 'Common/SharedPreferencesHelper.dart';
+import 'Common/SharedPrefsData.dart';
 import 'CreateCollectionscreen.dart';
 import 'CreateReturnorderscreen.dart';
+import 'Createorderscreen.dart';
 import 'Ledgerscreen.dart';
 import 'Model/Dealer.dart';
 
@@ -378,49 +381,28 @@ class Selectparty_screen extends State<Selectpartyscreen> {
     });
   }
 
-  Future<void> getslpcode() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
 
-// Retrieve userId and slpCode
-    String? userId = prefs.getString("userId");
-    String? slpCode = prefs.getString("slpCode");
 
-// Check if they are not null before using them
-    if (userId != null && slpCode != null) {
-      // Use userId and slpCode in your code
-      print('Retrieved userId: $userId');
-      print('Retrieved slpCode: $slpCode');
-      fetchData();
-    } else {
-      // Handle the case where userId or slpCode is null
-      print('User not logged in or missing required data.');
-    }
-  }
   Future<void> getshareddata() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-
-// Retrieve userId and slpCode
-
-
-    setState(() {
-      userId = prefs.getString("userId");
-      slpCode = prefs.getString("slpCode");
-      CompneyId = prefs.getInt("compneyid")!;
-      fetchData();
-      print('Retrieved CompneyId: $CompneyId');
-    });
-// Check if they are not null before using them
-    if (userId != null && slpCode != null ) {
-      // Use userId and slpCode in your code
-      print('Retrieved userId: $userId');
-      print('Retrieved slpCode: $slpCode');
-
-    } else {
-      // Handle the case where userId or slpCode is null
-      print('User not logged in or missing required data.');
-    }
+    userId= await SharedPrefsData.getStringFromSharedPrefs("userId");
+    slpCode= await SharedPrefsData.getStringFromSharedPrefs("slpCode");
+    CompneyId= await SharedPrefsData.getIntFromSharedPrefs("companyId");
+    print('User ID: $userId');
+    print('SLP Code: $slpCode');
+    print('Company ID: $CompneyId');
+    fetchData();
+    // final loadedData = await SharedPreferencesHelper.getCategories();
+    // print('loadedData: $loadedData');
+    // if (loadedData != null) {
+    //   userId = loadedData['response']['userId'];
+    //   slpCode = loadedData['response']['slpCode'];
+    //   CompneyId = loadedData['response']['companyId'];
+    //   print('User ID: $userId');
+    //   print('SLP Code: $slpCode');
+    //   print('Company ID: $CompneyId');
+    //   fetchData();
+    // }
   }
-
 
 }
 

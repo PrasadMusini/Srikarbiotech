@@ -18,6 +18,7 @@ import 'LoginScreen.dart';
 import 'ViewCollectionProvider.dart';
 
 void main() {
+
   runApp(
     MultiProvider(
       providers: [
@@ -46,6 +47,7 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       home: MultiProvider(
         providers: [
           ChangeNotifierProvider(create: (context) => CartProvider()),
@@ -151,20 +153,18 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
         print('isLogin:$isLogin');
         print('welcome:$welcome');
         // Add any additional logic or navigation based on the retrieved values
-
-        // Example: Navigate to the appropriate screen
         if (isLogin) {
-          navigateToLogin();
-          // User is logged in
-          // Navigate to the home screen
-        } else {
-          // User is not logged in
-          // Check the 'welcome' value and navigate accordingly
+          navigateToHome();
 
-          navigateToLogin();
-          // Navigate to the welcome screen
+        } else {
+          if (welcome) {
+            navigateToLogin();
+          } else {
+            navigateTocompneyselection();
+          }
+
         }
-        navigateToLogin();
+
       }
     });
 
@@ -221,6 +221,12 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
   void navigateToHome() {
     Navigator.of(context).pushReplacement(
       MaterialPageRoute(builder: (context) => HomeScreen()),
+    );
+  }
+
+  void navigateTocompneyselection() {
+    Navigator.of(context).pushReplacement(
+      MaterialPageRoute(builder: (context) => Companiesselection()),
     );
   }
 

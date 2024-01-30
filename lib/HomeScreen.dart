@@ -8,6 +8,11 @@ import 'package:srikarbiotech/ViewOrders.dart';
 import 'package:srikarbiotech/view_collection_page.dart';
 
 import 'Common/CommonUtils.dart';
+import 'Common/Constants.dart';
+import 'Common/SharedPreferencesHelper.dart';
+import 'Common/SharedPrefsData.dart';
+import 'Companiesselection.dart';
+import 'LoginScreen.dart';
 import 'Selectpartyscreen.dart';
 import 'ViewReturnorder.dart';
 
@@ -18,11 +23,11 @@ class HomeScreen extends StatefulWidget {
 
 class _home_Screen extends State<HomeScreen> {
   int currentIndex = 0;
-int CompneyId = 0;
+  int CompneyId = 0;
   String? userId = "";
   String? slpCode = "";
   @override
-  initState() {
+  void initState() {
     super.initState();
     SystemChrome.setPreferredOrientations([
       DeviceOrientation.portraitDown,
@@ -33,12 +38,15 @@ int CompneyId = 0;
       if (isConnected) {
         print('Connected to the internet');
         getshareddata();
+
+
       } else {
         CommonUtils.showCustomToastMessageLong('No Internet Connection', context, 1, 4);
         print('Not connected to the internet');  // Not connected to the internet
       }
     });
-  }
+   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -70,58 +78,117 @@ int CompneyId = 0;
                   ? 'Srikar Bio Tech'
                   : 'Srikar Seeds ',
               style: TextStyle(
-                  color: Color(0xFF414141), fontWeight: FontWeight.w600),
+                color: Color(0xFF414141),
+                fontWeight: FontWeight.w600,
+              ),
             ),
             Spacer(),
-            SvgPicture.asset(
-              'assets/bell.svg',
-              width: 18.0,
-              height: 25.0,
-              color: Color(0xFFe78337),
+            GestureDetector(
+              onTap: () {
+                // Show the bell icon functionality
+                // Implement your logic here for the bell icon click
+              },
+              child: SvgPicture.asset(
+                'assets/bell.svg',
+                width: 18.0,
+                height: 25.0,
+                color: Color(0xFFe78337),
+              ),
             ),
             SizedBox(
               width: 15.0,
             ),
-            SvgPicture.asset(
-              'assets/sign-out-alt.svg',
-              width: 18.0,
-              height: 25.0,
-              color: Color(0xFFe78337),
+            GestureDetector(
+              onTap: () {
+                // Show the logout confirmation dialog
+                logOutDialog();
+              },
+              child: SvgPicture.asset(
+                'assets/sign-out-alt.svg',
+                width: 18.0,
+                height: 25.0,
+                color: Color(0xFFe78337),
+              ),
             ),
             SizedBox(
               width: 20.0,
-            )
+            ),
           ],
         ),
+
+
       ),
       body: imageslider(),
     );
   }
 
   Future<void> getshareddata() async {
+
+      userId = await SharedPrefsData.getStringFromSharedPrefs("userId");
+      slpCode = await SharedPrefsData.getStringFromSharedPrefs("slpCode");
+      CompneyId = await SharedPrefsData.getIntFromSharedPrefs("companyId");
+      print('User ID: $userId');
+      print('SLP Code: $slpCode');
+      print('Company ID: $CompneyId');
+
+
+  }
+
+
+  void logOutDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Logout'),
+          content: Text('Are you sure you want to Logout?'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(); // Close the dialog
+              },
+              child: Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(); // Close the dialog
+                onConfirmLogout(); // Perform logout action
+              },
+              child: Text('Logout'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void onConfirmLogout() {
+    SharedPreferencesHelper.putBool(Constants.IS_LOGIN, false);
+    CommonUtils.showCustomToastMessageLong("Logout Successful", context, 0, 3);
+
+
+    Navigator.of(context).pushAndRemoveUntil(
+      MaterialPageRoute(builder: (context) => Companiesselection()),
+          (route) => false,
+    );
+  }
+  Future<Map<String, dynamic>> getUserInfo() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
 
-// Retrieve userId and slpCode
+    String userId = prefs.getString("userId") ?? "";
+    String slpCode = prefs.getString("slpCode") ?? "";
+    int companyId = prefs.getInt("companyId") ?? 0;
+    print('User ID:1== $userId');
+    print('SLP Code:1== $slpCode');
+    print('Company ID:1== $companyId');
+    return {
+      "userId": userId,
+      "slpCode": slpCode,
+      "companyId": companyId,
+    };
 
-
-    setState(() {
-    userId = prefs.getString("userId");
-       slpCode = prefs.getString("slpCode");
-      CompneyId = prefs.getInt("compneyid")!;
-    print('Retrieved CompneyId: $CompneyId');
-    });
-// Check if they are not null before using them
-    if (userId != null && slpCode != null ) {
-      // Use userId and slpCode in your code
-      print('Retrieved userId: $userId');
-      print('Retrieved slpCode: $slpCode');
-
-    } else {
-      // Handle the case where userId or slpCode is null
-      print('User not logged in or missing required data.');
-    }
   }
-  }
+}
 
 
 class BannerImages {

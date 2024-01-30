@@ -7,6 +7,9 @@ import 'package:flutter_svg/svg.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'Common/CommonUtils.dart';
+import 'Common/Constants.dart';
+import 'Common/SharedPreferencesHelper.dart';
+import 'Common/SharedPrefsData.dart';
 import 'HomeScreen.dart';
 import 'Model/CompanyModel.dart';
 import 'Services/api_config.dart';
@@ -396,34 +399,27 @@ class _MyHomePageState extends State<LoginScreen> {
       print('LoginjsonResponse ==>$jsonResponse');
       if (jsonResponse['isSuccess'] == true) {
         print('Login successful');
+        // Save boolean value in SharedPreferences
+        final Map<String, dynamic> responseData = json.decode(response.body);
+        //await AuthService.saveSecondApiResponse(responseData);
+        print('Savedresponse: ${responseData}');
+        await SharedPreferencesHelper.saveCategories(responseData);
 
-        userId =  jsonResponse['response']['userId'];
-        slpCode =  jsonResponse['response']['slpCode'];
-        print('userId===>$userId');
-        print('slpCode===>$slpCode');
+        SharedPreferencesHelper.putBool(Constants.IS_LOGIN, true);
         SharedPreferences prefs = await SharedPreferences.getInstance();
-        await prefs.setString("userId", userId ?? "");
-        await prefs.setString("slpCode", slpCode ?? "");
-        await prefs.setInt("compneyid", compneyid);
 
+        prefs.setString("userId", jsonResponse['response']['userId']);
+        prefs.setString("slpCode", jsonResponse['response']['slpCode']);
+        prefs.setInt("companyId", jsonResponse['response']['companyId']);
 
+        SharedPrefsData.updateStringValue("userId",  jsonResponse['response']['userId']);
+        SharedPrefsData.updateStringValue("slpCode",  jsonResponse['response']['slpCode']);
+        SharedPrefsData.updateIntValue("companyId",  jsonResponse['response']['companyId']);
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(builder: (context) => HomeScreen()),
         );
-        // Navigate to the next activity based on your logic
-        // if (jsonResponse['response']['roleName'] == 'SuperAdmin') {
-        //   Navigator.pushReplacement(
-        //     context,
-        //     MaterialPageRoute(builder: (context) => SuperAdminScreen()),
-        //   );
-        // } else {
-        //   // Add additional conditions for other roles or activities
-        //   // Navigator.pushReplacement(
-        //   //   context,
-        //   //   MaterialPageRoute(builder: (context) => OtherScreen()),
-        //   // );
-        // }
+
       } else {
         print('Login failed. Please check your credentials.');
         CommonUtils.showCustomToastMessageLong('Login failed. Please check your credentials.', context, 1, 4);

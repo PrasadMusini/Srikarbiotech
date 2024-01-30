@@ -1,22 +1,41 @@
+import 'dart:io';
+
 import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:hexcolor/hexcolor.dart';
+import 'package:intl/intl.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:share/share.dart';
+import 'package:share_extend/share_extend.dart';
 import 'package:srikarbiotech/ViewOrders.dart';
-import 'package:srikarbiotech/view_collection_page.dart';
 
 import 'HomeScreen.dart';
 
 class orderStatusScreen extends StatelessWidget {
-  const orderStatusScreen({super.key});
-
+  final Map<String, dynamic> responseData;
+  String orderId = "";
+  // Constructor to receive responseData
+  orderStatusScreen({required this.responseData});
   @override
   Widget build(BuildContext context) {
     // final arguments = ModalRoute.of(context)?.settings.arguments as ListResult;
+    // Print the response data for debugging purposes
+    print('Response Data: $responseData');
+     orderId = responseData['response']['orderNumber'] ?? 'xxxxxxxxxx';
+    print('orderId: $orderId');
+    // Create a formatted string with remaining data
+
+    // String formattedData = _formatData(responseData);
+    // print('Formatted Data:\n$formattedData');
+    // // Save the formatted data to a text document
+    // saveDataToTextDocument(formattedData);
+    // // Print the formatted data for debugging purposes
+
     final primaryGreen = HexColor('#11872f');
     final primaryOrange = HexColor('#dc762b');
 
-    String orderId = 'xxxxxxxxxx';
+
 
     return Scaffold(
 
@@ -65,12 +84,14 @@ class orderStatusScreen extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
+
+                // Display the orderId in the UI
                 const Text(
                   'Order ID: ',
                   style: TextStyle(fontWeight: FontWeight.bold),
                 ),
                 Text(
-                  orderId,
+                  '$orderId',
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 20,
@@ -84,30 +105,79 @@ class orderStatusScreen extends StatelessWidget {
             ),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: GestureDetector(
-                onTap: () {
-                  // Navigate to the "View Collections" screen
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => ViewOrders()),
-                  );
-                },
-                child:
-                Container(
-                  padding: const EdgeInsets.all(13),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(12),
-                    color: primaryOrange,
-                  ),
-                  child: const Center(
-                    child: Text(
-                      'Go to View Orders',
-                      style: TextStyle(
-                          fontWeight: FontWeight.bold, color: Colors.white),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: InkWell(
+              onTap: () async {
+            print('Go to View Orders button clicked');
+
+            // Add logic for the download button
+            await Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => ViewOrders()),
+            );
+
+            // Once the ViewOrders screen is popped, the orderId should be updated
+            print('orderId: $orderId');
+            },
+                      child: Container(
+                        padding: const EdgeInsets.all(10),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(10),
+                          color: Color(0xFFe78337),
+                        ),
+                        child: const Center(
+                          child:  Text(
+                            'Go to View Orders',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold, // Set the font weight to bold
+                              fontFamily: 'Roboto', // Set the font family to Roboto
+                            ),
+                          ),
+                        ),
+                      ),
                     ),
                   ),
-                ),
+                  const SizedBox(
+                    width: 15,
+                  ),
+                  InkWell(
+                    onTap: () async {
+                      print('Share button clicked');
+
+                      // Create a formatted string with remaining data
+                      String formattedData = _formatData(responseData);
+                      print('Formatted Data:\n$formattedData');
+
+                      // Save the formatted data to a text document
+                      //await saveDataToTextDocument(formattedData);
+                      await _shareorderdetails(responseData);
+
+                    },
+                    child: Container(
+                      padding: const EdgeInsets.all(10),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10),
+                        border: Border.all(
+                          color: Color(0xFFe78337),
+                        ),
+                        color: Color(0xFFF8dac2),
+                      ),
+                      child: SvgPicture.asset(
+                        'assets/share.svg',
+                        color: Color(0xFFe78337),
+                        width: 25,
+                        height: 25,
+                      ),
+                    ),
+                  )
+
+                ],
               ),
+
             ),
             const SizedBox(
               height: 20,
@@ -147,4 +217,119 @@ class orderStatusScreen extends StatelessWidget {
       ),
     );
   }
+
+  String _formatData(dynamic data) {
+    if (data is Map) {
+      return data.entries
+          .map((entry) => '${entry.key}: ${_formatData(entry.value)}')
+          .join('\n');
+    } else if (data is Iterable) {
+      return data.map((item) => _formatData(item)).join('\n');
+    } else {
+      return '$data';
+    }
+  }
+
+//Future<void> saveDataToTextDocument(String data) async {
+  //   try {
+  //     Directory directory = Directory('/storage/emulated/0/Download');
+  //     String fileName = "srikar_order_data${orderId}.txt";
+  //     String filePath = '${directory.path}/$fileName';
+  //
+  //     final file = File(filePath);
+  //
+  //     // Write formattedData to the file
+  //     await file.writeAsString(data);
+  //
+  //     // Print a message for debugging purposes
+  //     print('Text document created successfully at: $filePath');
+  //
+  //     // Print the content of the file for debugging
+  //     print('File content:\n${await file.readAsString()}');
+  //
+  //     // Share the order details
+  //     await _shareorderdetails('/storage/emulated/0/Download/srikar_order_dataSkOrder000731.txt');
+  //   } catch (e) {
+  //     // Handle exceptions
+  //     print('Exception: $e');
+  //   }
+  // }
+  Future<void> _shareorderdetails(Map<String, dynamic> responseData) async {
+    try {
+      // Extract relevant data from the response
+    //   String orderDetails = """
+    //   Item Name: ${responseData['response']['orderItemXrefTypeList'][0]['itemName']}
+    //   Number of Pieces: ${responseData['response']['orderItemXrefTypeList'][0]['noOfPcs']}
+    //   Order Quantity: ${responseData['response']['orderItemXrefTypeList'][0]['orderQty']}
+    //   Price: ${responseData['response']['orderItemXrefTypeList'][0]['price']}
+    //   Order Number: ${responseData['response']['orderNumber']}
+    //   Order Date: ${responseData['response']['orderDate']}
+    //   Party Code: ${responseData['response']['partyCode']}
+    //   Party Name: ${responseData['response']['partyName']}
+    //   Party Address: ${responseData['response']['partyAddress']}
+    //   Party State: ${responseData['response']['partyState']}
+    //   Party GST Number: ${responseData['response']['partyGSTNumber']}
+    //   Proprietor Name: ${responseData['response']['proprietorName']}
+    //   Outstanding Amount: ${responseData['response']['partyOutStandingAmount']}
+    //   Booking Place: ${responseData['response']['bookingPlace']}
+    //   Transport Name: ${responseData['response']['transportName']}
+    //   End User Message: ${responseData['endUserMessage']}
+    // """;
+      String orderDetails = """
+   
+      Party Code: ${responseData['response']['partyCode']}
+      Party Name: ${responseData['response']['partyName']}
+      Party Address: ${responseData['response']['partyAddress']}
+      Order Number: ${responseData['response']['orderNumber']}
+      Order Date: ${responseData['response']['orderDate']}
+      Outstanding Amount: ${responseData['response']['partyOutStandingAmount']}
+     
+    """;
+      // Share the formatted order details
+      await Share.share(orderDetails, subject: 'Order Details');
+    } catch (error) {
+      print('Error sharing order details: $error');
+    }
+  }
+
+  // Future<void> saveDataToTextDocument(String data) async {
+  //   try {
+  //     Directory directory = Directory('/storage/emulated/0/Download');
+  //     String fileName = "order_details.txt";
+  //     String filePath = '${directory.path}/$fileName';
+  //
+  //     final file = File(filePath);
+  //
+  //     // Write formattedData to the file
+  //     await file.writeAsString(data);
+  //
+  //     // Share the order details
+  //     await _shareFile(filePath);
+  //   } catch (e) {
+  //     // Handle exceptions
+  //     print('Exception: $e');
+  //   }
+  // }
+  //
+  // Future<void> _shareFile(String filePath) async {
+  //   try {
+  //     // Check if the file exists
+  //     File file = File(filePath);
+  //     if (await file.exists()) {
+  //       // Read the content of the file
+  //       String fileContent = await file.readAsString();
+  //
+  //       // Share the file content using Share package
+  //       await Share.share(fileContent, subject: 'Order Details');
+  //     } else {
+  //       print('File not found: $filePath');
+  //     }
+  //   } catch (error) {
+  //     print('Error sharing order details: $error');
+  //   }
+  // }
+  //
+
+
+
 }
