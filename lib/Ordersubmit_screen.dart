@@ -78,18 +78,17 @@ class Order_submit_screen extends State<Ordersubmit_screen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
+      appBar:
+      AppBar(
         backgroundColor: Color(0xFFe78337),
         automaticallyImplyLeading: false,
-        // This line removes the default back arrow
         title: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Row(
               children: [
                 Padding(
-                  padding:
-                  const EdgeInsets.symmetric(horizontal: 2, vertical: 2),
+                  padding: const EdgeInsets.symmetric(horizontal: 2, vertical: 2),
                   child: GestureDetector(
                     onTap: () {
                       // Handle the click event for the back button
@@ -111,13 +110,11 @@ class Order_submit_screen extends State<Ordersubmit_screen> {
                   ),
                 ),
                 FutureBuilder(
-                  future: Future
-                      .value(), // Replace with your actual asynchronous operation
+                  future: getshareddata(),
                   builder: (context, snapshot) {
                     if (snapshot.connectionState == ConnectionState.done) {
                       // Access the cart data from the provider
-                      cartItems =
-                          Provider.of<CartProvider>(context).getCartItems();
+                      cartItems = Provider.of<CartProvider>(context).getCartItems();
                       // Update the globalCartLength
                       globalCartLength = cartItems.length;
                     }
@@ -152,6 +149,7 @@ class Order_submit_screen extends State<Ordersubmit_screen> {
           ],
         ),
       ),
+
       body: SingleChildScrollView(
         child: Column(
           children: [

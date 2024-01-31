@@ -57,80 +57,84 @@ class _home_Screen extends State<HomeScreen> {
           // You can add any custom logic before closing the app
           return true; // Return true to allow back button press and close the app
         },
-    child:  Scaffold(
-      appBar: AppBar(
+        child: Scaffold(
+        appBar: AppBar(
         elevation: 5.0,
         backgroundColor: Colors.white,
-        //  centerTitle: true,
-        automaticallyImplyLeading:
-            false, // Set this to false to remove back arrow
-        title:
-        Row(
-          mainAxisAlignment: MainAxisAlignment.start,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 2, vertical: 2),
+        automaticallyImplyLeading: false,
+        title: FutureBuilder(
+        future: getshareddata(),
+    builder: (context, snapshot) {
+    if (snapshot.connectionState == ConnectionState.done) {
+      return Row(
+        mainAxisAlignment: MainAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Padding(
+            padding:
+            const EdgeInsets.symmetric(horizontal: 2, vertical: 2),
+          ),
+          Image.asset(
+            CompneyId == 1
+                ? 'assets/srikar-bio.png'
+                : 'assets/srikar-seed.png',
+            width: 60.0,
+            height: 40.0,
+          ),
+          Text(
+            CompneyId == 1 ? 'Srikar Bio Tech' : 'Srikar Seeds ',
+            style: TextStyle(
+              color: Color(0xFF414141),
+              fontWeight: FontWeight.w600,
             ),
-            Image.asset(
-              CompneyId == 1
-                  ? 'assets/srikar-bio.png'
-                  : 'assets/srikar-seed.png',
-              width: 60.0,
-              height: 40.0,
+          ),
+          Spacer(),
+          GestureDetector(
+            onTap: () {
+              // Show the bell icon functionality
+              // Implement your logic here for the bell icon click
+            },
+            child: SvgPicture.asset(
+              'assets/bell.svg',
+              width: 18.0,
+              height: 25.0,
+              color: Color(0xFFe78337),
             ),
-            Text(
-              CompneyId == 1
-                  ? 'Srikar Bio Tech'
-                  : 'Srikar Seeds ',
-              style: TextStyle(
-                color: Color(0xFF414141),
-                fontWeight: FontWeight.w600,
-              ),
+          ),
+          SizedBox(
+            width: 15.0,
+          ),
+          GestureDetector(
+            onTap: () {
+              // Show the logout confirmation dialog
+              logOutDialog();
+            },
+            child: SvgPicture.asset(
+              'assets/sign-out-alt.svg',
+              width: 18.0,
+              height: 25.0,
+              color: Color(0xFFe78337),
             ),
-            Spacer(),
-            GestureDetector(
-              onTap: () {
-                // Show the bell icon functionality
-                // Implement your logic here for the bell icon click
-              },
-              child: SvgPicture.asset(
-                'assets/bell.svg',
-                width: 18.0,
-                height: 25.0,
-                color: Color(0xFFe78337),
-              ),
-            ),
-            SizedBox(
-              width: 15.0,
-            ),
-            GestureDetector(
-              onTap: () {
-                // Show the logout confirmation dialog
-                logOutDialog();
-              },
-              child: SvgPicture.asset(
-                'assets/sign-out-alt.svg',
-                width: 18.0,
-                height: 25.0,
-                color: Color(0xFFe78337),
-              ),
-            ),
-            SizedBox(
-              width: 20.0,
-            ),
-          ],
-        ),
-
-
-      ),
+          ),
+          SizedBox(
+            width: 20.0,
+          ),
+        ],
+      );
+    }
+    else {
+    // Return a placeholder or loading indicator
+    return SizedBox.shrink();
+    }
+    },
+    ),
+    ),
       body: imageslider(),
     ),
     );
   }
 
   Future<void> getshareddata() async {
-
       userId = await SharedPrefsData.getStringFromSharedPrefs("userId");
       slpCode = await SharedPrefsData.getStringFromSharedPrefs("slpCode");
       CompneyId = await SharedPrefsData.getIntFromSharedPrefs("companyId");
@@ -179,22 +183,7 @@ class _home_Screen extends State<HomeScreen> {
           (route) => false,
     );
   }
-  Future<Map<String, dynamic>> getUserInfo() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
 
-    String userId = prefs.getString("userId") ?? "";
-    String slpCode = prefs.getString("slpCode") ?? "";
-    int companyId = prefs.getInt("companyId") ?? 0;
-    print('User ID:1== $userId');
-    print('SLP Code:1== $slpCode');
-    print('Company ID:1== $companyId');
-    return {
-      "userId": userId,
-      "slpCode": slpCode,
-      "companyId": companyId,
-    };
-
-  }
 }
 
 
