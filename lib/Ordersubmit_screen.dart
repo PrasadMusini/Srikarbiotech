@@ -141,10 +141,12 @@ class Order_submit_screen extends State<Ordersubmit_screen> {
                   MaterialPageRoute(builder: (context) => HomeScreen()),
                 );
               },
-              child: Icon(
-                Icons.home,
-                size: 30,
-                color: Colors.white,
+              child: Image.asset(
+                CompneyId == 1
+                    ? 'assets/srikar-home-icon.png'
+                    : 'assets/srikar-seed.png',
+                width: CompneyId == 1 ? 30 : 60,
+                height: CompneyId == 1 ? 30 : 40,
               ),
             ),
           ],
@@ -197,8 +199,18 @@ class Order_submit_screen extends State<Ordersubmit_screen> {
                     textEditingControllers = List.generate(cartItems.length,
                             (index) => TextEditingController());
                   }
-                  return CartItemWidget(cartItem: cartItem, controller: textEditingControllers[index]);
-                },
+    return CartItemWidget(
+    cartItem: cartItems[index],
+    onDelete: () {
+    setState(() {
+    // Remove the item from the list when delete is pressed
+
+    cartItems.removeAt(index);
+    });
+    },
+    );
+    },
+
               );
             } else {
               // Handle other connection states (such as ConnectionState.active or ConnectionState.none)
@@ -531,6 +543,12 @@ class Order_submit_screen extends State<Ordersubmit_screen> {
   // }
 
   void AddOrder() async {
+
+    DateTime currentDate = DateTime.now();
+
+    // Format the date as 'yyyy-MM-dd'
+    String formattedcurrentDate = DateFormat('yyyy-MM-dd').format(currentDate);
+    print('Formatted Date: $formattedcurrentDate');
     final String apiUrl = 'http://182.18.157.215/Srikar_Biotech_Dev/API/api/Order/AddOrder';
     List<Map<String, dynamic>> orderItemList = cartItems.map((cartItem) {
 
@@ -543,14 +561,18 @@ class Order_submit_screen extends State<Ordersubmit_screen> {
         "ItemName": cartItem.itemName,
         "NoOfPcs": 10 ,
         "OrderQty":  cartItem.orderQty,
-        "Price": "5000",
-        "IGST": 1.1,
-        "CGST": 1.1,
-        "SGST": 1.1
+        "Price":  cartItem.price,
+        "IGST":  cartItem.igst,
+        "CGST": cartItem.cgst,
+        "SGST": cartItem.sgst
         // Map other cart item properties to corresponding fields
         // ...
       };
     }).toList();
+    // Calculate the sum of prices for the entire order
+    double totalOrderPrice = orderItemList.fold(0.0, (sum, item) => sum + (item['Price'] ?? 0.0));
+    print('totalOrderPrice====$totalOrderPrice');
+
     Map<String, dynamic> orderData = {
 
 
@@ -566,7 +588,7 @@ class Order_submit_screen extends State<Ordersubmit_screen> {
       "PartyPhoneNumber": '${widget.phone}',
       "PartyGSTNumber": '${widget.gstRegnNo}',
       "ProprietorName": '${widget.proprietorName}',
-      "PartyOutStandingAmount": 1.1,
+      "PartyOutStandingAmount": totalOrderPrice,
       "BookingPlace": '${widget.BookingPlace}',
       "TransportName": '${widget.TransportName}',
       "FileName": "",
@@ -577,13 +599,13 @@ class Order_submit_screen extends State<Ordersubmit_screen> {
       "IGST": 1.1,
       "CGST": 1.1,
       "SGST": 1.1,
-      "TotalCost": 1.1,
+      "TotalCost": totalOrderPrice,
       "Remarks": "test",
       "IsActive": true,
       "CreatedBy": userId,
-      "CreatedDate": "2024-01-29",
+      "CreatedDate": formattedcurrentDate,
       "UpdatedBy": userId,
-      "UpdatedDate": "2024-01-29"
+      "UpdatedDate": formattedcurrentDate
     };
     print(jsonEncode(orderData));
 
@@ -612,7 +634,8 @@ class Order_submit_screen extends State<Ordersubmit_screen> {
             builder: (context) => orderStatusScreen(responseData: responseData),
           ),
         );
-
+        clearCartItems();
+        printRemainingCartItems();
       } else {
         // Handle errors
         print('Error: ${response.reasonPhrase}');
@@ -677,20 +700,30 @@ class Order_submit_screen extends State<Ordersubmit_screen> {
 
   }
 }
-
 class CartItemWidget extends StatefulWidget {
   final OrderItemXrefType cartItem;
-  final TextEditingController controller;
+  final VoidCallback onDelete;
 
-  CartItemWidget({required this.cartItem, required this.controller});
+  CartItemWidget({required this.cartItem, required this.onDelete});
 
   @override
   _CartItemWidgetState createState() => _CartItemWidgetState();
 }
-
 class _CartItemWidgetState extends State<CartItemWidget> {
+  late TextEditingController _textController;
+  late int _orderQty;
+
+  @override
+  void initState() {
+    super.initState();
+    _orderQty = widget.cartItem.orderQty;
+    _textController = TextEditingController(text: _orderQty.toString());
+  }
+
   @override
   Widget build(BuildContext context) {
+    double totalWidth = MediaQuery.of(context).size.width;
+
     return Padding(
       padding: const EdgeInsets.only(left: 16.0, right: 16.0, bottom: 10.0),
       child: Card(
@@ -705,42 +738,73 @@ class _CartItemWidgetState extends State<CartItemWidget> {
             children: [
               Text(
                 '${widget.cartItem.itemName}',
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 16.0,
-                ),
+                style: CommonUtils.Mediumtext_14,
               ),
               SizedBox(height: 8.0),
               Text(
                 '₹${widget.cartItem.price}',
-                style: TextStyle(
-                  color: Colors.orange,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 16.0,
-                ),
+                style: CommonUtils.Mediumtext_o_14,
               ),
               SizedBox(height: 8.0),
-              ValueListenableBuilder<int>(
-                valueListenable: ValueNotifier<int>(widget.cartItem.orderQty),
-                builder: (context, val, child) {
-                  return PlusMinusButtons(
-                    addQuantity: () {
-                      setState(() {
-                        widget.cartItem.orderQty++;
-                        widget.controller.text = widget.cartItem.orderQty.toString();
-                      });
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Container(
+                    width: (totalWidth - 40) / 2, // Adjusted width dynamically
+                    child: PlusMinusButtons(
+                      addQuantity: () {
+                        setState(() {
+                          _orderQty++;
+                          _textController.text = _orderQty.toString();
+                        });
+                      },
+                      deleteQuantity: () {
+                        setState(() {
+                          if (_orderQty > 1) {
+                            _orderQty--;
+                            _textController.text = _orderQty.toString();
+                          }
+                        });
+                      },
+                      textController: _textController,
+                    ),
+                  ),
+                  SizedBox(width: 8.0),
+                  GestureDetector(
+                    onTap: () {
+                      widget.onDelete(); // Corrected to invoke the onDelete callback
                     },
-                    deleteQuantity: () {
-                      setState(() {
-                        if (widget.cartItem.orderQty > 1) {
-                          widget.cartItem.orderQty--;
-                          widget.controller.text = widget.cartItem.orderQty.toString();
-                        }
-                      });
-                    },
-                    text: val.toString(),
-                  );
-                },
+                    child: Container(
+                      height: 36,
+                      width: 40,
+                      decoration: BoxDecoration(
+                        color: Color(0xFFF8dac2),
+                        border: Border.all(
+                          color: Color(0xFFe78337),
+                          width: 1.0,
+                        ),
+                        borderRadius: BorderRadius.circular(8.0),
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 4.0),
+                        child: Align(
+                          alignment: Alignment.center,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(
+                                Icons.delete,
+                                size: 18.0,
+                                color: Colors.red,
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+
+                ],
               ),
             ],
           ),
@@ -749,25 +813,89 @@ class _CartItemWidgetState extends State<CartItemWidget> {
     );
   }
 }
+
 class PlusMinusButtons extends StatelessWidget {
   final VoidCallback deleteQuantity;
   final VoidCallback addQuantity;
-  final String text;
-  const PlusMinusButtons(
-      {Key? key,
-        required this.addQuantity,
-        required this.deleteQuantity,
-        required this.text})
-      : super(key: key);
+  final TextEditingController textController;
+
+  PlusMinusButtons({
+    Key? key,
+    required this.addQuantity,
+    required this.deleteQuantity,
+    required this.textController,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      children: [
-        IconButton(onPressed: deleteQuantity, icon: const Icon(Icons.remove)),
-        Text(text),
-        IconButton(onPressed: addQuantity, icon: const Icon(Icons.add)),
-      ],
+    return Container(
+      width: MediaQuery.of(context).size.width / 2.4,
+      height: 38,
+      child: Card(
+        color: Colors.orange,
+        margin: EdgeInsets.symmetric(horizontal: .0),
+        child: Row(
+          children: [
+            IconButton(
+              onPressed: () {
+                deleteQuantity();
+                _updateTextController();
+              },
+              icon: const Icon(Icons.remove, color: Colors.white),
+            ),
+            Expanded(
+              child: Align(
+                alignment: Alignment.center,
+                child: Container(
+                  height: 36,
+                  child: Padding(
+                    padding: const EdgeInsets.all(2.0),
+                    child: Container(
+                      alignment: Alignment.center,
+                      width: MediaQuery.of(context).size.width / 5,
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                      ),
+                      child: TextField(
+                        controller: textController,
+                        keyboardType: TextInputType.number,
+                        inputFormatters: <TextInputFormatter>[
+                          FilteringTextInputFormatter.digitsOnly,
+                          LengthLimitingTextInputFormatter(5),
+                        ],
+                        decoration: InputDecoration(
+                          border: InputBorder.none,
+                          focusedBorder: InputBorder.none,
+                          enabledBorder: InputBorder.none,
+                          contentPadding: EdgeInsets.only(bottom: 10.0),
+                        ),
+                        textAlign: TextAlign.center,
+                        style: CommonUtils.Mediumtext_o_14,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+            IconButton(
+              onPressed: () {
+                addQuantity();
+                _updateTextController();
+              },
+              icon: const Icon(Icons.add, color: Colors.white),
+            ),
+          ],
+
+        ),
+      ),
     );
+  }
+
+  // Helper method to update the text controller
+  void _updateTextController() {
+    // Update the text controller based on your logic
+    // For example, you might want to increment or decrement the value
+    // Here, I'm just printing the current value to the console
+    print('Current Value: ${textController.text}');
   }
 }

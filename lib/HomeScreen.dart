@@ -51,7 +51,13 @@ class _home_Screen extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     double height = MediaQuery.of(context).size.height / 3;
-    return Scaffold(
+    return WillPopScope(
+        onWillPop: () async {
+          // Handle back button press here
+          // You can add any custom logic before closing the app
+          return true; // Return true to allow back button press and close the app
+        },
+    child:  Scaffold(
       appBar: AppBar(
         elevation: 5.0,
         backgroundColor: Colors.white,
@@ -119,6 +125,7 @@ class _home_Screen extends State<HomeScreen> {
 
       ),
       body: imageslider(),
+    ),
     );
   }
 

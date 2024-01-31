@@ -1,5 +1,6 @@
 import 'package:badges/badges.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 // import 'package:shopping_cart_app/database/db_helper.dart';
 // import 'package:shopping_cart_app/model/cart_model.dart';
@@ -277,25 +278,65 @@ class _CartScreenState extends State<CartScreen> {
 class PlusMinusButtons extends StatelessWidget {
   final VoidCallback deleteQuantity;
   final VoidCallback addQuantity;
-  final String text;
-  const PlusMinusButtons(
-      {Key? key,
-      required this.addQuantity,
-      required this.deleteQuantity,
-      required this.text})
-      : super(key: key);
+  final TextEditingController textController; // Use the correct parameter name
+
+  const PlusMinusButtons({
+    Key? key,
+    required this.addQuantity,
+    required this.deleteQuantity,
+    required this.textController, // Use the correct parameter name
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Row(
       children: [
-        IconButton(onPressed: deleteQuantity, icon: const Icon(Icons.remove)),
-        Text(text),
-        IconButton(onPressed: addQuantity, icon: const Icon(Icons.add)),
+        IconButton(
+          onPressed: deleteQuantity,
+          icon: const Icon(Icons.remove),
+        ),
+        Expanded(
+          child: Align(
+            alignment: Alignment.center,
+            child: Container(
+              height: 36,
+              child: Padding(
+                padding: const EdgeInsets.all(2.0),
+                child: Container(
+                  alignment: Alignment.center,
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                  ),
+                  child: TextField(
+                    controller: textController,
+                    keyboardType: TextInputType.number,
+                    inputFormatters: <TextInputFormatter>[
+                      FilteringTextInputFormatter.digitsOnly,
+                      LengthLimitingTextInputFormatter(5),
+                    ],
+                    decoration: InputDecoration(
+                      border: InputBorder.none,
+                      focusedBorder: InputBorder.none,
+                      enabledBorder: InputBorder.none,
+                      contentPadding: EdgeInsets.only(bottom: 10.0),
+                    ),
+                    textAlign: TextAlign.center,
+                    // style: CommonUtils.Mediumtext_o_14, // Add your text style if needed
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ),
+        IconButton(
+          onPressed: addQuantity,
+          icon: const Icon(Icons.add),
+        ),
       ],
     );
   }
 }
+
 
 class ReusableWidget extends StatelessWidget {
   final String title, value;

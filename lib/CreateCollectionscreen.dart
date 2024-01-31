@@ -50,6 +50,7 @@ class Createcollection_screen extends State<CreateCollectionscreen> {
   TextEditingController checkissuedbankcontroller = TextEditingController();
   TextEditingController accountnumcontroller = TextEditingController();
   TextEditingController creditbankcontroller = TextEditingController();
+  TextEditingController utrcontroller = TextEditingController();
   String? userId;
   String? slpCode;
   File? _imageFile;
@@ -165,9 +166,8 @@ getshareddata();
                 CompneyId == 1
                     ? 'assets/srikar-home-icon.png'
                     : 'assets/srikar-seed.png',
-                width: 30,
-                height: 30,
-
+                width: CompneyId == 1 ? 30 : 60,
+                height: CompneyId == 1 ? 30 : 40,
               ),
             ),
 
@@ -809,6 +809,8 @@ getshareddata();
                                                   padding: EdgeInsets.only(
                                                       left: 10.0, top: 0.0),
                                                   child: TextFormField(
+                                                    controller:
+                                                    utrcontroller,
                                                     keyboardType:
                                                         TextInputType.name,
                                                     style: TextStyle(
@@ -1295,11 +1297,11 @@ getshareddata();
       // Default values for Online payment mode
       "CreditAccountNo": "",
       "CreditBank": "",
-      "UTRNumber": "",
+
       if (Selected_PaymentMode == 'Online') ...{
         "CreditAccountNo": accountnumcontroller.text,
         "CreditBank": creditbankcontroller.text,
-      },
+        "UTRNumber": utrcontroller.text, },
       "FileName": filename,
       "FileLocation": "",
       "FileExtension": fileExtension,

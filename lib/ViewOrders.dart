@@ -84,7 +84,7 @@ class _vieworderPageState extends State<ViewOrders> {
               children: [
                 Padding(
                   padding:
-                      const EdgeInsets.symmetric(horizontal: 2, vertical: 2),
+                  const EdgeInsets.symmetric(horizontal: 2, vertical: 2),
                   child: GestureDetector(
                     onTap: () {
                       // Handle the click event for the back button
@@ -137,38 +137,38 @@ class _vieworderPageState extends State<ViewOrders> {
                 children: [
                   Expanded(
                       child: Container(
-                    // height: 55.0,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(5.0),
-                      border: Border.all(
-                        color: Colors.black26,
-                        width: 2,
-                      ),
-                    ),
-                    child: Align(
-                      alignment: Alignment.centerRight,
-                      child: Padding(
-                        padding: EdgeInsets.only(left: 10.0, top: 0.0),
-                        child: TextFormField(
-                          controller: searchController,
-                          onChanged: (value) {
-                            filterDealers();
-                          },
-                          keyboardType: TextInputType.name,
-                          style: CommonUtils.Mediumtext_12,
-                          decoration: InputDecoration(
-                            suffixIcon: Icon(
-                              Icons.search,
-                              color: Color(0xFFC4C2C2),
-                            ),
-                            hintText: 'Search for Party Name or Id',
-                            hintStyle: CommonUtils.hintstyle_14,
-                            border: InputBorder.none,
+                        // height: 55.0,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(5.0),
+                          border: Border.all(
+                            color: Colors.black26,
+                            width: 2,
                           ),
                         ),
-                      ),
-                    ),
-                  )),
+                        child: Align(
+                          alignment: Alignment.centerRight,
+                          child: Padding(
+                            padding: EdgeInsets.only(left: 10.0, top: 0.0),
+                            child: TextFormField(
+                              controller: searchController,
+                              onChanged: (value) {
+                                filterDealers();
+                              },
+                              keyboardType: TextInputType.name,
+                              style: CommonUtils.Mediumtext_12,
+                              decoration: InputDecoration(
+                                suffixIcon: Icon(
+                                  Icons.search,
+                                  color: Color(0xFFC4C2C2),
+                                ),
+                                hintText: 'Search for Party Name or Id',
+                                hintStyle: CommonUtils.hintstyle_14,
+                                border: InputBorder.none,
+                              ),
+                            ),
+                          ),
+                        ),
+                      )),
                   const SizedBox(
                     width: 10,
                   ),
@@ -204,6 +204,7 @@ class _vieworderPageState extends State<ViewOrders> {
               child: ListView.builder(
                 shrinkWrap: true,
                 itemCount: orderesponselist.length,
+                physics: PageScrollPhysics(),
                 // Change this to the number of static items you want
                 itemBuilder: (context, index) {
                   OrderResult orderresul = orderesponselist[index];
@@ -309,25 +310,25 @@ class _vieworderPageState extends State<ViewOrders> {
                   //     DateFormat('dd-MM-yyyy').format(orderresul.orderDate);
                   // Use the static names based on the index
                   String partyName =
-                      staticPartyNames[index % staticPartyNames.length];
+                  staticPartyNames[index % staticPartyNames.length];
                   String orderId =
-                      staticOrderIds[index % staticOrderIds.length];
+                  staticOrderIds[index % staticOrderIds.length];
                   int numberOfItems =
-                      staticNumberOfItems[index % staticNumberOfItems.length];
+                  staticNumberOfItems[index % staticNumberOfItems.length];
                   int lrnum = lrnumber[index % staticNumberOfItems.length];
 
                   String statusnames =
-                      status[index % staticNumberOfItems.length];
+                  status[index % staticNumberOfItems.length];
                   String booking =
-                      bookingplace[index % staticNumberOfItems.length];
+                  bookingplace[index % staticNumberOfItems.length];
                   String transport =
-                      transportplace[index % staticNumberOfItems.length];
+                  transportplace[index % staticNumberOfItems.length];
                   double price =
-                      staticprice[index % staticNumberOfItems.length];
+                  staticprice[index % staticNumberOfItems.length];
 
                   String lr_dates = lrdates[index % staticNumberOfItems.length];
                   String paymentmode =
-                      paymode[index % staticNumberOfItems.length];
+                  paymode[index % staticNumberOfItems.length];
 
                   return GestureDetector(
                     onTap: () {
@@ -346,22 +347,23 @@ class _vieworderPageState extends State<ViewOrders> {
                       Navigator.of(context).pushReplacement(
                         MaterialPageRoute(
                             builder: (context) => orderdetails(
-                                  partyname: orderresul.partyName,
-                                  orderid: orderresul.orderNumber,
-                                  orderdate: fromatteddates,
-                                  totalprice: orderresul.totalCost,
-                                  partyAddress: orderresul.partyAddress,
-                                  bookingplace: orderresul.bookingPlace,
-                                  Preferabletransport: orderresul.transportName,
-                                  lrnumber: lrnum,
-                                  lrdate: lr_dates,
-                                  partyGSTNumber: orderresul.partyGSTNumber,
-                                  paymentmode: paymentmode,
-                                  partycode: orderresul.partyCode,
-                                  transportmode: transport,
-                                  statusname: orderresul.statusName,
-                                  proprietorName: orderresul.proprietorName,
-                                )),
+                              partyname: orderresul.partyName,
+                              orderid: orderresul.id,
+                              ordernumber: orderresul.orderNumber,
+                              orderdate: fromatteddates,
+                              totalprice: orderresul.totalCost,
+                              partyAddress: orderresul.partyAddress,
+                              bookingplace: orderresul.bookingPlace,
+                              Preferabletransport: orderresul.transportName,
+                              lrnumber: lrnum,
+                              lrdate: lr_dates,
+                              partyGSTNumber: orderresul.partyGSTNumber,
+                              paymentmode: paymentmode,
+                              partycode: orderresul.partyCode,
+                              transportmode: transport,
+                              statusname: orderresul.statusName,
+                              proprietorName: orderresul.proprietorName,
+                            )),
                       );
                     },
                     child: Container(
@@ -392,16 +394,16 @@ class _vieworderPageState extends State<ViewOrders> {
                                   children: [
                                     // starting icon of card
                                     Card(
-                                      elevation: 2,
-                                      color: Colors.white70,
+                                      elevation: 5,
+                                      // color: Colors.white,
                                       child: Container(
                                         height: 65,
-                                        width: 90,
+                                        width: 75,
                                         padding: const EdgeInsets.all(8),
                                         decoration: BoxDecoration(
                                           borderRadius:
-                                              BorderRadius.circular(10),
-                                          color: Colors.white30,
+                                          BorderRadius.circular(10),
+                                          color: Colors.white,
                                         ),
                                         child: Center(
                                           child: getSvgAsset(
@@ -423,9 +425,9 @@ class _vieworderPageState extends State<ViewOrders> {
                                             left: 10, top: 0, bottom: 0),
                                         child: Column(
                                           crossAxisAlignment:
-                                              CrossAxisAlignment.start,
+                                          CrossAxisAlignment.start,
                                           mainAxisAlignment:
-                                              MainAxisAlignment.spaceBetween,
+                                          MainAxisAlignment.spaceBetween,
                                           children: [
                                             Text(
                                               '${orderresul.partyName}',
@@ -443,8 +445,8 @@ class _vieworderPageState extends State<ViewOrders> {
                                             ),
                                             Row(
                                               mainAxisAlignment:
-                                                  MainAxisAlignment
-                                                      .spaceBetween,
+                                              MainAxisAlignment
+                                                  .spaceBetween,
                                               children: [
                                                 Container(
                                                   child: Row(
@@ -453,23 +455,23 @@ class _vieworderPageState extends State<ViewOrders> {
                                                         'Order id :',
                                                         style: TextStyle(
                                                             fontFamily:
-                                                                'Roboto',
+                                                            'Roboto',
                                                             fontSize: 12,
                                                             color: Colors.black,
                                                             fontWeight:
-                                                                FontWeight
-                                                                    .w400),
+                                                            FontWeight
+                                                                .w400),
                                                       ),
                                                       Text(
                                                         ' ${orderresul.orderNumber}',
                                                         style: TextStyle(
                                                             fontFamily:
-                                                                'Roboto',
+                                                            'Roboto',
                                                             fontSize: 13,
                                                             color: Colors.black,
                                                             fontWeight:
-                                                                FontWeight
-                                                                    .w600),
+                                                            FontWeight
+                                                                .w600),
                                                       ),
                                                     ],
                                                   ),
@@ -519,7 +521,7 @@ class _vieworderPageState extends State<ViewOrders> {
                                                         fontSize: 13,
                                                         color: Colors.black,
                                                         fontWeight:
-                                                            FontWeight.w400),
+                                                        FontWeight.w400),
                                                   ),
                                                   Text(
                                                     '₹${orderresul.totalCost}',
@@ -527,9 +529,9 @@ class _vieworderPageState extends State<ViewOrders> {
                                                         fontFamily: 'Roboto',
                                                         fontSize: 13,
                                                         color:
-                                                            Color(0xFFe58338),
+                                                        Color(0xFFe58338),
                                                         fontWeight:
-                                                            FontWeight.w600),
+                                                        FontWeight.w600),
                                                   ),
                                                 ],
                                               ),
@@ -576,16 +578,18 @@ class _vieworderPageState extends State<ViewOrders> {
                                 children: [
                                   Container(
                                     height: 30,
+                                    //   width: 80,
+                                    padding: EdgeInsets.all(5.0),
                                     decoration: BoxDecoration(
                                       borderRadius: BorderRadius.circular(10),
                                       color: getStatusTypeBackgroundColor(
                                           orderresul.statusName),
                                     ),
                                     child: IntrinsicWidth(
-                                      stepWidth: 60.0,
+                                      //stepWidth: 500.0,
                                       child: Row(
                                         mainAxisAlignment:
-                                            MainAxisAlignment.center,
+                                        MainAxisAlignment.center,
                                         children: [
                                           Text(
                                             '${orderresul.statusName}',
@@ -604,29 +608,29 @@ class _vieworderPageState extends State<ViewOrders> {
                                   ),
                                   Row(
                                     mainAxisAlignment:
-                                        MainAxisAlignment.spaceAround,
+                                    MainAxisAlignment.spaceAround,
                                     children: [
                                       Container(
                                           child: Row(
-                                        children: [
-                                          Text(
-                                            'Date: ',
-                                            style: TextStyle(
-                                                fontFamily: 'Roboto',
-                                                fontSize: 12,
-                                                color: Colors.black,
-                                                fontWeight: FontWeight.w400),
-                                          ),
-                                          Text(
-                                            "$fromatteddates",
-                                            style: TextStyle(
-                                                fontFamily: 'Roboto',
-                                                fontSize: 13,
-                                                color: Color(0xFFe58338),
-                                                fontWeight: FontWeight.w600),
-                                          ),
-                                        ],
-                                      )),
+                                            children: [
+                                              Text(
+                                                'Date: ',
+                                                style: TextStyle(
+                                                    fontFamily: 'Roboto',
+                                                    fontSize: 12,
+                                                    color: Colors.black,
+                                                    fontWeight: FontWeight.w400),
+                                              ),
+                                              Text(
+                                                "$fromatteddates",
+                                                style: TextStyle(
+                                                    fontFamily: 'Roboto',
+                                                    fontSize: 13,
+                                                    color: Color(0xFFe58338),
+                                                    fontWeight: FontWeight.w600),
+                                              ),
+                                            ],
+                                          )),
                                       SizedBox(
                                         width: 10.0,
                                       ),
@@ -699,43 +703,43 @@ class _vieworderPageState extends State<ViewOrders> {
 
   Color getStatusTypeBackgroundColor(String statusTypeId) {
     switch (statusTypeId) {
-      case 'Pedning':
+      case 'Pending':
         return Color(0xFFE58338).withOpacity(0.1);
       case 'Shipped':
-        // Set background color for statusTypeId 8
-        return Colors.blue.withOpacity(0.1);
+      // Set background color for statusTypeId 8
+        return Color(0xFF0d6efd).withOpacity(0.1);
       case 'Accept':
-        // Set background color for statusTypeId 9
-        return Colors.green.withOpacity(0.1);
-      // case 'Partially Shipped':
-      //   // Set background color for statusTypeId 9
-      //   return Colors.purple.withOpacity(0.1);
+      // Set background color for statusTypeId 9
+        return Color(0xFF198754).withOpacity(0.1);
+      case 'Partially Shipped':
+      // Set background color for statusTypeId 9
+        return Color(0xFF0dcaf0).withOpacity(0.1);
       case 'Reject':
-        return Colors.red.withOpacity(0.1);
+        return Color(0xFFdc3545).withOpacity(0.1);
         break;
-      // Add more cases as needed for other statusTypeId values
+    // Add more cases as needed for other statusTypeId values
 
       default:
-        // Default background color or handle other cases if needed
+      // Default background color or handle other cases if needed
         return Colors.white;
     }
   }
 
   Color getStatusTypeTextColor(String statusTypeId) {
     switch (statusTypeId) {
-      case 'Pedning':
+      case 'Pending':
         return Color(0xFFe58338);
       case 'Shipped':
-        // Set background color for statusTypeId 8
-        return Colors.blue;
+      // Set background color for statusTypeId 8
+        return Color(0xFF0d6efd);
       case 'Accept':
-        // Set background color for statusTypeId 9
-        return Colors.green;
-      // case 'Partially Shipped':
-      //   // Set background color for statusTypeId 9
-      //   return Colors.purple;
+      // Set background color for statusTypeId 9
+        return Color(0xFF198754);
+      case 'Partially Shipped':
+      // Set background color for statusTypeId 9
+        return Color(0xFF0dcaf0);
       case 'Reject':
-        return Colors.red;
+        return Color(0xFFdc3545);
         break;
 
       default:
@@ -747,27 +751,27 @@ class _vieworderPageState extends State<ViewOrders> {
     String assetPath;
     late Color iconColor;
     switch (status) {
-      case "Pedning":
+      case "Pending":
         assetPath = 'assets/shipping-timed.svg';
         iconColor = Color(0xFFe58338);
         break;
       case 'Shipped':
         assetPath = 'assets/shipping-fast.svg';
-        iconColor = Colors.blue;
+        iconColor = Color(0xFF0d6efd);
         break;
       case 'Accept':
         assetPath = 'assets/box-circle-check.svg';
-        iconColor = Colors.green;
+        iconColor = Color(0xFF198754);
         break;
-      // case 'Partially Shipped':
-      //   assetPath = 'assets/boxes.svg';
-      //   iconColor = Colors.purple;
-      //   break;
+      case 'Partially Shipped':
+        assetPath = 'assets/boxes.svg';
+        iconColor = Color(0xFF0dcaf0);
+        break;
       case 'Reject':
         assetPath = 'assets/shipping-timed.svg';
-        iconColor = Colors.red;
+        iconColor = Color(0xFFdc3545);
         break;
-      // Add more cases for other statusnames
+    // Add more cases for other statusnames
       default:
         assetPath = 'assets/sb_home.svg';
         iconColor = Colors.black26;
@@ -886,9 +890,9 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
   }
 
   Future<void> _selectDate(
-    BuildContext context,
-    TextEditingController controller,
-  ) async {
+      BuildContext context,
+      TextEditingController controller,
+      ) async {
     DateTime currentDate = DateTime.now();
     DateTime initialDate;
 
@@ -931,11 +935,11 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
   }
 
   Widget buildDateInput(
-    BuildContext context,
-    String labelText,
-    TextEditingController controller,
-    VoidCallback onTap,
-  ) {
+      BuildContext context,
+      String labelText,
+      TextEditingController controller,
+      VoidCallback onTap,
+      ) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -1013,9 +1017,9 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
   }
 
   Future<void> _selectfromDate(
-    BuildContext context,
-    TextEditingController controller,
-  ) async {
+      BuildContext context,
+      TextEditingController controller,
+      ) async {
     DateTime currentDate = DateTime.now();
     DateTime initialDate;
 
@@ -1058,11 +1062,11 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
   }
 
   Widget buildDateInputfromdate(
-    BuildContext context,
-    String labelText,
-    TextEditingController controller,
-    VoidCallback onTap,
-  ) {
+      BuildContext context,
+      String labelText,
+      TextEditingController controller,
+      VoidCallback onTap,
+      ) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -1181,381 +1185,381 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
   Widget build(BuildContext context) {
     return SingleChildScrollView(
         child: Padding(
-      padding: const EdgeInsets.all(20),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisSize: MainAxisSize.min,
-        children: <Widget>[
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: <Widget>[
-              Text(
-                'Filter By',
-                style: _titleTextStyle,
-              ),
-              // Text('Clear all filters', style: _labelTextStyle,),
-              Text(
-                'Clear all filters',
-                style: _clearTextStyle,
-              ),
-            ],
-          ),
-          Container(
-            margin: const EdgeInsets.only(top: 5, bottom: 12),
-            child: const Divider(
-              height: 5,
-            ),
-          ),
-          Column(
+          padding: const EdgeInsets.all(20),
+          child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Padding(
-                padding: const EdgeInsets.only(left: 5.0),
-                child: Text(
-                  'Party',
-                  style: _labelTextStyle,
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: <Widget>[
+                  Text(
+                    'Filter By',
+                    style: _titleTextStyle,
+                  ),
+                  // Text('Clear all filters', style: _labelTextStyle,),
+                  Text(
+                    'Clear all filters',
+                    style: _clearTextStyle,
+                  ),
+                ],
+              ),
+              Container(
+                margin: const EdgeInsets.only(top: 5, bottom: 12),
+                child: const Divider(
+                  height: 5,
                 ),
               ),
-              Padding(
-                padding: EdgeInsets.only(left: 0, top: 5.0, right: 0),
-                child: Container(
-                  // width: double.infinity,
-                  height: 40.0,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(10),
-                    border: Border.all(
-                      color: Color(0xFFe58338),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.only(left: 5.0),
+                    child: Text(
+                      'Party',
+                      style: _labelTextStyle,
                     ),
                   ),
-                  child: DropdownButtonHideUnderline(
-                    child: ButtonTheme(
-                      alignedDropdown: true,
-                      child: DropdownButton<int>(
-                          value: selectedCardCode,
-                          iconSize: 20,
-                          icon: null,
-                          isExpanded: true,
-                          underline: const SizedBox(),
-                          style: TextStyle(
-                            color: Color(0xFFe58338),
-                          ),
-                          onChanged: (value) {
-                            setState(() {
-                              selectedCardCode = value!;
-                              if (selectedCardCode != -1) {
-                                selectedValue =
+                  Padding(
+                    padding: EdgeInsets.only(left: 0, top: 5.0, right: 0),
+                    child: Container(
+                      // width: double.infinity,
+                      height: 40.0,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10),
+                        border: Border.all(
+                          color: Color(0xFFe58338),
+                        ),
+                      ),
+                      child: DropdownButtonHideUnderline(
+                        child: ButtonTheme(
+                          alignedDropdown: true,
+                          child: DropdownButton<int>(
+                              value: selectedCardCode,
+                              iconSize: 20,
+                              icon: null,
+                              isExpanded: true,
+                              underline: const SizedBox(),
+                              style: TextStyle(
+                                color: Color(0xFFe58338),
+                              ),
+                              onChanged: (value) {
+                                setState(() {
+                                  selectedCardCode = value!;
+                                  if (selectedCardCode != -1) {
+                                    selectedValue =
                                     dropdownItems[selectedCardCode]['cardCode'];
-                                selectedName =
+                                    selectedName =
                                     dropdownItems[selectedCardCode]['cardName'];
 
-                                print("selectedValue:$selectedValue");
-                                print("selectedName:$selectedName");
-                              } else {
-                                print("==========");
-                                print(selectedValue);
-                                print(selectedName);
-                              }
-                              // isDropdownValid = selectedTypeCdId != -1;
-                            });
-                          },
-                          items: [
-                            DropdownMenuItem<int>(
-                              value: -1,
-                              child: Text('Select Party'), // Static text
-                            ),
-                            ...dropdownItems.asMap().entries.map((entry) {
-                              final index = entry.key;
-                              final item = entry.value;
-                              return DropdownMenuItem<int>(
-                                  value: index,
-                                  child: Text(
-                                    item['cardName'],
-                                    overflow: TextOverflow.visible,
-                                    // wrapText: true,
-                                  ));
-                            }).toList(),
-                          ]),
+                                    print("selectedValue:$selectedValue");
+                                    print("selectedName:$selectedName");
+                                  } else {
+                                    print("==========");
+                                    print(selectedValue);
+                                    print(selectedName);
+                                  }
+                                  // isDropdownValid = selectedTypeCdId != -1;
+                                });
+                              },
+                              items: [
+                                DropdownMenuItem<int>(
+                                  value: -1,
+                                  child: Text('Select Party'), // Static text
+                                ),
+                                ...dropdownItems.asMap().entries.map((entry) {
+                                  final index = entry.key;
+                                  final item = entry.value;
+                                  return DropdownMenuItem<int>(
+                                      value: index,
+                                      child: Text(
+                                        item['cardName'],
+                                        overflow: TextOverflow.visible,
+                                        // wrapText: true,
+                                      ));
+                                }).toList(),
+                              ]),
+                        ),
+                      ),
                     ),
                   ),
+                  SizedBox(
+                    height: 10.0,
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(left: 5.0),
+                    child: Text(
+                      'Purpose',
+                      style: _labelTextStyle,
+                    ),
+                  ),
+                  SizedBox(
+                    height: 4.0,
+                  ),
+                  Container(
+                      width: MediaQuery.of(context).size.width,
+                      height: 40.0,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(12.0),
+                        border: Border.all(
+                          color: Color(0xFFe78337),
+                          width: 1.0,
+                        ),
+                      ),
+                      child: Padding(
+                        padding: EdgeInsets.all(8.0),
+                        child: purposeList.isEmpty
+                            ? CircularProgressIndicator
+                            .adaptive() // Show a loading indicator
+                            : DropdownButton<String>(
+                          hint: Text(
+                            'Select Purpose',
+                            style: TextStyle(
+                              fontSize: 14,
+                              fontFamily: 'Roboto',
+                              //    fontWeight: FontWeight.w600,
+                              color: Color(0xFFe78337),
+                            ),
+                          ),
+                          value: selectedPurpose,
+                          onChanged: (String? newValue) {
+                            setState(() {
+                              selectedPurpose = newValue;
+
+                              // Find the selected Purpose object
+                              selectedPurposeObj = purposeList.firstWhere(
+                                    (purpose) => purpose.fldValue == newValue,
+                                orElse: () => Purpose(
+                                    fldValue: '', descr: '', purposeName: ''),
+                              );
+
+                              // Print the selected values
+                              print(
+                                  'fldValue: ${selectedPurposeObj?.fldValue}');
+                              print('descr: ${selectedPurposeObj?.descr}');
+                              print(
+                                  'purposeName: ${selectedPurposeObj?.purposeName}');
+
+                              purposename = selectedPurposeObj!.purposeName;
+                              print('selectpurposeName: $purposename');
+                            });
+                          },
+                          items: purposeList.map((Purpose purpose) {
+                            return DropdownMenuItem<String>(
+                              value: purpose.fldValue,
+                              child: Text(
+                                purpose.purposeName,
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  fontFamily: 'Roboto',
+                                  fontWeight: FontWeight.w600,
+                                  color: Color(0xFFe78337),
+                                ),
+                              ),
+                            );
+                          }).toList(),
+                          icon: Icon(Icons.arrow_drop_down),
+                          iconSize: 24,
+                          isExpanded: true,
+                          underline: SizedBox(),
+                        ),
+                      ))
+                ],
+              ),
+
+              SizedBox(
+                height: 10.0,
+              ),
+              Container(
+                height: 40,
+                //  child: Expanded(
+                child: apiResponse == null
+                    ? Center(child: CircularProgressIndicator.adaptive())
+                    : ListView.builder(
+                  scrollDirection: Axis.horizontal,
+                  shrinkWrap: true,
+                  itemCount: apiResponse!.listResult.length,
+                  itemBuilder: (BuildContext context, int index) {
+                    bool isSelected = index == indexselected;
+                    PaymentMode currentPaymode = apiResponse!.listResult[
+                    index]; // Store the current paymode in a local variable
+
+                    IconData iconData;
+                    switch (currentPaymode.desc) {
+                      case 'Cheque':
+                      // iconData = Icons.payment;
+                        break;
+                      case 'Online':
+                      //   iconData = Icons.access_alarm;
+                        break;
+                      case 'UPI':
+                      //   iconData = Icons.payment;
+                        break;
+                    // Add more cases as needed
+                      default:
+                      //   iconData = Icons.payment; // Default icon
+                        break;
+                    }
+
+                    return GestureDetector(
+                      onTap: () {
+                        setState(() {
+                          indexselected = index;
+                          selectedPaymode =
+                              currentPaymode; // Update the selectedPaymode outside the build method
+                        });
+                        payid = currentPaymode.typeCdId;
+                        Selected_PaymentMode = currentPaymode.desc;
+                        print('payid:$payid');
+                        print(
+                            'Selected Payment Mode: ${currentPaymode.desc}, TypeCdId: $payid');
+                        print(
+                            'Selected Payment Mode: ${Selected_PaymentMode}, TypeCdId: $payid');
+                      },
+                      child: Container(
+                        margin: EdgeInsets.symmetric(horizontal: 4.0),
+                        decoration: BoxDecoration(
+                          color: isSelected
+                              ? Color(0xFFe78337)
+                              : Color(0xFFe78337).withOpacity(0.1),
+                          border: Border.all(
+                            color: isSelected
+                                ? Color(0xFFe78337)
+                                : Color(0xFFe78337),
+                            width: 1.0,
+                          ),
+                          borderRadius: BorderRadius.circular(8.0),
+                        ),
+                        child: IntrinsicWidth(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Container(
+                                padding:
+                                EdgeInsets.symmetric(horizontal: 10.0),
+                                child: Row(
+                                  children: [
+                                    // Icon(
+                                    //   iconData, // Use the dynamically determined icon
+                                    //   color: isSelected
+                                    //       ? Colors.white
+                                    //       : Colors.black,
+                                    // ),
+                                    // SizedBox(
+                                    //     width:
+                                    //         8.0), // Add some spacing between icon and text
+                                    Text(
+                                      '${currentPaymode.desc.toString()}',
+                                      style: TextStyle(
+                                        color: isSelected
+                                            ? Colors.white
+                                            : Colors.black,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    );
+                  },
                 ),
+                //  ),
+              ),
+
+              SizedBox(
+                height: 10.0,
+              ), // From date
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  buildDateInput(
+                    context,
+                    'To Date',
+                    todateController,
+                        () => _selectDate(context, todateController),
+                  ),
+                ],
               ),
               SizedBox(
                 height: 10.0,
               ),
-              Padding(
-                padding: const EdgeInsets.only(left: 5.0),
-                child: Text(
-                  'Purpose',
-                  style: _labelTextStyle,
-                ),
+              // To Date
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  buildDateInputfromdate(
+                    context,
+                    'From Date',
+                    fromdateController,
+                        () => _selectfromDate(context, fromdateController),
+                  ),
+                ],
               ),
               SizedBox(
-                height: 4.0,
+                height: 10.0,
               ),
-              Container(
-                  width: MediaQuery.of(context).size.width,
-                  height: 40.0,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(12.0),
-                    border: Border.all(
-                      color: Color(0xFFe78337),
-                      width: 1.0,
-                    ),
-                  ),
-                  child: Padding(
-                    padding: EdgeInsets.all(8.0),
-                    child: purposeList.isEmpty
-                        ? CircularProgressIndicator
-                            .adaptive() // Show a loading indicator
-                        : DropdownButton<String>(
-                            hint: Text(
-                              'Select Purpose',
-                              style: TextStyle(
-                                fontSize: 14,
-                                fontFamily: 'Roboto',
-                                //    fontWeight: FontWeight.w600,
-                                color: Color(0xFFe78337),
-                              ),
-                            ),
-                            value: selectedPurpose,
-                            onChanged: (String? newValue) {
-                              setState(() {
-                                selectedPurpose = newValue;
-
-                                // Find the selected Purpose object
-                                selectedPurposeObj = purposeList.firstWhere(
-                                  (purpose) => purpose.fldValue == newValue,
-                                  orElse: () => Purpose(
-                                      fldValue: '', descr: '', purposeName: ''),
-                                );
-
-                                // Print the selected values
-                                print(
-                                    'fldValue: ${selectedPurposeObj?.fldValue}');
-                                print('descr: ${selectedPurposeObj?.descr}');
-                                print(
-                                    'purposeName: ${selectedPurposeObj?.purposeName}');
-
-                                purposename = selectedPurposeObj!.purposeName;
-                                print('selectpurposeName: $purposename');
-                              });
-                            },
-                            items: purposeList.map((Purpose purpose) {
-                              return DropdownMenuItem<String>(
-                                value: purpose.fldValue,
-                                child: Text(
-                                  purpose.purposeName,
-                                  style: TextStyle(
-                                    fontSize: 14,
-                                    fontFamily: 'Roboto',
-                                    fontWeight: FontWeight.w600,
-                                    color: Color(0xFFe78337),
-                                  ),
-                                ),
-                              );
-                            }).toList(),
-                            icon: Icon(Icons.arrow_drop_down),
-                            iconSize: 24,
-                            isExpanded: true,
-                            underline: SizedBox(),
-                          ),
-                  ))
-            ],
-          ),
-
-          SizedBox(
-            height: 10.0,
-          ),
-          Container(
-            height: 40,
-            //  child: Expanded(
-            child: apiResponse == null
-                ? Center(child: CircularProgressIndicator.adaptive())
-                : ListView.builder(
-                    scrollDirection: Axis.horizontal,
-                    shrinkWrap: true,
-                    itemCount: apiResponse!.listResult.length,
-                    itemBuilder: (BuildContext context, int index) {
-                      bool isSelected = index == indexselected;
-                      PaymentMode currentPaymode = apiResponse!.listResult[
-                          index]; // Store the current paymode in a local variable
-
-                      IconData iconData;
-                      switch (currentPaymode.desc) {
-                        case 'Cheque':
-                          // iconData = Icons.payment;
-                          break;
-                        case 'Online':
-                          //   iconData = Icons.access_alarm;
-                          break;
-                        case 'UPI':
-                          //   iconData = Icons.payment;
-                          break;
-                        // Add more cases as needed
-                        default:
-                          //   iconData = Icons.payment; // Default icon
-                          break;
-                      }
-
-                      return GestureDetector(
-                        onTap: () {
-                          setState(() {
-                            indexselected = index;
-                            selectedPaymode =
-                                currentPaymode; // Update the selectedPaymode outside the build method
-                          });
-                          payid = currentPaymode.typeCdId;
-                          Selected_PaymentMode = currentPaymode.desc;
-                          print('payid:$payid');
-                          print(
-                              'Selected Payment Mode: ${currentPaymode.desc}, TypeCdId: $payid');
-                          print(
-                              'Selected Payment Mode: ${Selected_PaymentMode}, TypeCdId: $payid');
-                        },
-                        child: Container(
-                          margin: EdgeInsets.symmetric(horizontal: 4.0),
-                          decoration: BoxDecoration(
-                            color: isSelected
-                                ? Color(0xFFe78337)
-                                : Color(0xFFe78337).withOpacity(0.1),
-                            border: Border.all(
-                              color: isSelected
-                                  ? Color(0xFFe78337)
-                                  : Color(0xFFe78337),
-                              width: 1.0,
-                            ),
-                            borderRadius: BorderRadius.circular(8.0),
-                          ),
-                          child: IntrinsicWidth(
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Container(
-                                  padding:
-                                      EdgeInsets.symmetric(horizontal: 10.0),
-                                  child: Row(
-                                    children: [
-                                      // Icon(
-                                      //   iconData, // Use the dynamically determined icon
-                                      //   color: isSelected
-                                      //       ? Colors.white
-                                      //       : Colors.black,
-                                      // ),
-                                      // SizedBox(
-                                      //     width:
-                                      //         8.0), // Add some spacing between icon and text
-                                      Text(
-                                        '${currentPaymode.desc.toString()}',
-                                        style: TextStyle(
-                                          color: isSelected
-                                              ? Colors.white
-                                              : Colors.black,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ],
-                            ),
+              Row(
+                children: [
+                  Expanded(
+                    child: ElevatedButton(
+                      onPressed: () {},
+                      style: ElevatedButton.styleFrom(
+                        textStyle: const TextStyle(
+                          color: Colors.red,
+                        ),
+                        side: const BorderSide(
+                          color: Colors.red,
+                        ),
+                        backgroundColor: Colors.white,
+                        shape: const RoundedRectangleBorder(
+                          borderRadius: BorderRadius.all(
+                            Radius.circular(10),
                           ),
                         ),
-                      );
-                    },
-                  ),
-            //  ),
-          ),
-
-          SizedBox(
-            height: 10.0,
-          ), // From date
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              buildDateInput(
-                context,
-                'To Date',
-                todateController,
-                () => _selectDate(context, todateController),
-              ),
-            ],
-          ),
-          SizedBox(
-            height: 10.0,
-          ),
-          // To Date
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              buildDateInputfromdate(
-                context,
-                'From Date',
-                fromdateController,
-                () => _selectfromDate(context, fromdateController),
-              ),
-            ],
-          ),
-          SizedBox(
-            height: 10.0,
-          ),
-          Row(
-            children: [
-              Expanded(
-                child: ElevatedButton(
-                  onPressed: () {},
-                  style: ElevatedButton.styleFrom(
-                    textStyle: const TextStyle(
-                      color: Colors.red,
-                    ),
-                    side: const BorderSide(
-                      color: Colors.red,
-                    ),
-                    backgroundColor: Colors.white,
-                    shape: const RoundedRectangleBorder(
-                      borderRadius: BorderRadius.all(
-                        Radius.circular(10),
+                      ),
+                      child: const Text(
+                        'Cancel',
+                        style: TextStyle(
+                          color: Colors.red,
+                        ),
                       ),
                     ),
                   ),
-                  child: const Text(
-                    'Cancel',
-                    style: TextStyle(
-                      color: Colors.red,
-                    ),
+                  const SizedBox(
+                    width: 20,
                   ),
-                ),
-              ),
-              const SizedBox(
-                width: 20,
-              ),
-              Expanded(
-                child: ElevatedButton(
-                  onPressed: () {
-                    getappliedflitters();
-                  },
-                  style: ElevatedButton.styleFrom(
-                    textStyle: const TextStyle(
-                      color: Colors.white,
-                    ),
-                    backgroundColor: _primaryOrange,
-                    shape: const RoundedRectangleBorder(
-                      borderRadius: BorderRadius.all(
-                        Radius.circular(10),
+                  Expanded(
+                    child: ElevatedButton(
+                      onPressed: () {
+                        getappliedflitters();
+                      },
+                      style: ElevatedButton.styleFrom(
+                        textStyle: const TextStyle(
+                          color: Colors.white,
+                        ),
+                        backgroundColor: _primaryOrange,
+                        shape: const RoundedRectangleBorder(
+                          borderRadius: BorderRadius.all(
+                            Radius.circular(10),
+                          ),
+                        ),
+                      ),
+                      child: const Text(
+                        'Apply',
+                        style: TextStyle(
+                          color: Colors.white,
+                        ),
                       ),
                     ),
                   ),
-                  child: const Text(
-                    'Apply',
-                    style: TextStyle(
-                      color: Colors.white,
-                    ),
-                  ),
-                ),
+                ],
               ),
             ],
           ),
-        ],
-      ),
-    ));
+        ));
   }
 
   Future<void> getappliedflitters() async {

@@ -78,4 +78,15 @@ class CartProvider extends ChangeNotifier {
   List<OrderItemXrefType> getCartItems() {
     return cartItems;
   }
+
+  // Method to remove an item from the cart
+  Future<void> removeFromCart(OrderItemXrefType item) async {
+    cartItems.remove(item);
+    notifyListeners();
+
+    // Save the updated cartItems to SharedPreferences
+    await saveCartItemsToSharedPreferences(cartItems);
+  }
+
+
 }

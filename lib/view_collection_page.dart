@@ -227,9 +227,8 @@ class _ViewCollectionPageState extends State<ViewCollectionPage> {
               CompneyId == 1
                   ? 'assets/srikar-home-icon.png'
                   : 'assets/srikar-seed.png',
-              width: 60,
-              height: 40,
-
+              width: CompneyId == 1 ? 30 : 60,
+              height: CompneyId == 1 ? 30 : 40,
             ),
           ),
 
