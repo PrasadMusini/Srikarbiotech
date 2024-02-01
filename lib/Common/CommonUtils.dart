@@ -95,7 +95,7 @@ class CommonUtils {
           children: [
             Text(
               title,
-              style:CommonUtils.header_Styles16,
+              style: CommonUtils.header_Styles16,
               maxLines: 2, // Display in 2 lines
               overflow: TextOverflow.ellipsis,
             ),
@@ -108,7 +108,7 @@ class CommonUtils {
             SizedBox(height: 8.0),
             Text(
               subtitle2,
-                style: CommonUtils.Mediumtext_14,
+              style: CommonUtils.Mediumtext_14,
               maxLines: 2, // Display in 2 lines
               overflow: TextOverflow.ellipsis,
             ),
@@ -116,14 +116,8 @@ class CommonUtils {
             RichText(
               text: TextSpan(
                 children: <TextSpan>[
-                  TextSpan(
-                    text: 'GST No. ',
-                    style: CommonUtils.Mediumtext_12
-                  ),
-                  TextSpan(
-                    text: subtitle3,
-                    style: CommonUtils.Mediumtext_12_0
-                  ),
+                  TextSpan(text: 'GST No. ', style: CommonUtils.Mediumtext_12),
+                  TextSpan(text: subtitle3, style: CommonUtils.Mediumtext_12_0),
                 ],
               ),
               overflow: TextOverflow.ellipsis,
@@ -146,6 +140,15 @@ class CommonUtils {
       ),
     );
   }
+
+  static final searchBarOutPutInlineBorder = OutlineInputBorder(
+    borderRadius: BorderRadius.circular(10),
+    borderSide: const BorderSide(color: Colors.black38),
+  );
+  static final searchBarEnabledNdFocuedOutPutInlineBorder = OutlineInputBorder(
+    borderRadius: BorderRadius.circular(10),
+    borderSide: const BorderSide(color: Colors.black),
+  );
 
   // header style
   static final TextStyle headerStyles = TextStyle(
@@ -224,4 +227,3 @@ Future<int?> getIntFromPreferences(String key) async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
   return prefs.getInt(key);
 }
-
