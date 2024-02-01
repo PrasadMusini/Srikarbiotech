@@ -62,11 +62,11 @@ class Createcollection_screen extends State<CreateCollectionscreen> {
   String? selectedValue;
   int selectedIndex = -1;
   bool isImageAdded = false;
-  int indexselected = -1;
+  bool isButtonEnabled = true;
   String filename = '';
   String fileExtension = '';
   String base64Image = '';
-  String? Selected_PaymentMode = "";
+  String? Selected_PaymentMode = "Online";
   int? payid;
   List<PaymentMode> paymentmode = [];
   bool status = false;
@@ -88,6 +88,7 @@ class Createcollection_screen extends State<CreateCollectionscreen> {
   String selectedItmsGrpNam = '';
   bool isLoading = false;
   int CompneyId = 0;
+  int indexselected = 0;
   @override
   initState() {
     super.initState();
@@ -102,6 +103,7 @@ class Createcollection_screen extends State<CreateCollectionscreen> {
     print('gstRegnNo: ${widget.gstRegnNo}');
     print('proprietorName: ${widget.proprietorName}');
 getshareddata();
+    DateController.text = DateFormat('dd-MM-yyyy').format(DateTime.now());
     CommonUtils.checkInternetConnectivity().then((isConnected) {
       if (isConnected) {
         getpaymentmethods();
@@ -154,21 +156,34 @@ getshareddata();
                 ),
               ],
             ),
-            GestureDetector(
-              onTap: () {
-                // Handle the click event for the home icon
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(builder: (context) => HomeScreen()),
-                );
+            FutureBuilder(
+              future: getshareddata(),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.done) {
+                  // Access the companyId after shared data is retrieved
+
+                  return   GestureDetector(
+                    onTap: () {
+                      // Handle the click event for the home icon
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(builder: (context) => HomeScreen()),
+                      );
+                    },
+                    child: Image.asset(
+                      CompneyId == 1
+                          ? 'assets/srikar-home-icon.png'
+                          : 'assets/seeds-home-icon.png',
+                      width: 30,
+                      height: 30,
+                    ),
+                  );
+
+                } else {
+                  // Return a placeholder or loading indicator
+                  return SizedBox.shrink();
+                }
               },
-              child: Image.asset(
-                CompneyId == 1
-                    ? 'assets/srikar-home-icon.png'
-                    : 'assets/srikar-seed.png',
-                width: CompneyId == 1 ? 30 : 60,
-                height: CompneyId == 1 ? 30 : 40,
-              ),
             ),
 
           ],
@@ -207,7 +222,7 @@ getshareddata();
                         children: [
                           buildDateInput(
                             context,
-                            ' Date',
+                            ' Date *',
                             DateController,
                             () => _selectDate(context, DateController),
                           ),
@@ -224,7 +239,7 @@ getshareddata();
                                   padding: EdgeInsets.only(
                                       top: 0.0, left: 5.0, right: 0.0),
                                   child: Text(
-                                    'Amount',
+                                    'Amount * ',
                                     style: TextStyle(
                                       fontSize: 12.0,
                                       color: Color(0xFF5f5f5f),
@@ -296,7 +311,7 @@ getshareddata();
                             padding: EdgeInsets.only(
                                 top: 10.0, left: 0.0, right: 0.0),
                             child: Text(
-                              'Payment Mode',
+                              'Payment Mode * ',
                               style: TextStyle(
                                 fontSize: 14,
                                 fontFamily: 'Roboto',
@@ -307,6 +322,8 @@ getshareddata();
                             ),
                           ),
                           SizedBox(height: 2.0),
+
+
                           Container(
                             height: 45,
                             // child: Expanded(
@@ -324,15 +341,12 @@ getshareddata();
 
                                       String iconData;
                                       switch (currentPaymode.desc) {
-                                        case 'Cheque':
-                                          iconData = 'assets/money-bills.svg';
-                                          break;
+
                                         case 'Online':
                                           iconData = 'assets/site-alt.svg';
                                           break;
-                                        case 'UPI':
-                                          iconData =
-                                              'assets/indian-rupee-sign.svg';
+                                        case 'Cheque':
+                                          iconData = 'assets/money-bills.svg';
                                           break;
                                         // Add more cases as needed
                                         default:
@@ -340,22 +354,24 @@ getshareddata();
                                               'assets/money-bills.svg'; // Default icon
                                           break;
                                       }
+                                      if (isSelected) {
+                                        print('Default selected item: ${currentPaymode.desc}, TypeCdId: ${currentPaymode.typeCdId}');
+                                        payid = currentPaymode.typeCdId;
+                                        Selected_PaymentMode = currentPaymode.desc;
+                                      }
 
                                       return GestureDetector(
                                         onTap: () {
                                           setState(() {
                                             indexselected = index;
-                                            selectedPaymode =
-                                                currentPaymode; // Update the selectedPaymode outside the build method
+                                            selectedPaymode = currentPaymode; // Update the selectedPaymode outside the build method
                                           });
                                           payid = currentPaymode.typeCdId;
-                                          Selected_PaymentMode =
-                                              currentPaymode.desc;
+                                          Selected_PaymentMode = currentPaymode.desc;
                                           print('payid:$payid');
                                           print(
                                               'Selected Payment Mode: ${currentPaymode.desc}, TypeCdId: $payid');
-                                          print(
-                                              'Selected Payment Mode: ${Selected_PaymentMode}, TypeCdId: $payid');
+                                          print('Selected Payment Mode: ${Selected_PaymentMode}, TypeCdId: $payid');
                                         },
                                         child: Container(
                                           // color: Color(0xFFF8dac2),
@@ -416,6 +432,252 @@ getshareddata();
                                     },
                                   ),
                           ),
+                          Visibility(
+                              visible: Selected_PaymentMode == 'Online',
+                              child: Padding(
+                                padding: EdgeInsets.only(
+                                    top: 10.0, left: 0.0, right: 0.0),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Padding(
+                                      padding: EdgeInsets.only(
+                                          top: 0.0, left: 5.0, right: 0.0),
+                                      child: Text(
+                                        'Credit Account No *',
+                                        style: TextStyle(
+                                          fontSize: 12.0,
+                                          color: Color(0xFF5f5f5f),
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                        textAlign: TextAlign.start,
+                                      ),
+                                    ),
+                                    SizedBox(height: 4.0),
+                                    GestureDetector(
+                                      onTap: () {
+                                        // Handle the click event for the second text view
+                                        print('first textview clicked');
+                                      },
+                                      child: Container(
+                                        width:
+                                        MediaQuery.of(context).size.width,
+                                        height: 55.0,
+                                        decoration: BoxDecoration(
+                                          borderRadius:
+                                          BorderRadius.circular(5.0),
+                                          border: Border.all(
+                                            color: Color(0xFFe78337),
+                                            width: 1,
+                                          ),
+                                        ),
+                                        child: Row(
+                                          children: [
+                                            Expanded(
+                                              child: Align(
+                                                alignment: Alignment.centerLeft,
+                                                child: Padding(
+                                                  padding: EdgeInsets.only(
+                                                      left: 10.0, top: 0.0),
+                                                  child: TextFormField(
+                                                    controller:
+                                                    accountnumcontroller,
+                                                    keyboardType:
+                                                    TextInputType.number,
+                                                    style: TextStyle(
+                                                      fontSize: 14,
+                                                      fontFamily: 'Roboto',
+                                                      fontWeight:
+                                                      FontWeight.w600,
+                                                      color: Color(0xFFe78337),
+                                                    ),
+                                                    decoration: InputDecoration(
+                                                      hintText:
+                                                      'Enter Credit Account No',
+                                                      hintStyle: TextStyle(
+                                                        fontSize: 14,
+                                                        fontFamily: 'Roboto',
+                                                        fontWeight: FontWeight.w700,
+                                                        color: Color(0xa0e78337),
+                                                      ),
+                                                      border: InputBorder.none,
+                                                    ),
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              )),
+                          // SizedBox(height: 5.0),
+                          Visibility(
+                              visible: Selected_PaymentMode == 'Online',
+                              child: Padding(
+                                padding: EdgeInsets.only(
+                                    top: 10.0, left: 0.0, right: 0.0),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Padding(
+                                      padding: EdgeInsets.only(
+                                          top: 0.0, left: 5.0, right: 0.0),
+                                      child: Text(
+                                        'Credit Bank *',
+                                        style: TextStyle(
+                                          fontSize: 12.0,
+                                          color: Color(0xFF5f5f5f),
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                        textAlign: TextAlign.start,
+                                      ),
+                                    ),
+                                    SizedBox(height: 4.0),
+                                    GestureDetector(
+                                      onTap: () {
+                                        // Handle the click event for the second text view
+                                        print('first textview clicked');
+                                      },
+                                      child: Container(
+                                        width:
+                                        MediaQuery.of(context).size.width,
+                                        height: 55.0,
+                                        decoration: BoxDecoration(
+                                          borderRadius:
+                                          BorderRadius.circular(5.0),
+                                          border: Border.all(
+                                            color: Color(0xFFe78337),
+                                            width: 1,
+                                          ),
+                                        ),
+                                        child: Row(
+                                          children: [
+                                            Expanded(
+                                              child: Align(
+                                                alignment: Alignment.centerLeft,
+                                                child: Padding(
+                                                  padding: EdgeInsets.only(
+                                                      left: 10.0, top: 0.0),
+                                                  child: TextFormField(
+                                                    controller:
+                                                    creditbankcontroller,
+                                                    keyboardType:
+                                                    TextInputType.name,
+                                                    style: TextStyle(
+                                                      fontSize: 14,
+                                                      fontFamily: 'Roboto',
+                                                      fontWeight:
+                                                      FontWeight.w600,
+                                                      color: Color(0xFFe78337),
+                                                    ),
+                                                    decoration: InputDecoration(
+                                                      hintText:
+                                                      'Enter Credit Bank',
+                                                      hintStyle: TextStyle(
+                                                        fontSize: 14,
+                                                        fontFamily: 'Roboto',
+                                                        fontWeight: FontWeight.w700,
+                                                        color: Color(0xa0e78337),
+                                                      ),
+                                                      border: InputBorder.none,
+                                                    ),
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              )),
+                          // SizedBox(height: 5.0),
+                          Visibility(
+                              visible: Selected_PaymentMode == 'Online',
+                              child: Padding(
+                                padding: EdgeInsets.only(
+                                    top: 10.0, left: 0.0, right: 0.0),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Padding(
+                                      padding: EdgeInsets.only(
+                                          top: 0.0, left: 5.0, right: 0.0),
+                                      child: Text(
+                                        'UTR Number *',
+                                        style: TextStyle(
+                                          fontSize: 12.0,
+                                          color: Color(0xFF5f5f5f),
+                                          fontFamily: 'Roboto',
+                                          fontWeight: FontWeight.w600,
+                                        ),
+                                        textAlign: TextAlign.start,
+                                      ),
+                                    ),
+                                    SizedBox(height: 5.0),
+                                    GestureDetector(
+                                      onTap: () {
+                                        // Handle the click event for the second text view
+                                        print('first textview clicked');
+                                      },
+                                      child: Container(
+                                        width:
+                                        MediaQuery.of(context).size.width,
+                                        height: 55.0,
+                                        decoration: BoxDecoration(
+                                          borderRadius:
+                                          BorderRadius.circular(5.0),
+                                          border: Border.all(
+                                            color: Color(0xFFe78337),
+                                            width: 1,
+                                          ),
+                                        ),
+                                        child: Row(
+                                          children: [
+                                            Expanded(
+                                              child: Align(
+                                                alignment: Alignment.centerLeft,
+                                                child: Padding(
+                                                  padding: EdgeInsets.only(
+                                                      left: 10.0, top: 0.0),
+                                                  child: TextFormField(
+                                                    controller:
+                                                    utrcontroller,
+                                                    keyboardType:
+                                                    TextInputType.name,
+                                                    style: TextStyle(
+                                                      fontSize: 14,
+                                                      fontFamily: 'Roboto',
+                                                      fontWeight:
+                                                      FontWeight.w600,
+                                                      color: Color(0xFFe78337),
+                                                    ),
+                                                    decoration: InputDecoration(
+                                                      hintText:
+                                                      'Enter UTR Number',
+                                                      hintStyle: TextStyle(
+                                                        fontSize: 14,
+                                                        fontFamily: 'Roboto',
+                                                        fontWeight: FontWeight.w700,
+                                                        color: Color(0xa0e78337),
+                                                      ),
+                                                      border: InputBorder.none,
+                                                    ),
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              )),
                           //   ),
                         //  SizedBox(height: 5.0),
                           Visibility(
@@ -501,17 +763,20 @@ getshareddata();
                                 ),
                               )),
                           // Check Number
-                        //  SizedBox(height: 5.0),
+
                           Visibility(
                             visible: Selected_PaymentMode == 'Cheque',
-                            child: buildDateInput(
-                              context,
-                              'Check Date ',
-                              checkDateController,
-                              () => _selectcheckDate(
-                                  context, checkDateController),
+                            child: Padding(
+                              padding: EdgeInsets.only(top: 10.0, bottom: 0.0), // Adjust the padding as needed
+                              child: buildDateInput(
+                                context,
+                                'Check Date *',
+                                checkDateController,
+                                    () => _selectcheckDate(context, checkDateController),
+                              ),
                             ),
                           ),
+
                           // SizedBox(height: 5.0),
                           Visibility(
                               visible: Selected_PaymentMode == 'Cheque',
@@ -525,7 +790,7 @@ getshareddata();
                                       padding: EdgeInsets.only(
                                           top: 0.0, left: 5.0, right: 0.0),
                                       child: Text(
-                                        'Check Issued Bank',
+                                        'Check Issued Bank *',
                                         style: TextStyle(
                                           fontSize: 12.0,
                                           color: Color(0xFF5f5f5f),
@@ -596,252 +861,7 @@ getshareddata();
                                 ),
                               )),
                           // SizedBox(height: 5.0),
-                          Visibility(
-                              visible: Selected_PaymentMode == 'Online',
-                              child: Padding(
-                                padding: EdgeInsets.only(
-                                    top: 10.0, left: 0.0, right: 0.0),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Padding(
-                                      padding: EdgeInsets.only(
-                                          top: 0.0, left: 5.0, right: 0.0),
-                                      child: Text(
-                                        'Credit Account No',
-                                        style: TextStyle(
-                                          fontSize: 12.0,
-                                          color: Color(0xFF5f5f5f),
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                        textAlign: TextAlign.start,
-                                      ),
-                                    ),
-                                    SizedBox(height: 4.0),
-                                    GestureDetector(
-                                      onTap: () {
-                                        // Handle the click event for the second text view
-                                        print('first textview clicked');
-                                      },
-                                      child: Container(
-                                        width:
-                                            MediaQuery.of(context).size.width,
-                                        height: 55.0,
-                                        decoration: BoxDecoration(
-                                          borderRadius:
-                                              BorderRadius.circular(5.0),
-                                          border: Border.all(
-                                            color: Color(0xFFe78337),
-                                            width: 1,
-                                          ),
-                                        ),
-                                        child: Row(
-                                          children: [
-                                            Expanded(
-                                              child: Align(
-                                                alignment: Alignment.centerLeft,
-                                                child: Padding(
-                                                  padding: EdgeInsets.only(
-                                                      left: 10.0, top: 0.0),
-                                                  child: TextFormField(
-                                                    controller:
-                                                        accountnumcontroller,
-                                                    keyboardType:
-                                                        TextInputType.number,
-                                                    style: TextStyle(
-                                                      fontSize: 14,
-                                                      fontFamily: 'Roboto',
-                                                      fontWeight:
-                                                          FontWeight.w600,
-                                                      color: Color(0xFFe78337),
-                                                    ),
-                                                    decoration: InputDecoration(
-                                                      hintText:
-                                                          'Enter Credit Account No',
-                                                      hintStyle: TextStyle(
-                                                        fontSize: 14,
-                                                        fontFamily: 'Roboto',
-                                                        fontWeight: FontWeight.w700,
-                                                        color: Color(0xa0e78337),
-                                                      ),
-                                                      border: InputBorder.none,
-                                                    ),
-                                                  ),
-                                                ),
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              )),
-                          // SizedBox(height: 5.0),
-                          Visibility(
-                              visible: Selected_PaymentMode == 'Online',
-                              child: Padding(
-                                padding: EdgeInsets.only(
-                                    top: 10.0, left: 0.0, right: 0.0),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Padding(
-                                      padding: EdgeInsets.only(
-                                          top: 0.0, left: 5.0, right: 0.0),
-                                      child: Text(
-                                        'Credit Bank',
-                                        style: TextStyle(
-                                          fontSize: 12.0,
-                                          color: Color(0xFF5f5f5f),
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                        textAlign: TextAlign.start,
-                                      ),
-                                    ),
-                                    SizedBox(height: 4.0),
-                                    GestureDetector(
-                                      onTap: () {
-                                        // Handle the click event for the second text view
-                                        print('first textview clicked');
-                                      },
-                                      child: Container(
-                                        width:
-                                            MediaQuery.of(context).size.width,
-                                        height: 55.0,
-                                        decoration: BoxDecoration(
-                                          borderRadius:
-                                              BorderRadius.circular(5.0),
-                                          border: Border.all(
-                                            color: Color(0xFFe78337),
-                                            width: 1,
-                                          ),
-                                        ),
-                                        child: Row(
-                                          children: [
-                                            Expanded(
-                                              child: Align(
-                                                alignment: Alignment.centerLeft,
-                                                child: Padding(
-                                                  padding: EdgeInsets.only(
-                                                      left: 10.0, top: 0.0),
-                                                  child: TextFormField(
-                                                    controller:
-                                                        creditbankcontroller,
-                                                    keyboardType:
-                                                        TextInputType.name,
-                                                    style: TextStyle(
-                                                      fontSize: 14,
-                                                      fontFamily: 'Roboto',
-                                                      fontWeight:
-                                                          FontWeight.w600,
-                                                      color: Color(0xFFe78337),
-                                                    ),
-                                                    decoration: InputDecoration(
-                                                      hintText:
-                                                          'Enter Credit Bank',
-                                                      hintStyle: TextStyle(
-                                                        fontSize: 14,
-                                                        fontFamily: 'Roboto',
-                                                        fontWeight: FontWeight.w700,
-                                                        color: Color(0xa0e78337),
-                                                      ),
-                                                      border: InputBorder.none,
-                                                    ),
-                                                  ),
-                                                ),
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              )),
-                          // SizedBox(height: 5.0),
-                          Visibility(
-                              visible: Selected_PaymentMode == 'Online',
-                              child: Padding(
-                                padding: EdgeInsets.only(
-                                    top: 10.0, left: 0.0, right: 0.0),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Padding(
-                                      padding: EdgeInsets.only(
-                                          top: 0.0, left: 5.0, right: 0.0),
-                                      child: Text(
-                                        'UTR Number',
-                                        style: TextStyle(
-                                          fontSize: 12.0,
-                                          color: Color(0xFF5f5f5f),
-                                          fontFamily: 'Roboto',
-                                          fontWeight: FontWeight.w600,
-                                        ),
-                                        textAlign: TextAlign.start,
-                                      ),
-                                    ),
-                                    SizedBox(height: 5.0),
-                                    GestureDetector(
-                                      onTap: () {
-                                        // Handle the click event for the second text view
-                                        print('first textview clicked');
-                                      },
-                                      child: Container(
-                                        width:
-                                            MediaQuery.of(context).size.width,
-                                        height: 55.0,
-                                        decoration: BoxDecoration(
-                                          borderRadius:
-                                              BorderRadius.circular(5.0),
-                                          border: Border.all(
-                                            color: Color(0xFFe78337),
-                                            width: 1,
-                                          ),
-                                        ),
-                                        child: Row(
-                                          children: [
-                                            Expanded(
-                                              child: Align(
-                                                alignment: Alignment.centerLeft,
-                                                child: Padding(
-                                                  padding: EdgeInsets.only(
-                                                      left: 10.0, top: 0.0),
-                                                  child: TextFormField(
-                                                    controller:
-                                                    utrcontroller,
-                                                    keyboardType:
-                                                        TextInputType.name,
-                                                    style: TextStyle(
-                                                      fontSize: 14,
-                                                      fontFamily: 'Roboto',
-                                                      fontWeight:
-                                                          FontWeight.w600,
-                                                      color: Color(0xFFe78337),
-                                                    ),
-                                                    decoration: InputDecoration(
-                                                      hintText:
-                                                          'Enter UTR Number',
-                                                      hintStyle: TextStyle(
-                                                        fontSize: 14,
-                                                        fontFamily: 'Roboto',
-                                                        fontWeight: FontWeight.w700,
-                                                        color: Color(0xa0e78337),
-                                                      ),
-                                                      border: InputBorder.none,
-                                                    ),
-                                                  ),
-                                                ),
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              )),
+
                           // Download and Share buttons
 
                           // Purpose
@@ -849,7 +869,7 @@ getshareddata();
                             padding: EdgeInsets.only(
                                 top: 10.0, left: 0.0, right: 0.0),
                             child: Text(
-                              'Purpose',
+                              'Purpose *',
                               style: TextStyle(
                                 fontSize: 12.0,
                                 color: Color(0xFF5f5f5f),
@@ -945,7 +965,7 @@ getshareddata();
                             padding: EdgeInsets.only(
                                 top: 0.0, left: 0.0, right: 0.0),
                             child: Text(
-                              'Category',
+                              'Category * ',
                               style: TextStyle(
                                 fontSize: 12.0,
                                 color: Color(0xFF5f5f5f),
@@ -1035,7 +1055,7 @@ getshareddata();
                             padding: EdgeInsets.only(
                                 top: 10.0, left: 0.0, right: 0.0),
                             child: Text(
-                              'Attachment',
+                              'Attachment *',
                               style: TextStyle(
                                 fontSize: 12.0,
                                 color: Color(0xFF5f5f5f),
@@ -1045,7 +1065,7 @@ getshareddata();
                             ),
                           ),
                           SizedBox(height: 4.0),
-
+                          if (_imageFile == null)
                           GestureDetector(
                             onTap: () {
                               // here
@@ -1123,12 +1143,11 @@ getshareddata();
                           ),
                           SizedBox(height: 10.0),
 
-                          GestureDetector(
+                          GestureDetector    (
                             onTap: () {
                               // Handle tap on uploaded image to remove it
                               setState(() {
-                                _imageFile =
-                                    null; // Set _imageFile to null to remove the image
+                                _imageFile = null; // Set _imageFile to null to remove the image
                               });
                             },
                             child: SizedBox(
@@ -1188,27 +1207,37 @@ getshareddata();
 
                           // Submit Button
                           Container(
-                              padding: const EdgeInsets.all(10),
-                              width: double.infinity,
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(10),
-                                color: Color(0xFFe78337),
-                              ),
-                              child: GestureDetector(
-                                onTap: () {
-                                  // Call Submit submit function or perform the desired action here
-                                  print('Submit button clicked');
-                                  AddUpdateCollections(context);
-                                },
+                            padding: const EdgeInsets.all(10),
+                            width: double.infinity,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(10),
+                              color: isButtonEnabled ? Color(0xFFe78337) : Colors.grey, // Change color based on button state
+                            ),
+                            child: GestureDetector(
+                              onTap: isButtonEnabled ? () => AddUpdateCollections(context) : null,
+                              child: Container(
+                                padding: const EdgeInsets.all(10),
+                                width: double.infinity,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(10.0),
+                                  color: isButtonEnabled ? Color(0xFFe78337) : Colors.grey, // Change color based on button state
+                                ),
                                 child: Center(
                                   child: Text(
                                     'Submit',
                                     style: TextStyle(
+                                      fontFamily: 'Roboto',
+                                      fontSize: 14,
                                       color: Colors.white,
+                                      fontWeight: FontWeight.w700,
                                     ),
                                   ),
                                 ),
-                              )),
+                              ),
+                            ),
+                          ),
+
+
                         ],
                       ),
                     ),
@@ -1250,127 +1279,183 @@ getshareddata();
       isValid = false;
       hasValidationFailed = true;
     }
-    // if (isValid && checknumbercontroller.text.isEmpty) {
-    //   CommonUtils.showCustomToastMessageLong(
-    //       'Please Enter check Number', context, 1, 6);
-    //
-    //   isValid = false;
-    //   hasValidationFailed = true;
-    // }
-    // if (isValid && checkDateController.text.isEmpty) {
-    //   CommonUtils.showCustomToastMessageLong(
-    //       'Please Select Check Date', context, 1, 4);
-    //   isValid = false;
-    //   hasValidationFailed = true;
-    // }
-    // if (isValid && checkissuedbankcontroller.text.isEmpty) {
-    //   CommonUtils.showCustomToastMessageLong(
-    //       'Please Enter Check Issued Bank', context, 1, 6);
-    //
-    //   isValid = false;
-    //   hasValidationFailed = true;
-    // }
+    if (Selected_PaymentMode == 'Online') {
+      if (isValid && accountnumcontroller.text.isEmpty) {
+        CommonUtils.showCustomToastMessageLong(
+            'Please Enter Credit Account No ', context, 1, 6);
 
+        isValid = false;
+        hasValidationFailed = true;
+      }
+      if (isValid && creditbankcontroller.text.isEmpty) {
+        CommonUtils.showCustomToastMessageLong(
+            'Please Enter  Credit Bank ', context, 1, 4);
+        isValid = false;
+        hasValidationFailed = true;
+      }
+      if (isValid && utrcontroller.text.isEmpty) {
+        CommonUtils.showCustomToastMessageLong(
+            'Please Enter UTR Number ', context, 1, 6);
+
+        isValid = false;
+        hasValidationFailed = true;
+      }
+    }
+    else if (Selected_PaymentMode == 'Cheque') {
+      if (isValid && checknumbercontroller.text.isEmpty) {
+        CommonUtils.showCustomToastMessageLong(
+            'Please Enter check Number', context, 1, 6);
+
+        isValid = false;
+        hasValidationFailed = true;
+      }
+      if (isValid && checkDateController.text.isEmpty) {
+        CommonUtils.showCustomToastMessageLong(
+            'Please Select Check Date', context, 1, 4);
+        isValid = false;
+        hasValidationFailed = true;
+      }
+      if (isValid && checkissuedbankcontroller.text.isEmpty) {
+        CommonUtils.showCustomToastMessageLong(
+            'Please Enter Check Issued Bank', context, 1, 6);
+
+        isValid = false;
+        hasValidationFailed = true;
+      }
+    }
+
+    if (isValid && (selectedPurpose == null || selectedPurpose!.isEmpty)) {
+      // Show an error message or perform any action for invalid purpose
+
+      CommonUtils.showCustomToastMessageLong(
+          'Please select a purpose', context, 1, 6);
+
+      isValid = false;
+      hasValidationFailed = true;
+    }
+
+    if (isValid && (categroyname == null || categroyname!.isEmpty)) {
+      // Show an error message or perform any action for invalid category
+
+      CommonUtils.showCustomToastMessageLong(
+          'Please select a category', context, 1, 6);
+
+      isValid = false;
+      hasValidationFailed = true;
+    }
+    if (isValid && _imageFile == null){
+
+      CommonUtils.showCustomToastMessageLong(
+          'Please upload attachment', context, 1, 6);
+
+      isValid = false;
+      hasValidationFailed = true;
+  }
     setState(() {
       isLoading = true;
     });
+    if (isValid) {
+      // Disable the button after validation
+      disableButton();
+      Map<String, dynamic> requestData = {
+        "Id": "",
+        "Date": selecteddate,
+        "SlpCode": '$slpCode',
+        "PartyCode": '${widget.cardCode}',
+        "PartyName": '${widget.cardName}',
+        "Address": '${widget.address}',
+        "StateName": '${widget.state}',
+        "PhoneNumber": '${widget.phone}',
+        "Amount": Amounttext.text,
+        "PaymentType": '$payid',
+        "PaymentTypeName": Selected_PaymentMode,
+        "PurposeValue": '${selectedPurposeObj?.fldValue}',
+        "PurposeDesc": '${selectedPurposeObj?.descr}',
+        "Category": '${selectedcategoryObj?.itmsGrpCod}',
+        "CategoryName": '${selectedcategoryObj?.itmsGrpNam}',
 
-    Map<String, dynamic> requestData = {
-      "Id": "",
-      "Date": selecteddate,
-      "SlpCode": '$slpCode',
-      "PartyCode": '${widget.cardCode}',
-      "PartyName": '${widget.cardName}',
-      "Address": '${widget.address}',
-      "StateName": '${widget.state}',
-      "PhoneNumber": '${widget.phone}',
-      "Amount": Amounttext.text,
-      "PaymentType": '$payid',
-      "PaymentTypeName": Selected_PaymentMode,
-      "PurposeValue": '${selectedPurposeObj?.fldValue}',
-      "PurposeDesc": '${selectedPurposeObj?.descr}',
-      "Category": '${selectedcategoryObj?.itmsGrpCod}',
-      "CategoryName": '${selectedcategoryObj?.itmsGrpNam}',
-      "CheckNumber": checknumbercontroller.text,
-      "CheckDate": checkdate,
-      "CheckIssuedBank": checkissuedbankcontroller.text,
-      // Default values for Online payment mode
-      "CreditAccountNo": "",
-      "CreditBank": "",
+        // Default values for Online payment mode
+        "CreditAccountNo": "",
+        "CreditBank": "",
 
-      if (Selected_PaymentMode == 'Online') ...{
-        "CreditAccountNo": accountnumcontroller.text,
-        "CreditBank": creditbankcontroller.text,
-        "UTRNumber": utrcontroller.text, },
-      "FileName": filename,
-      "FileLocation": "",
-      "FileExtension": fileExtension,
-      "Remarks": "",
-      "CompanyId": CompneyId,
-      "StatusTypeId": 7,
-      "IsActive": true,
-      "CreatedBy": '$userId',
-      "CreatedDate": formattedcurrentDate,
-      "UpdatedBy": '$userId',
-      "UpdatedDate": formattedcurrentDate,
-      "PartyGSTNumber": '${widget.gstRegnNo}',
-      "ProprietorName": '${widget.proprietorName}',
-      "FileString": '$base64Image'
-    };
+        if (Selected_PaymentMode == 'Online') ...{
+          "CreditAccountNo": accountnumcontroller.text,
+          "CreditBank": creditbankcontroller.text,
+          "UTRNumber": utrcontroller.text,},
+         if (Selected_PaymentMode == 'Cheque') ...{
+        "CheckNumber": checknumbercontroller.text,
+        "CheckDate": checkdate,
+        "CheckIssuedBank": checkissuedbankcontroller.text,},
+        "FileName": filename,
+        "FileLocation": "",
+        "FileExtension": fileExtension,
+        "Remarks": "",
+        "CompanyId": CompneyId,
+        "StatusTypeId": 7,
+        "IsActive": true,
+        "CreatedBy": '$userId',
+        "CreatedDate": formattedcurrentDate,
+        "UpdatedBy": '$userId',
+        "UpdatedDate": formattedcurrentDate,
+        "PartyGSTNumber": '${widget.gstRegnNo}',
+        "ProprietorName": '${widget.proprietorName}',
+        "FileString": '$base64Image'
+      };
 
-    print(requestData);
-    print(jsonEncode(requestData));
-    // URL for the API endpoint
-    String apiUrl =
-        "http://182.18.157.215/Srikar_Biotech_Dev/API/api/Collections/AddUpdateCollections";
+      print(requestData);
+      print(jsonEncode(requestData));
+      // URL for the API endpoint
+      String apiUrl =
+          "http://182.18.157.215/Srikar_Biotech_Dev/API/api/Collections/AddUpdateCollections";
 
-    // Encode the JSON data
-    String requestBody = jsonEncode(requestData);
+      // Encode the JSON data
+      String requestBody = jsonEncode(requestData);
 
-    // Set up the headers
-    Map<String, String> headers = {
-      "Content-Type": "application/json",
-    };
+      // Set up the headers
+      Map<String, String> headers = {
+        "Content-Type": "application/json",
+      };
 
-    try {
-      // Make the HTTP POST request
-      final response = await http.post(
-        Uri.parse(apiUrl),
-        headers: headers,
-        body: requestBody,
-      );
+      try {
+        // Make the HTTP POST request
+        final response = await http.post(
+          Uri.parse(apiUrl),
+          headers: headers,
+          body: requestBody,
+        );
 
-      // Check if the request was successful (status code 200)
-      if (response.statusCode == 200) {
-        // Handle the response here (e.g., print or process the data)
-        Map<String, dynamic> responseData = json.decode(response.body);
+        // Check if the request was successful (status code 200)
+        if (response.statusCode == 200) {
+          // Handle the response here (e.g., print or process the data)
+          Map<String, dynamic> responseData = json.decode(response.body);
 
-        print("Response: ${response.body}");
+          print("Response: ${response.body}");
+          setState(() {
+            isLoading = false;
+          });
+          bool isSuccessFromApi = responseData['isSuccess'];
+
+          if (isSuccessFromApi) {
+            // Navigate to the next screen
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => StatusScreen()),
+            );
+          } else {
+            CommonUtils.showCustomToastMessageLong('Error', context, 1, 6);
+          }
+          //  CommonUtils.showCustomToastMessageLong(' Successfully', context, 0, 4);
+        } else {
+          // Handle the error if the request was not successful
+          print("Error: ${response.statusCode}, ${response.reasonPhrase}");
+        }
+      } catch (error) {
+        // Handle any exceptions that may occur during the request
+        print("Error: $error");
         setState(() {
           isLoading = false;
         });
-        bool isSuccessFromApi = responseData['isSuccess'];
-
-        if (isSuccessFromApi) {
-          // Navigate to the next screen
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => StatusScreen()),
-          );
-        } else {
-          CommonUtils.showCustomToastMessageLong('Error', context, 1, 6);
-        }
-        //  CommonUtils.showCustomToastMessageLong(' Successfully', context, 0, 4);
-      } else {
-        // Handle the error if the request was not successful
-        print("Error: ${response.statusCode}, ${response.reasonPhrase}");
       }
-    } catch (error) {
-      // Handle any exceptions that may occur during the request
-      print("Error: $error");
-      setState(() {
-        isLoading = false;
-      });
     }
   }
 
@@ -1485,6 +1570,7 @@ getshareddata();
     try {
       DateTime? picked = await showDatePicker(
         context: context,
+        initialEntryMode: DatePickerEntryMode.calendarOnly,
         initialDate: initialDate,
         firstDate: DateTime(2000),
         lastDate: DateTime(2101),
@@ -1509,9 +1595,9 @@ getshareddata();
   }
 
   Future<void> _selectDate(
-    BuildContext context,
-    TextEditingController controller,
-  ) async {
+      BuildContext context,
+      TextEditingController controller,
+      ) async {
     DateTime currentDate = DateTime.now();
     DateTime initialDate;
 
@@ -1527,9 +1613,11 @@ getshareddata();
       initialDate = currentDate;
     }
 
+
     try {
       DateTime? picked = await showDatePicker(
         context: context,
+        initialEntryMode: DatePickerEntryMode.calendarOnly,
         initialDate: initialDate,
         firstDate: DateTime(2000),
         lastDate: DateTime(2101),
@@ -1541,10 +1629,10 @@ getshareddata();
 
         // Save selected dates as DateTime objects
         selectedDate = picked;
-        print("Selected  Date: $selectedDate");
+        print("Selected Date: $selectedDate");
 
         // Print formatted date
-        print("Selected  Date: ${DateFormat('yyyy-MM-dd').format(picked)}");
+        print("Selected Date: ${DateFormat('yyyy-MM-dd').format(picked)}");
       }
     } catch (e) {
       print("Error selecting date: $e");
@@ -1703,6 +1791,12 @@ getshareddata();
       print('Retrieved CompneyId: $CompneyId');
 
 
+  }
+
+  void disableButton() {
+    setState(() {
+      isButtonEnabled = false;
+    });
   }
 
 }

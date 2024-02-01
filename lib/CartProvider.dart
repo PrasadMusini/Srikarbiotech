@@ -87,6 +87,14 @@ class CartProvider extends ChangeNotifier {
     // Save the updated cartItems to SharedPreferences
     await saveCartItemsToSharedPreferences(cartItems);
   }
+  bool isSameItemGroup(String newItemGrpCod) {
+    if (cartItems.isEmpty) {
+      // If the cart is empty, there are no conflicts
+      return true;
+    }
 
+    // Check if the newItemGrpCod is the same as the itemGrpCod of the first item in the cart
+    return cartItems.first.itemGrpCod == newItemGrpCod;
+  }
 
 }

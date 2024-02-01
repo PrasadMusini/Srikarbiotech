@@ -14,6 +14,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:srikarbiotech/Common/CommonUtils.dart';
 import 'package:http/http.dart' as http;
 
+import 'Common/SharedPrefsData.dart';
 import 'HomeScreen.dart';
 
 class Ledgerscreen extends StatefulWidget {
@@ -33,7 +34,7 @@ class Ledgerscreen extends StatefulWidget {
 }
 
 class Ledger_screen extends State<Ledgerscreen> {
-
+  bool downloading = false;
   TextEditingController fromDateController = TextEditingController();
   TextEditingController toDateController = TextEditingController();
   // CalendarFormat calendarFormat = CalendarFormat.month;
@@ -61,10 +62,8 @@ getshareddata();
       AppBar(
         backgroundColor: Color(0xFFe78337),
         automaticallyImplyLeading: false,
-        // This line removes the default back arrow
         title: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
-
           children: [
             Row(
               children: [
@@ -92,29 +91,40 @@ getshareddata();
                 ),
               ],
             ),
-            GestureDetector(
-              onTap: () {
-                // Handle the click event for the home icon
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(builder: (context) => HomeScreen()),
-                );
-              },
-              child: Container(
-              //  color: Colors.white, // Set the background color to white
-                child: Image.asset(
-                  CompneyId == 1
-                      ? 'assets/srikar-bio.png'
-                      : 'assets/srikar-seed.png',
-                  width: 60.0,
-                  height: 40.0,
-                ),
-              ),
-            ),
+            FutureBuilder(
+              future: getshareddata(),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.done) {
+                  // Access the companyId after shared data is retrieved
 
+                  return   GestureDetector(
+                    onTap: () {
+                      // Handle the click event for the home icon
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(builder: (context) => HomeScreen()),
+                      );
+                    },
+                    child: Image.asset(
+                      CompneyId == 1
+                          ? 'assets/srikar-home-icon.png'
+                          : 'assets/seeds-home-icon.png',
+                      width: 30,
+                      height: 30,
+                    ),
+                  );
+
+                } else {
+                  // Return a placeholder or loading indicator
+                  return SizedBox.shrink();
+                }
+              },
+            ),
           ],
         ),
       ),
+
+
       body: Column(
         children: [
           Padding(
@@ -182,11 +192,9 @@ getshareddata();
             Expanded(
               child: InkWell(
                 onTap: () {
-                   // Add logic for the download button
-
+                  // Add logic for the download button
                   downloadData();
-                    print('Download button clicked');
-
+                  print('Download button clicked');
                 },
                 child: Container(
                   padding: const EdgeInsets.all(10),
@@ -195,7 +203,7 @@ getshareddata();
                     color: Color(0xFFe78337),
                   ),
                   child: const Center(
-                    child:  Text(
+                    child: Text(
                       'Download',
                       style: TextStyle(
                         color: Colors.white,
@@ -208,6 +216,13 @@ getshareddata();
                 ),
               ),
             ),
+            // Add a progress indicator based on the downloading state
+            if (downloading)
+              LinearProgressIndicator(
+                backgroundColor: Colors.grey[200],
+                valueColor: AlwaysStoppedAnimation<Color>(Colors.blue),
+              ),
+
             const SizedBox(
               width: 15,
             ),
@@ -447,7 +462,7 @@ getshareddata();
     }
     if (isValid && toDateController.text.isEmpty) {
       CommonUtils.showCustomToastMessageLong(
-          'Please Select to Date', context, 1, 4);
+          'Please Select To Date', context, 1, 4);
       isValid = false;
       hasValidationFailed = true;
     }
@@ -469,6 +484,7 @@ getshareddata();
       // };
 
       final requestBody = {
+        "CompanyId": '$CompneyId',
         "PartyCode":'${widget.cardCode}',
         "FromDate": fromdate,
         "ToDate": todate
@@ -485,6 +501,9 @@ getshareddata();
         if (response.statusCode == 200) {
           final jsonResponse = json.decode(response.body);
 
+          setState(() {
+            downloading = false;
+          });
           if (jsonResponse['isSuccess']) {
             // Convert base64 string to bytes
             if (jsonResponse['response'] == null) {
@@ -556,7 +575,7 @@ getshareddata();
     }
     if (isValid && toDateController.text.isEmpty) {
       CommonUtils.showCustomToastMessageLong(
-          'Please Select to Date', context, 1, 4);
+          'Please Select To Date', context, 1, 4);
       isValid = false;
       hasValidationFailed = true;
     }
@@ -578,6 +597,7 @@ getshareddata();
       //   "ToDate": "2023-06-05"
       // };
       final requestBody = {
+        "CompanyId": '$CompneyId',
         "PartyCode":'${widget.cardCode}',
         "FromDate": fromdate,
         "ToDate": todate
@@ -692,11 +712,12 @@ getshareddata();
     SharedPreferences prefs = await SharedPreferences.getInstance();
 
 // Retrieve userId and slpCode
-    setState(() {
 
-      CompneyId = prefs.getInt("compneyid")!;
-      print('Retrieved CompneyId: $CompneyId');
-    });
+
+      CompneyId = await SharedPrefsData.getIntFromSharedPrefs("companyId");
+
+      print('Company ID: $CompneyId');
+
   }
 
 

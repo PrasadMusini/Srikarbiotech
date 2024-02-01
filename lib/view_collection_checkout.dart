@@ -4,6 +4,7 @@ import 'package:hexcolor/hexcolor.dart';
 import 'package:intl/intl.dart';
 
 import 'Common/CommonUtils.dart';
+import 'Common/SharedPrefsData.dart';
 import 'HomeScreen.dart';
 import 'Model/card_collection.dart';
 
@@ -49,12 +50,12 @@ class _ViewCollectionCheckOutState extends State<ViewCollectionCheckOut> {
     ]
     // ['Date', 'Payment Mode', 'Cheque Date', 'Purpose', '']
   ];
-
+  int CompneyId = 0;
   @override
   void initState() {
     super.initState();
 
-
+    getshareddata();
     print("screenFrom: ${widget.listResult.phoneNumber}");
 
 
@@ -124,20 +125,36 @@ class _ViewCollectionCheckOutState extends State<ViewCollectionCheckOut> {
                 ),
               ],
             ),
-            GestureDetector(
-              onTap: () {
-                // Handle the click event for the home icon
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(builder: (context) => HomeScreen()),
-                );
+            FutureBuilder(
+              future: getshareddata(),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.done) {
+                  // Access the companyId after shared data is retrieved
+
+                  return   GestureDetector(
+                    onTap: () {
+                      // Handle the click event for the home icon
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(builder: (context) => HomeScreen()),
+                      );
+                    },
+                    child: Image.asset(
+                      CompneyId == 1
+                          ? 'assets/srikar-home-icon.png'
+                          : 'assets/seeds-home-icon.png',
+                      width: 30,
+                      height: 30,
+                    ),
+                  );
+
+                } else {
+                  // Return a placeholder or loading indicator
+                  return SizedBox.shrink();
+                }
               },
-              child: Icon(
-                Icons.home,
-                size: 30,
-                color: Colors.white,
-              ),
             ),
+
           ],
         ),
       ),
@@ -269,5 +286,14 @@ class _ViewCollectionCheckOutState extends State<ViewCollectionCheckOut> {
         ),
       ),
     );
+  }
+
+  Future<void> getshareddata() async {
+
+    CompneyId = await SharedPrefsData.getIntFromSharedPrefs("companyId");
+
+    print('Company ID: $CompneyId');
+
+
   }
 }

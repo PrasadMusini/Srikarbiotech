@@ -7,5 +7,5 @@ var baseUrl = "http://182.18.157.215/Srikar_Biotech_Dev/API/api/";      // Test
 
 var post_Login ="Account/Login";
 
-var GetAllDealersBySlpCode="Account/GetAllDealersBySlpCode/";
+var GetAllDealersBySlpCode="Party/GetDealersBySlpCode/";
 //api/Account/GetAllDealersBySlpCode/{CompanyId}/{SlpCode}

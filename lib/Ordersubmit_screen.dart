@@ -130,21 +130,34 @@ class Order_submit_screen extends State<Ordersubmit_screen> {
                 ),
               ],
             ),
-            GestureDetector(
-              onTap: () {
-                // Handle the click event for the home icon
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(builder: (context) => HomeScreen()),
-                );
+            FutureBuilder(
+              future: getshareddata(),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.done) {
+                  // Access the companyId after shared data is retrieved
+
+                  return   GestureDetector(
+                    onTap: () {
+                      // Handle the click event for the home icon
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(builder: (context) => HomeScreen()),
+                      );
+                    },
+                    child: Image.asset(
+                      CompneyId == 1
+                          ? 'assets/srikar-home-icon.png'
+                          : 'assets/seeds-home-icon.png',
+                      width: 30,
+                      height: 30,
+                    ),
+                  );
+
+                } else {
+                  // Return a placeholder or loading indicator
+                  return SizedBox.shrink();
+                }
               },
-              child: Image.asset(
-                CompneyId == 1
-                    ? 'assets/srikar-home-icon.png'
-                    : 'assets/srikar-seed.png',
-                width: CompneyId == 1 ? 30 : 60,
-                height: CompneyId == 1 ? 30 : 40,
-              ),
             ),
           ],
         ),
@@ -592,7 +605,7 @@ class Order_submit_screen extends State<Ordersubmit_screen> {
       "FileName": "",
       "FileLocation": "",
       "FileExtension": "",
-      "StatusTypeId": 2,
+      "StatusTypeId": 1,
       "Discount": 1.1,
       "IGST": 1.1,
       "CGST": 1.1,

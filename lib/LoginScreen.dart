@@ -30,6 +30,7 @@ class _MyHomePageState extends State<LoginScreen> {
   int compneyid = 0; // Assuming companyId is an int
   String? userId;
   String? slpCode;
+  bool isLoading = false;
   @override
   initState() {
     super.initState();
@@ -289,11 +290,6 @@ class _MyHomePageState extends State<LoginScreen> {
                                 child: GestureDetector(
                                   onTap: () {
                                     _login();
-                                    // Navigator.push(
-                                    //   context,
-                                    //   MaterialPageRoute(
-                                    //       builder: (context) => HomeScreen()),
-                                    // );
                                   },
                                   child: Container(
                                     width: MediaQuery.of(context).size.width,
@@ -302,15 +298,17 @@ class _MyHomePageState extends State<LoginScreen> {
                                       borderRadius: BorderRadius.circular(6.0),
                                       color: Color(0xFFe78337),
                                     ),
-                                    child: Row(
+                                    child: isLoading // Show loading indicator if isLoading is true
+                                        ? Center(child: CircularProgressIndicator())
+                                        : Row(
                                       crossAxisAlignment:
-                                          CrossAxisAlignment.center,
+                                      CrossAxisAlignment.center,
                                       mainAxisAlignment:
-                                          MainAxisAlignment.center,
+                                      MainAxisAlignment.center,
                                       children: [
                                         Text(
                                           'LogIn',
-                                          style: CommonUtils.Buttonstyle
+                                          style: CommonUtils.Buttonstyle,
                                         ),
                                         Image.asset(
                                           'assets/right_arrow.png',
@@ -325,6 +323,7 @@ class _MyHomePageState extends State<LoginScreen> {
                               ),
                             ),
                           ),
+
                           Padding(
                             padding: const EdgeInsets.only(
                                 top: 12.0,
@@ -368,13 +367,10 @@ class _MyHomePageState extends State<LoginScreen> {
 
 
   void _login() async {
+    setState(() {
+      isLoading = true; // Set loading state to true
+    });
     final apiUrl = baseUrl+post_Login;
-  //  final apiUrl = 'http://182.18.157.215/Srikar_Biotech_Dev/API/api/Account/Login';
-  //   final payload = {
-  //     "Username": "Superadmin",
-  //     "Password": "Abcd@123",
-  //     "CompanyId": 2
-  //   };
 
     final payload = {
       "Username": emailController.text,
@@ -382,7 +378,7 @@ class _MyHomePageState extends State<LoginScreen> {
       "CompanyId": compneyid
     };
 
-    if (passwordController.text.isEmpty) {
+    if (emailController.text.isEmpty) {
       CommonUtils.showCustomToastMessageLong('Please Enter Username', context, 1, 4);
       return;
     }
@@ -427,6 +423,9 @@ class _MyHomePageState extends State<LoginScreen> {
     } else {
       print('Login failed. Please check your credentials.');
     }
+    setState(() {
+      isLoading = false; // Set loading state back to false after the response
+    });
   }
 
 }

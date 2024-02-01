@@ -16,8 +16,12 @@ class StatusScreen extends StatelessWidget {
     final primaryOrange = HexColor('#dc762b');
 
     String orderId = 'xxxxxxxxxx';
-
-    return Scaffold(
+    return WillPopScope(
+        onWillPop: () async {
+      // Disable the back button functionality
+      return false;
+    },
+    child:  Scaffold(
 
       body: Center(
         child: Column(
@@ -144,6 +148,6 @@ class StatusScreen extends StatelessWidget {
           ],
         ),
       ),
-    );
+    ));
   }
 }
