@@ -120,7 +120,11 @@ class _ViewCollectionPageState extends State<ViewCollectionPage> {
               return const Center(child: CircularProgressIndicator.adaptive());
             } else if (snapshot.hasError) {
               return Center(
-                child: Text('Error occurred: ${snapshot.error}'),
+                child: Text(
+                  'No collection found!',
+                  style: _customTextStyle,
+                ),
+                // Text('Error occurred: ${snapshot.error}'),
               );
             } else {
               if (snapshot.hasData) {
